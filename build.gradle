@@ -1,0 +1,36 @@
+task copyServerArtifacts(type: Copy)
+{
+    from 'Server/build/classes/java/main'
+    into 'testing/server'
+}
+
+task copySharedArtifacts(type: Copy)
+{
+    from 'Shared/build/classes/java/main'
+    into 'testing/server'
+}
+
+tasks.register('buildAll') {
+    //Build artifacts
+    dependsOn gradle.includedBuild('shared').task(':build')
+    dependsOn gradle.includedBuild('server').task(':build')
+
+    //Copy artifacts to testing folder for execution
+    dependsOn 'copyServerArtifacts'
+    dependsOn 'copySharedArtifacts'
+}
+
+tasks.register('runServer', JavaExec) {
+    //mainClass = 'Launcher'
+    FileTree jars = fileTree('/Server/build/libs/') { include '*.jar' }
+    //classpath = jars.getSingleFile()
+    classpath = jars
+}
+
+tasks.register('debugServer', JavaExec) {
+    //mainClass = 'Launcher'
+    FileTree jars = fileTree('/Server/build/libs/') { include '*.jar' }
+    //classpath = jars.getSingleFile()
+    classpath = jars
+    debug = true
+}

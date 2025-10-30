@@ -1,0 +1,37 @@
+plugins {
+    id 'java'
+}
+
+group 'com.propertypal'
+version '0.1-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src']
+        }
+    }
+}
+dependencies {
+    implementation 'com.propertypal:shared:+'
+    implementation 'com.google.code.gson:gson:+'
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'Launcher'
+    }
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
+test {
+    useJUnitPlatform()
+}

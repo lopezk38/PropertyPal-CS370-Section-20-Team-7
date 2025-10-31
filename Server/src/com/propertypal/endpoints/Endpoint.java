@@ -1,3 +1,4 @@
+import com.propertypal.ClientRequest;
 import com.sun.net.httpserver.*;
 import java.net.URI;
 import java.io.IOException;
@@ -29,7 +30,7 @@ public class Endpoint<T extends BasePacket> implements HttpHandler
     @FunctionalInterface
     interface forwarder<packetType>
     {
-        public void forward(packetType packet);
+        public void forward(ClientRequest request);
     }
 
     public Endpoint(Class<T> packetType, forwarder forwardUsing)
@@ -78,10 +79,10 @@ public class Endpoint<T extends BasePacket> implements HttpHandler
         if (this.packet == null) throw new IllegalArgumentException("ERROR: Failed to deserialize packet!");
         //TODO: Need to deal with null fields that must not be null
 
-        target.forward(this.packet);
+        target.forward(new ClientRequest(this, this.packet));
     }
 
-    private void sendResp(String resp) throws IOException
+    public void sendResp(String resp) throws IOException
     {
         if (exchange == null)
         {

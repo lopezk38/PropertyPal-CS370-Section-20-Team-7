@@ -1,5 +1,6 @@
 //import com.propertypal.shared;
 
+import com.propertypal.SecurityFilter;
 import com.sun.net.httpserver.*;
 import java.net.InetSocketAddress;
 import java.net.URI;
@@ -16,6 +17,8 @@ public class NetServer
     private HttpServer httpServer;
     private int port;
     private ExecutorService executor;
+
+    private SecurityFilter filter = SecurityFilter.getInstance();
 
     public int getPort() { return port; }
 
@@ -36,7 +39,7 @@ public class NetServer
         //Add endpoints
         //httpServer.createContext("/helloWorld", new EndpointHelloWorld());
         //httpServer.createContext("/echoTest", new EndpointEcho());
-        httpServer.createContext("/login", new Endpoint(LoginPacket.class, (packet) -> { System.out.println("dummy fired"); }));
+        httpServer.createContext("/login", new Endpoint(LoginPacket.class, (request) -> { filter.AuthFilter.filterLoginPacket(request); }));
 
         //httpServer.setExecutor(executor); //Multithreaded. Use for prod
         httpServer.setExecutor(null); //Singlethreaded. Use for easier debug

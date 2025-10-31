@@ -1,3 +1,5 @@
+package com.propertypal;
+
 //import com.propertypal.shared;
 
 import com.propertypal.SecurityFilter;
@@ -39,7 +41,8 @@ public class NetServer
         //Add endpoints
         //httpServer.createContext("/helloWorld", new EndpointHelloWorld());
         //httpServer.createContext("/echoTest", new EndpointEcho());
-        httpServer.createContext("/login", new Endpoint(LoginPacket.class, (request) -> { filter.AuthFilter.filterLoginPacket(request); }));
+        httpServer.createContext("/auth/login", new Endpoint(LoginPacket.class, (request) -> { filter.filterLoginPacket(request); }));
+        httpServer.createContext("/auth/logout", new Endpoint(LoginPacket.class, (request) -> { filter.filterLogoutPacket(request); }));
 
         //httpServer.setExecutor(executor); //Multithreaded. Use for prod
         httpServer.setExecutor(null); //Singlethreaded. Use for easier debug

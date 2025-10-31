@@ -5,12 +5,9 @@ import com.propertypal.CoreLogic;
 import com.propertypal.DbWrapper;
 import com.propertypal.network.responses.*;
 
-public class AuthFilters
+public class AuthFilters extends BaseFilters
 {
-    private CoreLogic logic = CoreLogic.getInstance();
-    private DbWrapper db = DbWrapper.getInstance();
-
-    public BaseResponseEnum enforceLoggedIn(ClientRequest req)
+    public int enforceLoggedIn(ClientRequest req)
     {
         //Check DB for token, validate
 
@@ -18,23 +15,27 @@ public class AuthFilters
 
         //If rejected, respond with rejection and return with why
         BaseResponse resp = new BaseResponse();
-        resp.STATUS = BaseResponse.ERR_BAD_TOKEN;
-        req.source.sendResp(resp.toJson());
+        resp.STATUS = BaseResponseEnum.ERR_BAD_TOKEN;
+        req.setResponse(resp);
+        req.sendResponse();
         return resp.STATUS;
     }
 
-    public LoginResponse.LoginStatus filterLoginPacket(ClientRequest req)
+    public void filterLoginPacket(ClientRequest req)
     {
         //No restrictions for this type
         //Forward request
-        CoreLogic.HandleLogin(req);
+        CoreLogic logic = CoreLogic.getInstance();
+        logic.handleLogin(req);
 
-        return LoginResponse.SUCCESS;
+        return;
     }
 
-    public LogoutResponse.LogoutStatus filterLogoutPacket(ClientRequest req)
+    public void filterLogoutPacket(ClientRequest req)
     {
-        BaseResponseEnum loginCheckResult = enforceLoggedIn(req);
-        if (logoutCheckResult == BaseResponse.ERR_BAD_TOKEN) { return loginCheckResult; }
+        int loggedInCheckResult = enforceLoggedIn(req);
+        if (loggedInCheckResult == BaseResponseEnum.ERR_BAD_TOKEN){ return; }
+
+        //TODO logout path
     }
 }

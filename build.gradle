@@ -16,8 +16,8 @@ tasks.register('buildAll') {
     dependsOn gradle.includedBuild('server').task(':build')
 
     //Copy artifacts to testing folder for execution
-    dependsOn 'copyServerArtifacts'
-    dependsOn 'copySharedArtifacts'
+    //dependsOn 'copyServerArtifacts'
+    //dependsOn 'copySharedArtifacts'
 }
 
 tasks.register('runServer', JavaExec) {

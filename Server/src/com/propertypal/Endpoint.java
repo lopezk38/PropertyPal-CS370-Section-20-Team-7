@@ -1,6 +1,9 @@
+package com.propertypal;
+
 import com.propertypal.ClientRequest;
 import com.sun.net.httpserver.*;
 import java.net.URI;
+import java.net.InetSocketAddress;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -82,7 +85,7 @@ public class Endpoint<T extends BasePacket> implements HttpHandler
         target.forward(new ClientRequest(this, this.packet));
     }
 
-    public void sendResp(String resp) throws IOException
+    public void sendResp(String resp)
     {
         if (exchange == null)
         {
@@ -91,12 +94,24 @@ public class Endpoint<T extends BasePacket> implements HttpHandler
         }
 
         //Respond
-        exchange.sendResponseHeaders(200, resp.length());
-        OutputStream outData = exchange.getResponseBody();
-        outData.write(resp.getBytes());
-        outData.close();
+        try
+        {
+            exchange.sendResponseHeaders(200, resp.length());
+            OutputStream outData = exchange.getResponseBody();
+            outData.write(resp.getBytes());
+            outData.close();
+        }
+        catch (IOException e)
+        {
+            //Nothing we can really do. Just drop the request (AKA do nothing)
+        }
 
         System.out.println("Responded with: " + resp);
+    }
+
+    public InetSocketAddress getRemoteIP()
+    {
+        return exchange.getRemoteAddress();
     }
 
     private final void rejectForErr(int errCode) throws IOException

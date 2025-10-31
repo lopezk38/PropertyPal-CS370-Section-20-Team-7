@@ -1,3 +1,5 @@
+package com.propertypal;
+
 import java.io.IOException;
 
 public class Launcher

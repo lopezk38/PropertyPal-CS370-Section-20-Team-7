@@ -2,6 +2,9 @@ package com.propertypal.network.responses;
 
 import java.time.LocalDateTime;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import com.propertypal.network.GsonAdapters.LocalDateTimeAdapter;
 
 public class BaseResponse
 {
@@ -27,7 +30,7 @@ public class BaseResponse
         catch (Exception e)
         {
             System.out.println("ERROR: JSON failed construction: " + e.toString());
-            return ("{'STATUS': " + BaseResponseEnum.ERR_UNKNOWN.toString() + ", 'TIMESTAMP': '" + LocalDateTime.now().toString() + "'}");
+            return ("{'STATUS': " + Integer.toString(BaseResponseEnum.ERR_UNKNOWN) + ", 'TIMESTAMP': '" + LocalDateTime.now().toString() + "'}");
         }
     }
 }

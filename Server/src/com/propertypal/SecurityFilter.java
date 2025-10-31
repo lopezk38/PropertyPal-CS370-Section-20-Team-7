@@ -1,13 +1,14 @@
 package com.propertypal;
 
 import com.propertypal.filters.AuthFilters;
+import com.propertypal.network.responses.*;
 import com.propertypal.network.packets.*;
 
 public class SecurityFilter
 {
     private static SecurityFilter instance = null;
 
-    private AuthFilters AuthFilter = new AuthFilters();
+    private AuthFilters authFilter = new AuthFilters();
 
     public SecurityFilter()
     {
@@ -26,7 +27,14 @@ public class SecurityFilter
         return instance;
     }
 
-    private BaseResponseEnum enforceLoggedIn(ClientRequest req) { AuthFilters.enforceLoggedIn(req); }
-    public LoginResponse.LoginStatus filterLoginPacket(ClientRequest req) { AuthFilters.filterLoginPacket(req); }
+    private int enforceLoggedIn(ClientRequest req) { return authFilter.enforceLoggedIn(req); }
+
+    //Auth
+    public void filterLoginPacket(ClientRequest req) { authFilter.filterLoginPacket(req); }
+    public void filterLogoutPacket(ClientRequest req) { authFilter.filterLogoutPacket(req); }
+
     //TODO add methods for each filter for modularity
+
+    //Outbound
+    public void sendResponse(ClientRequest request) { request.sendResponse(); }
 }

@@ -1,8 +1,12 @@
 package com.propertypal;
 
+import com.propertypal.logic.*;
+
 public class CoreLogic
 {
     private static CoreLogic instance = null;
+
+    private AuthLogic authLogic = new AuthLogic();
 
     public CoreLogic()
     {
@@ -21,19 +25,7 @@ public class CoreLogic
         return instance;
     }
 
-    public void handleLogin(ClientRequest req)
-    {
-        DbWrapper db = DbWrapper.getInstance();
-
-        //Query for user ID belonging to username
-        //Query for hashed pw in db
-
-        //Check for match
-        //Respond w/ rejection if so
-
-        //From here down, login succeeded
-        //Generate token
-        //Query to store token, IP, timestamp,
-        //Respond with token
-    }
+    //AuthLogic
+    public void handleLogin(ClientRequest req) { authLogic.handleLogin(req); }
+    //TODO add more
 }

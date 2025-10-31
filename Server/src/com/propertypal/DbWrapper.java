@@ -5,14 +5,28 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.PreparedStatement;
+import java.util.HashMap;
 
 public class DbWrapper
 {
     private static DbWrapper instance = null;
 
-    private final String dbUrl = "jdbc:h2:~/data/db";
+    private HashMap<PreparedStatement, Connection> openConnections = new HashMap<PreparedStatement, Connection>();
+
+    private final String dbUrl = "jdbc:h2:./data/db";
     private final String dbUName = "propertypalAdmin";
     private final String dbPw = "";
+
+    public static DbWrapper getInstance()
+    {
+        if (instance == null)
+        {
+            instance = new DbWrapper();
+        }
+
+        return instance;
+    }
 
     public DbWrapper()
     {
@@ -35,12 +49,16 @@ public class DbWrapper
 
         try
         {
-            con.createStatement().execute("CREATE Table Users (userID bigint PRIMARY KEY, firstName text, lastName text, email text ALTERNATE KEY), billingAddress1 text, billingAddress2 text, billingCity text, billingZIP text, billingCountry text, taxID text, registerDate timestamp, hashedPW text, requirePWReset boolean, loginAuthToken text ALTERNATE KEY, loginTokenExpiration timestamp, loginTokenValidIP inet, paypalAPIToken text)");
+            con.createStatement().execute("DROP TABLE IF EXISTS Users");
+            con.createStatement().execute("CREATE Table Users (userID bigint, firstName VARCHAR, lastName VARCHAR, email VARCHAR, billingAddress1 VARCHAR, billingAddress2 VARCHAR, billingCity VARCHAR, billingZIP VARCHAR, billingCountry VARCHAR, taxID VARCHAR, registerDate timestamp, hashedPW VARCHAR, requirePWReset boolean, loginAuthToken VARCHAR, loginTokenExpiration timestamp, loginTokenValidIP VARCHAR, paypalAPIToken VARCHAR, CONSTRAINT PK_ID PRIMARY KEY (userID), CONSTRAINT UQ_EM UNIQUE (email), CONSTRAINT UQ_TOK UNIQUE (loginAuthToken))");
             //TODO add other tables
+
+            //DEBUG
+            con.createStatement().execute("INSERT INTO Users (userID, email, hashedPW) VALUES (1001, '1@2.com', 'pass')");
         }
         catch (SQLException e)
         {
-            System.out.println("ERROR: Failed to init DB");
+            System.out.println("ERROR: Failed to init DB due to SQLException: " + e.toString());
             throw new RuntimeException("Could not init DB"); //Rethrow for caller to deal with
         }
 
@@ -63,7 +81,7 @@ public class DbWrapper
         catch (SQLException e)
         {
             System.out.println("ERROR: Failed to connect to DB");
-            throw new RuntimeException("Could not init DB");
+            throw new RuntimeException("Could not connect to DB");
         }
     }
 
@@ -93,17 +111,50 @@ public class DbWrapper
         return true;
     }
 
-    public static DbWrapper getInstance()
+    public PreparedStatement compileQuery(String query) throws SQLException
     {
-        if (instance == null)
+        if (query == null || query.isEmpty())
         {
-            instance = new DbWrapper();
+            return null;
         }
 
-        return instance;
+        try
+        {
+            Connection con = establishCon();
+            PreparedStatement statement = con.prepareStatement(query);
+            openConnections.put(statement, con);
+            return statement;
+        }
+        catch (SQLException e)
+        {
+            System.out.println("ERROR: Failed to compile SQL query: " + query);
+            throw e; //Rethrow for caller to deal with
+        }
     }
 
-    public ResultSet query(String query) throws SQLException
+    public void closeConnection(PreparedStatement usedQuery)
+    {
+        try
+        {
+            Connection con = openConnections.get(usedQuery);
+            if (con != null)
+            {
+                con.close();
+                openConnections.remove(usedQuery);
+            }
+            else
+            {
+                System.out.println("WARNING: Attempted to close already closed DB connection");
+            }
+        }
+        catch (SQLException e)
+        {
+            System.out.println("WARNING: Failed to close DB connection");
+        }
+    }
+
+    //Used internally, do not make public as it is vulnerable to injection
+    private ResultSet query(String query) throws SQLException
     {
         if (query == null || query.isEmpty())
         {

@@ -25,7 +25,7 @@ dependencies {
 
 jar {
     manifest {
-        attributes 'Main-Class': 'Launcher'
+        attributes 'Main-Class': 'com.propertypal.Launcher'
     }
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
     from {

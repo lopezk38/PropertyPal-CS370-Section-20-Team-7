@@ -1,4 +1,4 @@
-<h3>Sprint 2: Retrospective / Sprint 3: Planning
+<h3>Sprint 2: Retrospective / Sprint 3: Planning</h3>
 
 Date: 9/9
 
@@ -11,7 +11,7 @@ What the current sprint tasks are:
 - Individually write down group expectations
 
 
-<h3>Sprint 3: Mid-Sprint Sync
+<h3>Sprint 3: Mid-Sprint Sync</h3>
 
 Date: 9/11
 
@@ -19,7 +19,7 @@ How the current sprint is going:
 - Rgee will be consolidating each expectation response into one
   - Andrew will write out consolidated responses into paragraph form
 
-<h3>Sprint 3: Retrospective / Sprint 4: Planning
+<h3>Sprint 3: Retrospective / Sprint 4: Planning</h3>
 
 Date: 9/16
 
@@ -31,7 +31,7 @@ How the previous sprint went:
 What the current sprint tasks are:
 - Each member will work on their own UML diagram to reinforce concepts
 
-<h3>Sprint 4: Mid-Sprint Sync
+<h3>Sprint 4: Mid-Sprint Sync</h3>
 
 Date: 9/18
 
@@ -39,7 +39,7 @@ How the current sprint is going:
 - Planned for individual completion by Saturday evening
 - Planned for sync on Sunday to compare and glean insight from each other’s implementation
 
-<h3>Sprint 4: Retrospective / Sprint 5: Planning
+<h3>Sprint 4: Retrospective / Sprint 5: Planning</h3>
 
 Date: 9/23
 
@@ -53,7 +53,7 @@ What the current sprint tasks are:
 - Frontend team will begin sketching concept illustrations of various window states
   - Based on illustrations, we will determine work items to place in the Product Backlog
 
-<h3>Sprint 5: Mid-Sprint Sync
+<h3>Sprint 5: Mid-Sprint Sync</h3>
 
 Date: 9/25
 
@@ -61,7 +61,7 @@ How the current sprint is going:
 - Discussed items to place in backlog
 - Few issues with the Java program’s UI
 
-<h3>Sprint 5: Retrospective / Sprint 6: Planning
+<h3>Sprint 5: Retrospective / Sprint 6: Planning</h3>
 
 Date: 10/2
 
@@ -72,7 +72,7 @@ How the previous sprint went:
 What the current sprint tasks are:
 - Divide backlog list into 4 parts and task out each part to transform into system requirements
 
-<h3>Sprint 6: Retrospective / Sprint 7: Planning
+<h3>Sprint 6: Retrospective / Sprint 7: Planning</h3>
 
 Date: 10/7
 
@@ -86,7 +86,7 @@ What the current sprint tasks are:
 - Mock up use case items in Lucid
 - Andrew will get caught up (watch use case video)
 
-<h3>Sprint 7: Mid-Sprint Sync
+<h3>Sprint 7: Mid-Sprint Sync</h3>
 
 Date: 10/9
 
@@ -97,7 +97,7 @@ How the current sprint is going:
 - Start use case description tables on Friday
 - Rgee primary level table: log in
 
-<h3>Sprint 7: Retrospective / Sprint 8: Planning
+<h3>Sprint 7: Retrospective / Sprint 8: Planning</h3>
 
 Date: 10/14
 
@@ -112,7 +112,7 @@ What the current sprint tasks are:
   - Backend will be working on a dummy backend and implement various endpoints
   - Frontend will be starting UI wireframes in Lucid
 
-<h3>Sprint 8: Mid-Sprint Sync
+<h3>Sprint 8: Mid-Sprint Sync</h3>
 
 Date: 10/16
 
@@ -120,7 +120,7 @@ How the current sprint is going:
 - After both the lecture and receiving brief feedback from the professor, our program will be utilizing a layered-client to layered-server architecture
 - Will email our UML package diagram to the professor over the weekend for feedback
 
-<h3>Sprint 8: Retrospective / Sprint 9: Planning
+<h3>Sprint 8: Retrospective / Sprint 9: Planning</h3>
 
 Date: 10/21
 
@@ -135,14 +135,14 @@ What the current sprint tasks are:
   - Kenneth: Tenant pays rent
   - Andrew will be reviewing previously submitted labs and creating tasks to improve them based off grader feedback
 
-<h3>Sprint 9: Mid-Sprint Sync
+<h3>Sprint 9: Mid-Sprint Sync</h3>
 
 Date: 10/23
 
 How the current sprint is going:
 - Sent an email requesting feedback on how high/low level the SD’s should be
 
-<h3>Sprint 9: Retrospective / Sprint 10: Planning
+<h3>Sprint 9: Retrospective / Sprint 10: Planning</h3>
 
 Date: 10/28
 

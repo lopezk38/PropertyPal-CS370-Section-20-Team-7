@@ -23,5 +23,12 @@
 hs_err_pid*
 replay_pid*
 
+# Gradle cache directories
+.gradle/
+*/.gradle/
+
+# Gradle build output
 build/
+*/build/
+
 data/

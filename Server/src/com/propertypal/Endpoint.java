@@ -155,7 +155,7 @@ public class Endpoint<T extends BasePacket> implements HttpHandler
 
         try
         {
-            this.packet = this.gson.fromJson(this.requestData, this.packetType);
+            this.packet = BasePacket.fromJson(this.requestData, this.packetType);
         }
         catch (Exception e)
         {

@@ -3,8 +3,11 @@ package com.propertypal.network.responses;
 import java.time.LocalDateTime;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonSyntaxException;
 
 import com.propertypal.network.GsonAdapters.LocalDateTimeAdapter;
+import com.propertypal.network.GsonWrapper;
+import com.propertypal.network.packets.BasePacket;
 
 public class BaseResponse
 {
@@ -18,10 +21,7 @@ public class BaseResponse
 
     public String toJson()
     {
-        //Setup Gson/Json parser
-        GsonBuilder gsonBuilder = new GsonBuilder();
-        gsonBuilder.registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter().nullSafe());
-        Gson gson = gsonBuilder.create();
+        Gson gson = GsonWrapper.getInstance();
 
         try
         {
@@ -32,5 +32,12 @@ public class BaseResponse
             System.out.println("ERROR: JSON failed construction: " + e.toString());
             return ("{'STATUS': " + Integer.toString(BaseResponseEnum.ERR_UNKNOWN) + ", 'TIMESTAMP': '" + LocalDateTime.now().toString() + "'}");
         }
+    }
+
+    public static <T extends BasePacket> T fromJson(String jsonStr, Class<T> type) throws IllegalArgumentException, JsonSyntaxException
+    {
+        Gson gson = GsonWrapper.getInstance();
+
+        return gson.fromJson(jsonStr, type);
     }
 }

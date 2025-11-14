@@ -1,9 +1,29 @@
 package com.propertypal.network.packets;
 
+import com.propertypal.network.GsonAdapters.LocalDateTimeAdapter;
+
 import java.time.LocalDateTime;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonSyntaxException;
+import com.propertypal.network.GsonWrapper;
 
 public class BasePacket
 {
     public String token;
     public LocalDateTime timestamp;
+
+    public String toJson() throws IllegalArgumentException
+    {
+        Gson gson = GsonWrapper.getInstance();
+
+        return gson.toJson(this);
+    }
+
+    public static <T extends BasePacket> T fromJson(String jsonStr, Class<T> type) throws IllegalArgumentException, JsonSyntaxException
+    {
+        Gson gson = GsonWrapper.getInstance();
+
+        return gson.fromJson(jsonStr, type);
+    }
 }

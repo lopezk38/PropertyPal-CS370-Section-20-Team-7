@@ -8,9 +8,9 @@ public class CoreLogic
 
     private AuthLogic authLogic = new AuthLogic();
 
-    public CoreLogic()
+    private CoreLogic()
     {
-        if (instance != null) throw new RuntimeException("Only one instance of CoreLogic may exist");
+        if (instance != null) return;
 
         instance = this;
     }
@@ -27,5 +27,30 @@ public class CoreLogic
 
     //AuthLogic
     public void handleLogin(ClientRequest req) { authLogic.handleLogin(req); }
-    //TODO add more
+    public void handleLogout(ClientRequest req) { ; } //TODO: Create and connect to submodule
+
+    //AccountLogic
+    public void handleCreateAcct(ClientRequest req) { ; } //TODO: Create and connect to submodule
+    public void handleCreateInvite(ClientRequest req) { ; } //TODO: Create and connect to submodule
+    public void handleUploadDoc(ClientRequest req) { ; } //TODO: Create and connect to submodule
+
+    //DocLogic
+    public void handleViewDoc(ClientRequest req) { ; } //TODO: Create and connect to submodule
+    public void handleEditDoc(ClientRequest req) { ; } //TODO: Create and connect to submodule
+
+    //TicketLogic
+    public void handleCreateTicket(ClientRequest req) { ; } //TODO: Create and connect to submodule
+    public void handleEditTicket(ClientRequest req) { ; } //TODO: Create and connect to submodule
+    public void handleViewTicket(ClientRequest req) { ; } //TODO: Create and connect to submodule
+
+    //PaymentLogic
+    public void handleRequestRent(ClientRequest req) { ; } //TODO: Create and connect to submodule
+    public void handleUpdAmountDue(ClientRequest req) { ; } //TODO: Create and connect to submodule
+    public void handlePayRent(ClientRequest req) { ; } //TODO: Create and connect to submodule
+
+    //NavigationLogic
+    public void handleTenantLandingPgInfo(ClientRequest req) { ; } //TODO: Create and connect to submodule
+    public void handleLandlordLandingPgInfo(ClientRequest req) { ; } //TODO: Create and connect to submodule
+    public void handleNotifications(ClientRequest req) { ; } //TODO: Create and connect to submodule
+
 }

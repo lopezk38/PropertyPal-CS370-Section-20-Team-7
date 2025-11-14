@@ -10,9 +10,9 @@ public class SecurityFilter
 
     private AuthFilters authFilter = new AuthFilters();
 
-    public SecurityFilter()
+    private SecurityFilter()
     {
-        if (instance != null) throw new RuntimeException("Only one instance of SecurityFilter may exist");
+        if (instance != null) return;
 
         instance = this;
     }
@@ -29,11 +29,33 @@ public class SecurityFilter
 
     private int enforceLoggedIn(ClientRequest req) { return authFilter.enforceLoggedIn(req); }
 
-    //Auth
+    //AuthFilters
     public void filterLoginPacket(ClientRequest req) { authFilter.filterLoginPacket(req); }
     public void filterLogoutPacket(ClientRequest req) { authFilter.filterLogoutPacket(req); }
 
-    //TODO add methods for each filter for modularity
+    //AccountFilters
+    public void filterCreateAcctPacket(ClientRequest req) { ; } //TODO: Create and connect to submodule
+    public void filterCreateInvitePacket(ClientRequest req) { ; } //TODO: Create and connect to submodule
+
+    //DocFilters
+    public void filterUploadDocPacket(ClientRequest req) { ; } //TODO: Create and connect to submodule
+    public void filterViewDocPacket(ClientRequest req) { ; } //TODO: Create and connect to submodule
+    public void filterEditDocPacket(ClientRequest req) { ; } //TODO: Create and connect to submodule
+
+    //TicketFilters
+    public void filterCreateTicketPacket(ClientRequest req) { ; } //TODO: Create and connect to submodule
+    public void filterEditTicketPacket(ClientRequest req) { ; } //TODO: Create and connect to submodule
+    public void filterViewTicketPacket(ClientRequest req) { ; }  //TODO: Create and connect to submodule
+
+    //PaymentFilters
+    public void filterRequestRentPacket(ClientRequest req) { ; } //TODO: Create and connect to submodule
+    public void filterUpdAmountDuePacket(ClientRequest req) { ; } //TODO: Create and connect to submodule
+    public void filterPayRentPacket(ClientRequest req) { ; } //TODO: Create and connect to submodule
+
+    //NavigationFilters
+    public void filterTenantLandingPgInfoPacket(ClientRequest req) { ; } //TODO: Create and connect to submodule
+    public void filterLandlordLandingPgInfoPacket(ClientRequest req) { ; } //TODO: Create and connect to submodule
+    public void filterNotificationsPacket(ClientRequest req) { ; } //TODO: Create and connect to submodule
 
     //Outbound
     public void sendResponse(ClientRequest request) { request.sendResponse(); }

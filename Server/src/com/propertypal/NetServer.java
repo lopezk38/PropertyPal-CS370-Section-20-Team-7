@@ -1,7 +1,5 @@
 package com.propertypal;
 
-//import com.propertypal.shared;
-
 import com.propertypal.SecurityFilter;
 import com.sun.net.httpserver.*;
 import java.net.InetSocketAddress;
@@ -24,13 +22,13 @@ public class NetServer
 
     public int getPort() { return port; }
 
-    NetServer() throws IllegalArgumentException, IOException
+    private NetServer() throws IllegalArgumentException, IOException
     {
         //Spawn new HTTP server on port 80
         this(80);
     }
 
-    NetServer(int port) throws IllegalArgumentException, IOException
+    public NetServer(int port) throws IllegalArgumentException, IOException
     {
         if (port < 0 || port > 65535) throw new IllegalArgumentException("Invalid port number given");
 
@@ -39,8 +37,6 @@ public class NetServer
         executor = Executors.newFixedThreadPool(10);
 
         //Add endpoints
-        //httpServer.createContext("/helloWorld", new EndpointHelloWorld());
-        //httpServer.createContext("/echoTest", new EndpointEcho());
         httpServer.createContext("/auth/login", new Endpoint(LoginPacket.class, (request) -> { filter.filterLoginPacket(request); }));
         httpServer.createContext("/auth/logout", new Endpoint(LoginPacket.class, (request) -> { filter.filterLogoutPacket(request); }));
 

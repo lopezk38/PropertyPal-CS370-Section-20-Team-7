@@ -28,9 +28,9 @@ public class DbWrapper
         return instance;
     }
 
-    public DbWrapper()
+    private DbWrapper()
     {
-        if (instance != null) throw new RuntimeException("Only one instance of DbWrapper may exist");
+        if (instance != null) return;
 
         instance = this;
 

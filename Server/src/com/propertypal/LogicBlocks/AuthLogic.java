@@ -1,4 +1,4 @@
-package com.propertypal.logic;
+package com.propertypal.LogicBlocks;
 
 import com.propertypal.ClientRequest;
 import com.propertypal.SecurityFilter;
@@ -9,6 +9,7 @@ import com.propertypal.network.packets.*;
 import java.sql.SQLException;
 import java.sql.ResultSet;
 import java.sql.PreparedStatement;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import java.util.UUID;
 import java.time.LocalDateTime;
 
@@ -101,7 +102,7 @@ public class AuthLogic
 
         //Check for match
         //Respond w/ rejection if so
-        if (!password.equals(validPW))
+        if (!BCrypt.checkpw(password, validPW))
         {
             //Wrong PW
             LoginResponse resp = new LoginResponse();
@@ -147,7 +148,6 @@ public class AuthLogic
         resp.TOKEN = token;
         req.setResponse(resp);
         filter.sendResponse(req);
-        return;
 
 
     }

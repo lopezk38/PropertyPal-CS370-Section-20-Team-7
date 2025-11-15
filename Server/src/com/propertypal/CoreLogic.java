@@ -1,5 +1,6 @@
 package com.propertypal;
 
+import com.propertypal.LogicBlocks.AccountLogic;
 import com.propertypal.logic.*;
 
 public class CoreLogic
@@ -7,6 +8,7 @@ public class CoreLogic
     private static CoreLogic instance = null;
 
     private AuthLogic authLogic = new AuthLogic();
+    private AccountLogic acctLogic = new AccountLogic();
 
     private CoreLogic()
     {
@@ -30,7 +32,7 @@ public class CoreLogic
     public void handleLogout(ClientRequest req) { ; } //TODO: Create and connect to submodule
 
     //AccountLogic
-    public void handleCreateAcct(ClientRequest req) { ; } //TODO: Create and connect to submodule
+    public void handleCreateAcct(ClientRequest req) { acctLogic.handleCreateAcct(req); } //TODO: Create and connect to submodule
     public void handleCreateInvite(ClientRequest req) { ; } //TODO: Create and connect to submodule
     public void handleUploadDoc(ClientRequest req) { ; } //TODO: Create and connect to submodule
 

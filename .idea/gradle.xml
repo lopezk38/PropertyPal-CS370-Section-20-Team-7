@@ -4,8 +4,31 @@
   <component name="GradleSettings">
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
+        <compositeConfiguration>
+          <compositeBuild compositeDefinitionSource="SCRIPT">
+            <builds>
+              <build path="$PROJECT_DIR$/Server" name="server">
+                <projects>
+                  <project path="$PROJECT_DIR$/Server" />
+                </projects>
+              </build>
+              <build path="$PROJECT_DIR$/Shared" name="shared">
+                <projects>
+                  <project path="$PROJECT_DIR$/Shared" />
+                </projects>
+              </build>
+            </builds>
+          </compositeBuild>
+        </compositeConfiguration>
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="gradleJvm" value="openjdk-25" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/Server" />
+            <option value="$PROJECT_DIR$/Shared" />
+          </set>
+        </option>
       </GradleProjectSettings>
     </option>
   </component>

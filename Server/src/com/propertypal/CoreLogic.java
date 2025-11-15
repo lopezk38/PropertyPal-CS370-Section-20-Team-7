@@ -1,7 +1,6 @@
 package com.propertypal;
 
-import com.propertypal.LogicBlocks.AccountLogic;
-import com.propertypal.logic.*;
+import com.propertypal.LogicBlocks.*;
 
 public class CoreLogic
 {
@@ -32,7 +31,8 @@ public class CoreLogic
     public void handleLogout(ClientRequest req) { ; } //TODO: Create and connect to submodule
 
     //AccountLogic
-    public void handleCreateAcct(ClientRequest req) { acctLogic.handleCreateAcct(req); } //TODO: Create and connect to submodule
+    public void handleCreateTenantAcct(ClientRequest req) { acctLogic.handleCreateTenantAccount(req); }
+    public void handleCreateLandlordAcct(ClientRequest req) { ; } //TODO: Create and connect to submodule
     public void handleCreateInvite(ClientRequest req) { ; } //TODO: Create and connect to submodule
     public void handleUploadDoc(ClientRequest req) { ; } //TODO: Create and connect to submodule
 

@@ -8,14 +8,14 @@ import com.propertypal.network.responses.*;
 
 public class AccountFilters extends BaseFilters
 {
-    public void filterCreateAcctPacket(ClientRequest req)
+    public void filterCreateTenantAcctPacket(ClientRequest req)
     {
         CoreLogic logic = CoreLogic.getInstance();
-        logic.handleCreateAcct(req);
+        logic.handleCreateTenantAcct(req);
     }
 
     public void filterCreateInvitePacket(ClientRequest req)
     {
-
+        //TODO
     }
 }

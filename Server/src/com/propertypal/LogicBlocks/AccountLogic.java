@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 
 public class AccountLogic
 {
-    public void handleCreateAccount(ClientRequest req)
+    public void handleCreateTenantAccount(ClientRequest req)
     {
         SecurityFilter filter = SecurityFilter.getInstance();
         DbWrapper db = DbWrapper.getInstance();

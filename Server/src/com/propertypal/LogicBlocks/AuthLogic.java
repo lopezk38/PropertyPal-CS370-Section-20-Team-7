@@ -9,7 +9,7 @@ import com.propertypal.network.packets.*;
 import java.sql.SQLException;
 import java.sql.ResultSet;
 import java.sql.PreparedStatement;
-import org.springframework.security.crypto.bcrypt.BCrypt;
+//import org.springframework.security.crypto.bcrypt.BCrypt;
 import java.util.UUID;
 import java.time.LocalDateTime;
 
@@ -102,7 +102,7 @@ public class AuthLogic
 
         //Check for match
         //Respond w/ rejection if so
-        if (!BCrypt.checkpw(password, validPW))
+        if (!password.equals(validPW))
         {
             //Wrong PW
             LoginResponse resp = new LoginResponse();

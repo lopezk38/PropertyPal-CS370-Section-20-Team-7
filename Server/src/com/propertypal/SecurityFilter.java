@@ -34,7 +34,8 @@ public class SecurityFilter
     public void filterLogoutPacket(ClientRequest req) { authFilter.filterLogoutPacket(req); }
 
     //AccountFilters
-    public void filterCreateAcctPacket(ClientRequest req) { ; } //TODO: Create and connect to submodule
+    public void filterCreateTenantAcctPacket(ClientRequest req) { authFilter.filterCreateTenantAcctPacket(req); }
+    public void filterCreateLandlordAcctPacket(ClientRequest req) { ; } //TODO: Create and connect to submodule
     public void filterCreateInvitePacket(ClientRequest req) { ; } //TODO: Create and connect to submodule
 
     //DocFilters

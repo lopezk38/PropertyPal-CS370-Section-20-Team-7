@@ -2,3 +2,4 @@ rootProject.name = 'composite'
 
 includeBuild 'shared'
 includeBuild 'server'
+includeBuild 'client'

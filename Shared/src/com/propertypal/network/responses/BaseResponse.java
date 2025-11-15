@@ -34,7 +34,7 @@ public class BaseResponse
         }
     }
 
-    public static <T extends BasePacket> T fromJson(String jsonStr, Class<T> type) throws IllegalArgumentException, JsonSyntaxException
+    public static <T extends BaseResponse> T fromJson(String jsonStr, Class<T> type) throws IllegalArgumentException, JsonSyntaxException
     {
         Gson gson = GsonWrapper.getInstance();
 

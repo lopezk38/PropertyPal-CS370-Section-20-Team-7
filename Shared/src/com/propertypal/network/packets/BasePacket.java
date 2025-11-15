@@ -10,8 +10,13 @@ import com.propertypal.network.GsonWrapper;
 
 public class BasePacket
 {
-    public String token;
-    public LocalDateTime timestamp;
+    public String token = null;
+    public LocalDateTime timestamp = null;
+
+    public BasePacket()
+    {
+        timestamp = LocalDateTime.now();
+    }
 
     public String toJson() throws IllegalArgumentException
     {

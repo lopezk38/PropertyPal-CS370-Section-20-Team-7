@@ -38,17 +38,137 @@ public class AccountLogic
         boolean emailIsAvailable = false;
         //TODO Query - Check if email is taken
 
-        //Generate userID
-        long userID;
-        if (emailIsAvailable)
+        //Build query to get ID if email exists in DB
+        PreparedStatement emailQ = null;
+        try
         {
-            SecureRandom r = new SecureRandom();
-            userID = r.nextLong();
+            emailQ = db.compileQuery("SELECT userID FROM Users WHERE email = ?");
+            emailQ.setString(1, email);
+        }
+        catch (SQLException e)
+        {
+            System.out.println("ERROR: SQLException during handleCreateTenantAccount email query compilation: " + e.toString());
+
+            req.setUnknownErrResponse();
+            filter.sendResponse(req);
+            return;
         }
 
-        //TODO Query - store userID with correlating email
+        //Execute the query
+        ResultSet emailR = null;
+        try
+        {
+            emailR = emailQ.executeQuery();
+        }
+        catch (SQLException e)
+        {
+            System.out.println("ERROR: SQLException during handleCreateTenantAccount email query: " + e.toString());
 
-        //TODO Query - store password in db
+            req.setUnknownErrResponse();
+            filter.sendResponse(req);
+            db.closeConnection(emailQ);
+            return;
+        }
+
+        //Extract the result
+        try
+        {
+            if (emailR.next())
+            {
+                //Got a user
+                long userID = emailR.getLong("userID");
+                emailIsAvailable = emailR.wasNull(); //Make sure the user wasn't null before condemning the email
+            }
+            else
+            {
+                //User not found
+                emailIsAvailable = false;
+            }
+        }
+        catch (SQLException e)
+        {
+            System.out.println("ERROR: SQLException during handleLogin userName response parsing: " + e.toString());
+
+            req.setUnknownErrResponse();
+            filter.sendResponse(req);
+
+            db.closeConnection(emailQ);
+            return;
+        }
+        finally
+        {
+            db.closeConnection(emailQ);
+        }
+
+        if (!emailIsAvailable) //db handles generation of unique user IDs by itself
+        {
+            //Respond with error to try a different email
+            CreateAcctResponse resp = new CreateAcctResponse();
+            resp.STATUS = CreateAcctResponse.AccountStatus.ERR_BAD_EMAIL;
+            req.setResponse(resp);
+            filter.sendResponse(req);
+        }
+
+        //Build query to store user account info
+        PreparedStatement acctQ = null;
+        try
+        {
+            acctQ = db.compileQuery("""
+                    INSERT INTO Users (
+                    firstName,
+                    lastName,
+                    email,
+                    billingAddress1,
+                    billingAddress2,
+                    billingCity,
+                    billingState,
+                    billingZIP,
+                    billingCountry,
+                    registerDate,
+                    hashedPW,
+                    isLandlord
+                    )
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""");
+
+            acctQ.setString(1, packet.firstName);
+            acctQ.setString(2, packet.lastName);
+            acctQ.setString(3, email);
+            acctQ.setString(4, packet.billAddr1);
+            acctQ.setString(5, packet.billAddr2);
+            acctQ.setString(6, packet.billCity);
+            acctQ.setString(7, packet.billState);
+            acctQ.setString(8, packet.billZip);
+            acctQ.setString(9, packet.billCountry);
+            acctQ.setString(10, LocalDateTime.now().toString());
+            acctQ.setString(11, password);
+            acctQ.setBoolean(12, false);
+        }
+        catch (SQLException e)
+        {
+            System.out.println("ERROR: SQLException during handleCreateTenantAccount account query compilation: " + e.toString());
+
+            req.setUnknownErrResponse();
+            filter.sendResponse(req);
+            return;
+        }
+
+        //Execute the query
+        ResultSet acctR = null;
+        try
+        {
+            acctR = acctQ.executeQuery();
+        }
+        catch (SQLException e)
+        {
+            System.out.println("ERROR: SQLException during handleCreateTenantAccount account query: " + e.toString());
+
+            req.setUnknownErrResponse();
+            filter.sendResponse(req);
+            db.closeConnection(acctQ);
+            return;
+        }
+
+        db.closeConnection(acctQ);
     }
 
     public void handleCreateLandlordAccount(ClientRequest req)

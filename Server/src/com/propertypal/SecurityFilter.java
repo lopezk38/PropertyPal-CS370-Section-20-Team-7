@@ -1,5 +1,6 @@
 package com.propertypal;
 
+import com.propertypal.filters.AccountFilters;
 import com.propertypal.filters.AuthFilters;
 import com.propertypal.network.responses.*;
 import com.propertypal.network.packets.*;
@@ -9,6 +10,7 @@ public class SecurityFilter
     private static SecurityFilter instance = null;
 
     private AuthFilters authFilter = new AuthFilters();
+    private AccountFilters acctFilter = new AccountFilters();
 
     private SecurityFilter()
     {
@@ -36,7 +38,8 @@ public class SecurityFilter
     //AccountFilters
     public void filterCreateTenantAcctPacket(ClientRequest req) { authFilter.filterCreateTenantAcctPacket(req); }
     public void filterCreateLandlordAcctPacket(ClientRequest req) { ; } //TODO: Create and connect to submodule
-    public void filterCreateInvitePacket(ClientRequest req) { ; } //TODO: Create and connect to submodule
+    public void filterCreateInvitePacket(ClientRequest req) { acctFilter.filterCreateInvitePacket(req); }
+    public void filterAcceptInvitePacket(ClientRequest req) { acctFilter.filterAcceptInvitePacket(req); }
 
     //DocFilters
     public void filterUploadDocPacket(ClientRequest req) { ; } //TODO: Create and connect to submodule

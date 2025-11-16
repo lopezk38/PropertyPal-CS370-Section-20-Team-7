@@ -16,6 +16,13 @@ public class AccountFilters extends BaseFilters
 
     public void filterCreateInvitePacket(ClientRequest req)
     {
-        //TODO
+        CoreLogic logic = CoreLogic.getInstance();
+        logic.handleCreateInvite(req);
+    }
+
+    public void filterAcceptInvitePacket(ClientRequest req)
+    {
+        CoreLogic logic = CoreLogic.getInstance();
+        logic.handleAcceptInvite(req);
     }
 }

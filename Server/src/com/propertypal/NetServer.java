@@ -41,6 +41,9 @@ public class NetServer
         httpServer.createContext("/auth/logout", new Endpoint(LogoutPacket.class, (request) -> { filter.filterLogoutPacket(request); }));
         httpServer.createContext("/auth/newAcct/tenant", new Endpoint(CreateAcctPacket.class, (request) -> { filter.filterCreateTenantAcctPacket(request); }));
         httpServer.createContext("/lease/genInvite", new Endpoint(CreateInvitePacket.class, (request) -> { filter.filterCreateInvitePacket(request); }));
+        httpServer.createContext("/lease/acceptInvite", new Endpoint(AcceptInvitePacket.class, (request) -> { filter.filterAcceptInvitePacket(request); }));
+        httpServer.createContext("/doc/upload", new Endpoint(UploadDocPacket.class, (request) -> { filter.filterUploadDocPacket(request); }));
+
 
         //httpServer.setExecutor(executor); //Multithreaded. Use for prod
         httpServer.setExecutor(null); //Singlethreaded. Use for easier debug

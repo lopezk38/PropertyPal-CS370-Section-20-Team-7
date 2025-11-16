@@ -2,12 +2,15 @@ package com.propertypal;
 
 import com.propertypal.LogicBlocks.*;
 
+import javax.print.Doc;
+
 public class CoreLogic
 {
     private static CoreLogic instance = null;
 
     private AuthLogic authLogic = new AuthLogic();
     private AccountLogic acctLogic = new AccountLogic();
+    private DocLogic docLogic = new DocLogic();
 
     private CoreLogic()
     {
@@ -32,9 +35,10 @@ public class CoreLogic
 
     //AccountLogic
     public void handleCreateTenantAcct(ClientRequest req) { acctLogic.handleCreateTenantAccount(req); }
-    public void handleCreateLandlordAcct(ClientRequest req) { ; } //TODO: Create and connect to submodule
-    public void handleCreateInvite(ClientRequest req) { ; } //TODO: Create and connect to submodule
-    public void handleUploadDoc(ClientRequest req) { ; } //TODO: Create and connect to submodule
+    public void handleCreateLandlordAcct(ClientRequest req) { acctLogic.handleCreateLandlordAccount(req); }
+    public void handleCreateInvite(ClientRequest req) { acctLogic.handleCreateInvite(req); }
+    public void handleAcceptInvite(ClientRequest req) { acctLogic.handleAcceptInvite(req); }
+    public void handleUploadDoc(ClientRequest req) { docLogic.handleUploadDoc(req); } //TODO: Create and connect to submodule
 
     //DocLogic
     public void handleViewDoc(ClientRequest req) { ; } //TODO: Create and connect to submodule

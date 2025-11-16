@@ -48,9 +48,21 @@ public class AccountLogic
 
         //TODO Query - store userID with correlating email
 
-        //Hash and salt password
-        String hashedPW = BCrypt.hashpw(password, BCrypt.gensalt());
+        //TODO Query - store password in db
+    }
 
-        //TODO Query - store hashedPW in db
+    public void handleCreateLandlordAccount(ClientRequest req)
+    {
+        //TODO
+    }
+
+    public void handleCreateInvite(ClientRequest req)
+    {
+        //TODO
+    }
+
+    public void handleAcceptInvite(ClientRequest req)
+    {
+        //TODO
     }
 }

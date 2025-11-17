@@ -127,6 +127,7 @@ public class AuthLogic
             tokenQ.setString(1, token);
             tokenQ.setString(2, exprTime.toString());
             tokenQ.setString(3, ip);
+            tokenQ.setLong(4, userID);
         }
         catch (SQLException e)
         {

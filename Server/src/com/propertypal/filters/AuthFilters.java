@@ -3,29 +3,44 @@ package com.propertypal.filters;
 import com.propertypal.ClientRequest;
 import com.propertypal.CoreLogic;
 import com.propertypal.DbWrapper;
+import com.propertypal.SecurityFilter;
 import com.propertypal.network.responses.*;
+import com.propertypal.network.packets.*;
 
 public class AuthFilters extends BaseFilters
 {
     public int enforceLoggedIn(ClientRequest req)
     {
         //Check DB for token, validate
+        //TODO
 
-        //If approved, forward packet to core logic
+        //If approved, allow packet to proceed
+        return BaseResponseEnum.SUCCESS;
 
         //If rejected, respond with rejection and return with why
-        BaseResponse resp = new BaseResponse();
-        resp.STATUS = BaseResponseEnum.ERR_BAD_TOKEN;
-        req.setResponse(resp);
-        req.sendResponse();
-        return resp.STATUS;
+        //UNCOMMENT BELOW AFTER LOGIC ABOVE IS IMPLEMENTED
+        //BaseResponse resp = new BaseResponse();
+        //resp.STATUS = BaseResponseEnum.ERR_BAD_TOKEN;
+        //req.setResponse(resp);
+        //req.sendResponse();
+        //return resp.STATUS;
     }
 
     public void filterLoginPacket(ClientRequest req)
     {
+        if (!(req.packet instanceof LoginPacket))
+        {
+            //Endpoint registered to wrong handler
+            System.out.println("ERROR: filterLoginPacket is registered to the wrong endpoint");
+            BaseResponse resp = new BaseResponse();
+            resp.STATUS = BaseResponseEnum.ERR_UNKNOWN;
+            req.setResponse(resp);
+            filter.sendResponse(req);
+            return;
+        }
+
         //No restrictions for this type
         //Forward request
-        CoreLogic logic = CoreLogic.getInstance();
         logic.handleLogin(req);
 
         return;

@@ -43,6 +43,7 @@ public class NetServer
         httpServer.createContext("/lease/genInvite", new Endpoint(CreateInvitePacket.class, (request) -> { filter.filterCreateInvitePacket(request); }));
         httpServer.createContext("/lease/acceptInvite", new Endpoint(AcceptInvitePacket.class, (request) -> { filter.filterAcceptInvitePacket(request); }));
         httpServer.createContext("/doc/upload", new Endpoint(UploadDocPacket.class, (request) -> { filter.filterUploadDocPacket(request); }));
+        httpServer.createContext("/ticket/new", new Endpoint(CreateTicketPacket.class, (request) -> { filter.filterCreateTicketPacket(request); }));
 
 
         //httpServer.setExecutor(executor); //Multithreaded. Use for prod

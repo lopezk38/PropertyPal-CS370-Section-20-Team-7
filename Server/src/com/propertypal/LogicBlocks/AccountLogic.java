@@ -9,28 +9,15 @@ import com.propertypal.network.packets.*;
 import java.sql.SQLException;
 import java.sql.ResultSet;
 import java.sql.PreparedStatement;
-import java.security.SecureRandom;
-import org.springframework.security.crypto.bcrypt.BCrypt;
+//import java.security.SecureRandom;
+//import org.springframework.security.crypto.bcrypt.BCrypt;
+import java.util.UUID;
 import java.time.LocalDateTime;
 
-public class AccountLogic
+public class AccountLogic extends BaseLogic
 {
     public void handleCreateTenantAccount(ClientRequest req)
     {
-        SecurityFilter filter = SecurityFilter.getInstance();
-        DbWrapper db = DbWrapper.getInstance();
-
-        if (!(req.packet instanceof CreateAcctPacket))
-        {
-            //Endpoint registered to wrong handler
-            System.out.println("ERROR: handleCreateAccount is registered to the wrong endpoint");
-            BaseResponse resp = new BaseResponse();
-            resp.STATUS = BaseResponseEnum.ERR_UNKNOWN;
-            req.setResponse(resp);
-            filter.sendResponse(req);
-            return;
-        }
-
         CreateAcctPacket packet = (CreateAcctPacket) req.packet;
         String email = packet.email;
         String password = packet.password;
@@ -103,14 +90,13 @@ public class AccountLogic
         if (!emailIsAvailable) //db handles generation of unique user IDs by itself
         {
             //Respond with error to try a different email
-            CreateAcctResponse resp = new CreateAcctResponse();
-            resp.STATUS = CreateAcctResponse.AccountStatus.ERR_BAD_EMAIL;
-            req.setResponse(resp);
+            req.setBaseErrResponse(CreateAcctResponse.AccountStatus.ERR_BAD_EMAIL);
             filter.sendResponse(req);
         }
 
         //Build query to store user account info
         PreparedStatement acctQ = null;
+        String token = UUID.randomUUID().toString();
         try
         {
             acctQ = db.compileQuery("""
@@ -126,9 +112,12 @@ public class AccountLogic
                     billingCountry,
                     registerDate,
                     hashedPW,
-                    isLandlord
+                    isLandlord,
+                    loginAuthToken,
+                    loginTokenExpiration,
+                    loginTokenValidIP
                     )
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""");
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""");
 
             acctQ.setString(1, packet.firstName);
             acctQ.setString(2, packet.lastName);
@@ -142,6 +131,9 @@ public class AccountLogic
             acctQ.setString(10, LocalDateTime.now().toString());
             acctQ.setString(11, password);
             acctQ.setBoolean(12, false);
+            acctQ.setString(13, token);
+            acctQ.setString(14, LocalDateTime.now().plusHours(24).toString());
+            acctQ.setString(15, req.getRemoteIP());
         }
         catch (SQLException e)
         {
@@ -169,6 +161,12 @@ public class AccountLogic
         }
 
         db.closeConnection(acctQ);
+
+        //Succeded, send OK
+        CreateAcctResponse resp = new CreateAcctResponse();
+        resp.TOKEN = token;
+        req.setResponse(resp);
+        filter.sendResponse(req);
     }
 
     public void handleCreateLandlordAccount(ClientRequest req)

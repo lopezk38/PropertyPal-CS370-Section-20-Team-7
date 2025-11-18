@@ -65,4 +65,10 @@ public class ClientRequest
         response = new BaseResponse();
         response.STATUS = BaseResponseEnum.ERR_UNKNOWN;
     }
+
+    public void setBaseErrResponse(int status)
+    {
+        this.response = new BaseResponse();
+        response.STATUS = status;
+    }
 }

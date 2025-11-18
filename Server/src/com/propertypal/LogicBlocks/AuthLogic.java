@@ -13,24 +13,10 @@ import java.sql.PreparedStatement;
 import java.util.UUID;
 import java.time.LocalDateTime;
 
-public class AuthLogic
+public class AuthLogic extends BaseLogic
 {
     public void handleLogin(ClientRequest req)
     {
-        SecurityFilter filter = SecurityFilter.getInstance();
-        DbWrapper db = DbWrapper.getInstance();
-
-        if (!(req.packet instanceof LoginPacket))
-        {
-            //Endpoint registered to wrong handler
-            System.out.println("ERROR: handleLogin is registered to the wrong endpoint");
-            BaseResponse resp = new BaseResponse();
-            resp.STATUS = BaseResponseEnum.ERR_UNKNOWN;
-            req.setResponse(resp);
-            filter.sendResponse(req);
-            return;
-        }
-
         LoginPacket packet = (LoginPacket) req.packet;
         String email = packet.email;
         String password = packet.password;
@@ -80,9 +66,7 @@ public class AuthLogic
             else
             {
                 //User not found
-                LoginResponse resp = new LoginResponse();
-                resp.STATUS = LoginResponse.LoginStatus.ERR_BAD_EMAIL;
-                req.setResponse(resp);
+                req.setBaseErrResponse(LoginResponse.LoginStatus.ERR_BAD_EMAIL);
                 filter.sendResponse(req);
 
                 db.closeConnection(userNameQ);
@@ -105,9 +89,7 @@ public class AuthLogic
         if (!password.equals(validPW))
         {
             //Wrong PW
-            LoginResponse resp = new LoginResponse();
-            resp.STATUS = LoginResponse.LoginStatus.ERR_BAD_PASSWORD;
-            req.setResponse(resp);
+            req.setBaseErrResponse(LoginResponse.LoginStatus.ERR_BAD_PASSWORD);
             filter.sendResponse(req);
             return;
         }

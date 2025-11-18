@@ -1,7 +1,6 @@
 package com.propertypal;
 
-import com.propertypal.filters.AccountFilters;
-import com.propertypal.filters.AuthFilters;
+import com.propertypal.filters.*;
 import com.propertypal.network.responses.*;
 import com.propertypal.network.packets.*;
 
@@ -9,14 +8,19 @@ public class SecurityFilter
 {
     private static SecurityFilter instance = null;
 
-    private AuthFilters authFilter = new AuthFilters();
-    private AccountFilters acctFilter = new AccountFilters();
+    private AuthFilters authFilter = null;
+    private AccountFilters acctFilter = null;
+    private TicketFilters ticketFilter = null;
 
     private SecurityFilter()
     {
         if (instance != null) return;
 
         instance = this;
+
+        authFilter = new AuthFilters();
+        acctFilter = new AccountFilters();
+        ticketFilter = new TicketFilters();
     }
 
     public static SecurityFilter getInstance()
@@ -29,7 +33,7 @@ public class SecurityFilter
         return instance;
     }
 
-    private int enforceLoggedIn(ClientRequest req) { return authFilter.enforceLoggedIn(req); }
+    public int enforceLoggedIn(ClientRequest req) { return authFilter.enforceLoggedIn(req); }
 
     //AuthFilters
     public void filterLoginPacket(ClientRequest req) { authFilter.filterLoginPacket(req); }
@@ -47,7 +51,7 @@ public class SecurityFilter
     public void filterEditDocPacket(ClientRequest req) { ; } //TODO: Create and connect to submodule
 
     //TicketFilters
-    public void filterCreateTicketPacket(ClientRequest req) { ; } //TODO: Create and connect to submodule
+    public void filterCreateTicketPacket(ClientRequest req) { ticketFilter.filterCreateTicketPacket(req); }
     public void filterEditTicketPacket(ClientRequest req) { ; } //TODO: Create and connect to submodule
     public void filterViewTicketPacket(ClientRequest req) { ; }  //TODO: Create and connect to submodule
 

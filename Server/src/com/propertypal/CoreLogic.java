@@ -7,16 +7,21 @@ import javax.print.Doc;
 public class CoreLogic
 {
     private static CoreLogic instance = null;
+    private static int instanceCount = 0;
 
-    private AuthLogic authLogic = new AuthLogic();
-    private AccountLogic acctLogic = new AccountLogic();
-    private DocLogic docLogic = new DocLogic();
+    private AuthLogic authLogic = null;
+    private AccountLogic acctLogic = null;
+    private DocLogic docLogic = null;
 
     private CoreLogic()
     {
         if (instance != null) return;
 
         instance = this;
+
+        authLogic = new AuthLogic();
+        acctLogic = new AccountLogic();
+        docLogic = new DocLogic();
     }
 
     public static CoreLogic getInstance()

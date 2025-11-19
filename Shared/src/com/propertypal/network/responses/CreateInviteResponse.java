@@ -1,5 +1,7 @@
 package com.propertypal.network.responses;
 
+import com.propertypal.network.enums.BaseResponseEnum;
+
 public class CreateInviteResponse
 {
     public String INVITE_ID;

@@ -1,5 +1,7 @@
 package com.propertypal.network.responses;
 
+import com.propertypal.network.enums.BaseResponseEnum;
+
 public class CreateTicketResponse extends BaseResponse
 {
     public long TICKET_ID;

@@ -67,8 +67,10 @@ public class DbWrapper
             ALTER TABLE IF EXISTS ESignRequests DROP CONSTRAINT IF EXISTS FK_ESIGNREQ_USER;
             ALTER TABLE IF EXISTS ESignatures DROP CONSTRAINT IF EXISTS FK_ESIGN_DOC;
             ALTER TABLE IF EXISTS ESignatures DROP CONSTRAINT IF EXISTS FK_ESIGN_USER;
-            ALTER TABLE IF EXISTS CommentAttachmentsMap DROP CONSTRAINT IF EXISTS FK_TAM_DOC;
-            ALTER TABLE IF EXISTS CommentAttachmentsMap DROP CONSTRAINT IF EXISTS FK_TAM_TICKET;
+            ALTER TABLE IF EXISTS TicketAttachmentsMap DROP CONSTRAINT IF EXISTS FK_TAM_DOC;
+            ALTER TABLE IF EXISTS TicketAttachmentsMap DROP CONSTRAINT IF EXISTS FK_TAM_TICKET;
+            ALTER TABLE IF EXISTS TicketCommentsMap DROP CONSTRAINT IF EXISTS FK_TCM_COMMENT;
+            ALTER TABLE IF EXISTS TicketCommentsMap DROP CONSTRAINT IF EXISTS FK_TCM_TICKET;
             ALTER TABLE IF EXISTS CommentAttachmentsMap DROP CONSTRAINT IF EXISTS FK_CAM_DOC;
             ALTER TABLE IF EXISTS CommentAttachmentsMap DROP CONSTRAINT IF EXISTS FK_CAM_COMMENT;
             """);
@@ -142,11 +144,10 @@ public class DbWrapper
                         editName boolean,
                         editAddress boolean,
                         viewPaymentsPage boolean,
-                        createGenericticket boolean,
-                        createMaintTicket boolean,
-                        createTaxTicket boolean,
-                        viewGenericTicket boolean,
-                        viewMaintTicket boolean,
+                        genericTicketPerms int,
+                        maintTicketPerms int,
+                        taxTicketPerms int,
+                        rentTicketPerms int,
                         viewTaxFinData boolean,
                         addLeaseContract boolean,
                         proposeLeaseChange boolean,
@@ -166,6 +167,7 @@ public class DbWrapper
                         dateCreated timestamp,
                         timeModified timestamp,
                         state int,
+                        type int,
                         CONSTRAINT PK_TICKETS_ID PRIMARY KEY (ticketID)
                     )""");
 
@@ -217,6 +219,14 @@ public class DbWrapper
                         docID bigint,
                         ticketID bigint,
                         CONSTRAINT PK_TAM_ID PRIMARY KEY (docID, ticketID)
+                    )""");
+
+            con.createStatement().execute("DROP TABLE IF EXISTS TicketCommentsMap");
+            con.createStatement().execute("""
+                    CREATE Table TicketCommentsMap(
+                        ticketID bigint,
+                        commentID bigint,
+                        CONSTRAINT PK_TCM_ID PRIMARY KEY (ticketID, commentID)
                     )""");
 
             con.createStatement().execute("DROP TABLE IF EXISTS CommentAttachmentsMap");
@@ -274,6 +284,11 @@ public class DbWrapper
             con.createStatement().execute("""
                 ALTER Table TicketAttachmentsMap ADD CONSTRAINT FK_TAM_DOC FOREIGN KEY (docID) REFERENCES Documents (docID);
                 ALTER Table TicketAttachmentsMap ADD CONSTRAINT FK_TAM_TICKET FOREIGN KEY (ticketID) REFERENCES Tickets (ticketID);
+                """);
+
+            con.createStatement().execute("""
+                ALTER Table TicketCommentsMap ADD CONSTRAINT FK_TCM_TICKET FOREIGN KEY (ticketID) REFERENCES Tickets (ticketID);
+                ALTER Table TicketCommentsMap ADD CONSTRAINT FK_TCM_COMMENT FOREIGN KEY (commentID) REFERENCES Comments (commentID);
                 """);
 
             con.createStatement().execute("""

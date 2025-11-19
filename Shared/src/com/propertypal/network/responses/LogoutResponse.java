@@ -1,5 +1,7 @@
 package com.propertypal.network.responses;
 
+import com.propertypal.network.enums.BaseResponseEnum;
+
 public class LogoutResponse extends BaseResponse
 {
     //Doesn't need anything more than what its parent offers

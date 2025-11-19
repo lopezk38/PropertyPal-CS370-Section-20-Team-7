@@ -3,12 +3,15 @@ package com.propertypal.LogicBlocks;
 import com.propertypal.ClientRequest;
 import com.propertypal.network.responses.*;
 import com.propertypal.network.packets.*;
+import com.propertypal.network.enums.*;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.PreparedStatement;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TicketLogic extends BaseLogic
 {
@@ -19,7 +22,7 @@ public class TicketLogic extends BaseLogic
         int ticketState = packet.ticket_state;
 
         //Validate inputs
-        if (ticketType < TicketEnums.Type.STANDARD || ticketType > TicketEnums.Type.RENT)
+        if (!TicketEnums.Type.validate(ticketType))
         {
             //Out of range
             req.setBaseErrResponse(CreateTicketResponse.CreateTicketStatus.ERR_BAD_TICKET_TYPE);
@@ -27,7 +30,7 @@ public class TicketLogic extends BaseLogic
             return;
         }
 
-        if (ticketState < TicketEnums.State.NEW || ticketState > TicketEnums.State.CLOSED)
+        if (!TicketEnums.State.validate(ticketType))
         {
             //Out of range
             req.setBaseErrResponse(CreateTicketResponse.CreateTicketStatus.ERR_BAD_TICKET_STATE);
@@ -62,7 +65,7 @@ public class TicketLogic extends BaseLogic
                     VALUES (?, ?, ?, ?, ?)""", Statement.RETURN_GENERATED_KEYS);
 
             ticketQ.setLong(1, userID);
-            ticketQ.setString(2, packet.lease_id);
+            ticketQ.setLong(2, packet.lease_id);
             ticketQ.setString(3, packet.description);
             ticketQ.setString(4, createTime);
             ticketQ.setString(5, createTime);
@@ -147,6 +150,276 @@ public class TicketLogic extends BaseLogic
 
     public void handleViewTicketPacket(ClientRequest req)
     {
-        ;
+        ViewTicketPacket packet = (ViewTicketPacket) req.packet;
+        long ticketID = packet.ticket_id;
+
+        //Values to retrieve
+        int ticketType = -1;
+        int ticketState = -1;
+        String ticketDesc = null;
+        int genericTicketPerms = 0;
+        int maintTicketPerms = 0;
+        int taxTicketPerms = 0;
+        int rentTicketPerms = 0;
+        long parentLease = -1;
+        List<Long> attachments = new ArrayList<Long>();
+        List<Long> comments = new ArrayList<Long>();
+
+        //Get userID
+        long userID = userIDFromToken(packet.token);
+        if (userID == -1)
+        {
+            req.setBaseErrResponse(BaseResponseEnum.ERR_BAD_TOKEN);
+            filter.sendResponse(req);
+        }
+
+        //Query DB for ticket data
+        PreparedStatement ticketQ = null;
+        try
+        {
+            ticketQ = db.compileQuery("""
+            SELECT parentLease, description, state, type
+            FROM Tickets
+            WHERE ticketID = ?
+            """);
+            ticketQ.setLong(1, ticketID);
+        }
+        catch (SQLException e)
+        {
+            System.out.println("ERROR: SQLException during handleViewTicket ticket query compilation: " + e.toString());
+
+            req.setUnknownErrResponse();
+            filter.sendResponse(req);
+            return;
+        }
+
+        ResultSet ticketR = null;
+        try
+        {
+            ticketR = ticketQ.executeQuery();
+        }
+        catch (SQLException e)
+        {
+            System.out.println("ERROR: SQLException during handleViewTicket ticket query execution: " + e.toString());
+
+            req.setUnknownErrResponse();
+            filter.sendResponse(req);
+            db.closeConnection(ticketQ);
+            return;
+        }
+
+        try
+        {
+            if (ticketR.next())
+            {
+                //Got a ticket
+                ticketType = ticketR.getInt("type");
+                ticketState = ticketR.getInt("state");
+                ticketDesc = ticketR.getString("description");
+                parentLease = ticketR.getLong("parentLease");
+            }
+            else
+            {
+                //Ticket not found
+                req.setBaseErrResponse(ViewTicketResponse.TicketStatus.ERR_BAD_TICKET);
+                filter.sendResponse(req);
+
+                db.closeConnection(ticketQ);
+                return;
+            }
+        }
+        catch (SQLException e)
+        {
+            System.out.println("ERROR: SQLException during handleViewTicket ticket response parsing: " + e.toString());
+
+            req.setUnknownErrResponse();
+            filter.sendResponse(req);
+
+            db.closeConnection(ticketQ);
+            return;
+        }
+
+        //Validate ticket data integrity
+        if (!TicketEnums.Type.validate(ticketType) || !TicketEnums.State.validate(ticketState) || parentLease <= 0)
+        {
+            //Out of range
+            req.setBaseErrResponse(ViewTicketResponse.TicketStatus.ERR_BAD_TICKET);
+            filter.sendResponse(req);
+            return;
+        }
+
+        if (ticketDesc == null) { ticketDesc = ""; }
+
+        //Retrieve permissions
+        PreparedStatement permQ = null;
+        try
+        {
+            //Compile and execute query
+            permQ = db.compileQuery("""
+            SELECT genericTicketPerms, maintTicketPerms, taxTicketPerms, rentTicketPerms
+            FROM LeasePermissions
+            WHERE userID = ? AND leaseID = ?
+            """);
+            permQ.setLong(1, userID);
+            permQ.setLong(2, parentLease);
+
+            ResultSet permR = permQ.executeQuery();
+
+            //Extract results
+            if (permR.next())
+            {
+                //Got a ticket
+                genericTicketPerms = permR.getInt("genericTicketPerms");
+                maintTicketPerms = permR.getInt("maintTicketPerms");
+                taxTicketPerms = permR.getInt("taxTicketPerms");
+                rentTicketPerms = permR.getInt("rentTicketPerms");
+            }
+
+        }
+        catch (SQLException e)
+        {
+            System.out.println("ERROR: SQLException during handleViewTicket permission query: " + e.toString());
+
+            req.setUnknownErrResponse();
+            filter.sendResponse(req);
+
+            return;
+        }
+        finally
+        {
+            db.closeConnection(permQ);
+        }
+
+        //Check if user is allowed to access this ticket
+        int relaventPerm = 0;
+        switch (ticketType)
+        {
+            default:
+            case TicketEnums.Type.STANDARD:
+                relaventPerm = genericTicketPerms;
+                break;
+
+            case TicketEnums.Type.MAINTENANCE:
+                relaventPerm = maintTicketPerms;
+                break;
+
+            case TicketEnums.Type.RENT:
+                relaventPerm = rentTicketPerms;
+                break;
+
+            case TicketEnums.Type.TAX:
+                relaventPerm = taxTicketPerms;
+                break;
+        }
+
+        if ((relaventPerm & 0b001) == 0)
+        {
+            //User lacks permission to view
+            req.setBaseErrResponse(BaseResponseEnum.ERR_PERMISSION_DENIED);
+            filter.sendResponse(req);
+            return;
+        }
+
+        //Get all attachments from db
+        PreparedStatement attachQ = null;
+        try
+        {
+            //Compile and execute query
+            attachQ = db.compileQuery("""
+            SELECT docID
+            FROM TicketAttachmentsMap
+            WHERE ticketID = ?
+            """);
+            attachQ.setLong(1, ticketID);
+
+            ResultSet attachR = attachQ.executeQuery();
+
+            //Extract results
+            while (attachR.next())
+            {
+                //Got an attachment
+                long curAttachID = attachR.getLong("docID");
+                if (curAttachID != 0)
+                {
+                    attachments.add(curAttachID);
+                }
+                else
+                {
+                    System.out.println("WARNING: Got null attachment for ticket: " + Long.toString(ticketID));
+                }
+            }
+
+        }
+        catch (SQLException e)
+        {
+            System.out.println("ERROR: SQLException during handleViewTicket attachment query: " + e.toString());
+
+            req.setUnknownErrResponse();
+            filter.sendResponse(req);
+
+            return;
+        }
+        finally
+        {
+            db.closeConnection(attachQ);
+        }
+        if (attachments.isEmpty()) { attachments = null; }
+
+        //Get all comments from db
+        PreparedStatement commentQ = null;
+        try
+        {
+            //Compile and execute query
+            commentQ = db.compileQuery("""
+            SELECT commentID
+            FROM TicketCommentssMap
+            WHERE ticketID = ?
+            """);
+            commentQ.setLong(1, ticketID);
+
+            ResultSet commentR = commentQ.executeQuery();
+
+            //Extract results
+            while (commentR.next())
+            {
+                //Got an attachment
+                long curComID = commentR.getLong("commentID");
+                if (curComID != 0)
+                {
+                    comments.add(curComID);
+                }
+                else
+                {
+                    System.out.println("WARNING: Got null attachment for ticket: " + Long.toString(ticketID));
+                }
+            }
+
+        }
+        catch (SQLException e)
+        {
+            System.out.println("ERROR: SQLException during handleViewTicket attachment query: " + e.toString());
+
+            req.setUnknownErrResponse();
+            filter.sendResponse(req);
+
+            return;
+        }
+        finally
+        {
+            db.closeConnection(commentQ);
+        }
+        if (comments.isEmpty()) { comments = null; }
+
+        //Build response and send
+        ViewTicketResponse resp = new ViewTicketResponse();
+        resp.STATUS = BaseResponseEnum.SUCCESS;
+        resp.TICKET_TYPE = ticketType;
+        resp.TICKET_STATE = ticketState;
+        resp.DESCRIPTION = ticketDesc;
+        resp.PERMISSIONS = relaventPerm;
+        resp.ATTACHMENT_IDS = attachments;
+        resp.COMMENT_IDS = comments;
+        req.setResponse(resp);
+        filter.sendResponse(req);
     }
 }

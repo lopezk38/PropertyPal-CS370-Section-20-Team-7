@@ -10,6 +10,7 @@ import java.io.IOException;
 
 import com.propertypal.network.responses.*;
 import com.propertypal.network.packets.*;
+import com.propertypal.network.enums.*;
 
 public class APIHandler
 {

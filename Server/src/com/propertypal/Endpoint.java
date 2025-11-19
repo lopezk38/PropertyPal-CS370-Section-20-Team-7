@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 
 import com.propertypal.network.responses.*;
 import com.propertypal.network.packets.*;
+import com.propertypal.network.enums.*;
 import com.propertypal.network.GsonAdapters.LocalDateTimeAdapter;
 
 public class Endpoint<T extends BasePacket> implements HttpHandler

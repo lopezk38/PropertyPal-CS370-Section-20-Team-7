@@ -5,9 +5,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 
-import com.propertypal.network.GsonAdapters.LocalDateTimeAdapter;
 import com.propertypal.network.GsonWrapper;
-import com.propertypal.network.packets.BasePacket;
+import com.propertypal.network.enums.BaseResponseEnum;
 
 public class BaseResponse
 {

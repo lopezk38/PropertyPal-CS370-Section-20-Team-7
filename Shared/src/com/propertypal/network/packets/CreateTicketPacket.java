@@ -4,7 +4,7 @@ import java.util.List;
 
 public class CreateTicketPacket extends BasePacket
 {
-    public String lease_id;
+    public long lease_id;
     public int ticket_type; //Use TicketEnums.Type to set
     public int ticket_state; //Use TicketEnums.State to set
     public String description;

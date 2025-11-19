@@ -69,7 +69,7 @@ public class AccountLogic extends BaseLogic
             else
             {
                 //User not found
-                emailIsAvailable = false;
+                emailIsAvailable = true;
             }
         }
         catch (SQLException e)

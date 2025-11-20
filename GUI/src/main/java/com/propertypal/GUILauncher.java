@@ -2,7 +2,7 @@ package com.propertypal;
 
 import javafx.application.Application;
 
-public class Launcher
+public class GUILauncher
 {
     public static void main(String[] args)
     {

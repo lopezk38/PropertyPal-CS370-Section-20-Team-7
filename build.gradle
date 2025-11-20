@@ -48,3 +48,9 @@ tasks.register('runGUI', JavaExec) {
     FileTree jars = fileTree('/GUI/build/libs/') { include '*.jar' }
     classpath = jars
 }
+
+tasks.register('debugGUI', JavaExec) {
+    FileTree jars = fileTree('/GUI/build/libs/') { include '*.jar' }
+    classpath = jars
+	debug = true
+}

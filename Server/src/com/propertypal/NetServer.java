@@ -48,7 +48,7 @@ public class NetServer
 
         httpServer.createContext("/ticket/new", new Endpoint(CreateTicketPacket.class, (request) -> { filter.filterCreateTicketPacket(request); }));
         httpServer.createContext("/ticket/view", new Endpoint(ViewTicketPacket.class, (request) -> { filter.filterViewTicketPacket(request); }));
-
+        httpServer.createContext("/ticket/list", new Endpoint(getTicketListPacket.class, (request) -> { filter.filterGetTicketListPacket(request); }));
 
         //httpServer.setExecutor(executor); //Multithreaded. Use for prod
         httpServer.setExecutor(null); //Singlethreaded. Use for easier debug

@@ -25,13 +25,13 @@
             <Font size="36.0"/>
         </font>
     </Text>
-    <Region prefHeight="26.0" prefWidth="1240.0"/>
-    <TextField fx:id="emailField" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="26.0" prefWidth="200.0"
+    <Region prefHeight="25.0" prefWidth="1240.0"/>
+    <TextField fx:id="emailField" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="25.0" prefWidth="200.0"
                promptText="Email"/>
-    <TextField fx:id="passwordField" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="26.0" prefWidth="200.0"
+    <TextField fx:id="passwordField" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="25.0" prefWidth="200.0"
                promptText="Password"/>
 
-    <Label fx:id="errorText" textFill="RED"/>
-    <Button onAction="#onLogInButtonClick" prefHeight="26.0" prefWidth="100.0" text="Log In"/>
-    <Button onAction="#onCreateAccountClick" prefHeight="26.0" prefWidth="100.0" text="Create Account"/>
+    <Label fx:id="errorLabel" textFill="RED"/>
+    <Button onAction="#onLogInButtonClick" prefHeight="25.0" prefWidth="100.0" text="Log In"/>
+    <Button onAction="#onCreateAccountButtonClick" prefHeight="25.0" prefWidth="100.0" text="Create Account"/>
 </VBox>

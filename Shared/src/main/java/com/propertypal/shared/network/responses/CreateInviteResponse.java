@@ -2,9 +2,9 @@ package com.propertypal.shared.network.responses;
 
 import com.propertypal.shared.network.enums.BaseResponseEnum;
 
-public class CreateInviteResponse
+public class CreateInviteResponse extends BaseResponse
 {
-    public String INVITE_ID;
+    public long INVITE_ID;
 
     public static class InviteStatus extends BaseResponseEnum
     {

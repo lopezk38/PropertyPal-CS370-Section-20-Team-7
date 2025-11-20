@@ -18,7 +18,7 @@ public class LoginController
     private TextField passwordField;
 
     @FXML
-    private Label errorText;
+    private Label errorLabel;
 
     // Prevents focus of the Email field when page spawns
     @FXML
@@ -38,9 +38,9 @@ public class LoginController
 
     // TEMPORARY Create Account button trigger
     @FXML
-    private void onCreateAccountClick()
+    private void onCreateAccountButtonClick()
     {
-        errorText.setText("REDIRECT: CREATE ACCOUNT PAGE");
+        errorLabel.setText("REDIRECT: CREATE ACCOUNT PAGE");
     }
 
     private void handleLogin()
@@ -51,18 +51,18 @@ public class LoginController
         // Check empty fields
         if (email.isEmpty() || password.isEmpty())
         {
-            errorText.setText("All fields are required");
+            errorLabel.setText("All fields are required");
             return;
         }
 
         // Email validation (simple pattern)
         if (!email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$"))
         {
-            errorText.setText("Please enter a valid email address");
+            errorLabel.setText("Please enter a valid email address");
             return;
         }
 
         // TEMPORARY Valid email + non-empty password
-        errorText.setText("LOGIN SUCCESS");
+        errorLabel.setText("LOGIN SUCCESS");
     }
 }

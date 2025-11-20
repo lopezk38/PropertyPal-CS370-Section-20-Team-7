@@ -190,6 +190,7 @@ public class TicketLogic extends BaseLogic
 
             req.setUnknownErrResponse();
             filter.sendResponse(req);
+            db.closeConnection(ticketQ);
             return;
         }
 

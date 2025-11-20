@@ -54,10 +54,4 @@ public class AuthFilters extends BaseFilters
 
         //TODO logout path
     }
-
-    public void filterCreateTenantAcctPacket(ClientRequest req)
-    {
-
-        //TODO logout path
-    }
 }

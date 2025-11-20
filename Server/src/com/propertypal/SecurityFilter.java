@@ -40,8 +40,8 @@ public class SecurityFilter
     public void filterLogoutPacket(ClientRequest req) { authFilter.filterLogoutPacket(req); }
 
     //AccountFilters
-    public void filterCreateTenantAcctPacket(ClientRequest req) { authFilter.filterCreateTenantAcctPacket(req); }
-    public void filterCreateLandlordAcctPacket(ClientRequest req) { ; } //TODO: Create and connect to submodule
+    public void filterCreateTenantAcctPacket(ClientRequest req) { acctFilter.filterCreateTenantAcctPacket(req); }
+    public void filterCreateLandlordAcctPacket(ClientRequest req) { acctFilter.filterCreateLandlordAcctPacket(req); }
     public void filterCreateInvitePacket(ClientRequest req) { acctFilter.filterCreateInvitePacket(req); }
     public void filterAcceptInvitePacket(ClientRequest req) { acctFilter.filterAcceptInvitePacket(req); }
 
@@ -53,7 +53,7 @@ public class SecurityFilter
     //TicketFilters
     public void filterCreateTicketPacket(ClientRequest req) { ticketFilter.filterCreateTicketPacket(req); }
     public void filterEditTicketPacket(ClientRequest req) { ; } //TODO: Create and connect to submodule
-    public void filterViewTicketPacket(ClientRequest req) { ticketFilter.filterViewTicketPacket(req);}  //TODO: Create and connect to submodule
+    public void filterViewTicketPacket(ClientRequest req) { ticketFilter.filterViewTicketPacket(req);}
     public void filterGetTicketListPacket(ClientRequest req) { ticketFilter.filterGetTicketList(req);}
 
     //PaymentFilters

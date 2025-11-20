@@ -19,4 +19,5 @@ public class CreateAcctPacket extends BasePacket
     public String billZip;
     public String billCountry;
     public String phone;
+    public String tax_id;
 }

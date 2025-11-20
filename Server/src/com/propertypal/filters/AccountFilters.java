@@ -27,6 +27,22 @@ public class AccountFilters extends BaseFilters
         logic.handleCreateTenantAcct(req);
     }
 
+    public void filterCreateLandlordAcctPacket(ClientRequest req)
+    {
+        if (!(req.packet instanceof CreateAcctPacket))
+        {
+            //Endpoint registered to wrong handler
+            System.out.println("ERROR: filterCreateLandlordAcctPacket is registered to the wrong endpoint");
+            BaseResponse resp = new BaseResponse();
+            resp.STATUS = BaseResponseEnum.ERR_UNKNOWN;
+            req.setResponse(resp);
+            filter.sendResponse(req);
+            return;
+        }
+
+        logic.handleCreateLandlordAcct(req);
+    }
+
     public void filterCreateInvitePacket(ClientRequest req)
     {
         logic.handleCreateInvite(req);

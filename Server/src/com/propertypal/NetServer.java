@@ -40,6 +40,7 @@ public class NetServer
         httpServer.createContext("/auth/login", new Endpoint(LoginPacket.class, (request) -> { filter.filterLoginPacket(request); }));
         httpServer.createContext("/auth/logout", new Endpoint(LogoutPacket.class, (request) -> { filter.filterLogoutPacket(request); }));
         httpServer.createContext("/auth/newAcct/tenant", new Endpoint(CreateAcctPacket.class, (request) -> { filter.filterCreateTenantAcctPacket(request); }));
+        httpServer.createContext("/auth/newAcct/landlord", new Endpoint(CreateAcctPacket.class, (request) -> { filter.filterCreateLandlordAcctPacket(request); }));
 
         httpServer.createContext("/lease/genInvite", new Endpoint(CreateInvitePacket.class, (request) -> { filter.filterCreateInvitePacket(request); }));
         httpServer.createContext("/lease/acceptInvite", new Endpoint(AcceptInvitePacket.class, (request) -> { filter.filterAcceptInvitePacket(request); }));

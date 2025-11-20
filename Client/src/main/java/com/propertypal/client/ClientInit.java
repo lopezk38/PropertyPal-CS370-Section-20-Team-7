@@ -4,6 +4,8 @@ import com.propertypal.client.APIHandler;
 import com.propertypal.shared.network.responses.*;
 import com.propertypal.shared.network.packets.*;
 
+import javafx.application.Application;
+
 public class ClientInit
 {
     public static void main(String[] args)
@@ -25,5 +27,7 @@ public class ClientInit
         }
         System.out.println("Login request completed");
         //END TESTBENCH
+
+        Application.launch(ClientApp.class);
     }
 }

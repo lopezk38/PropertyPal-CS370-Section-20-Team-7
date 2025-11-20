@@ -4,7 +4,7 @@ import com.propertypal.ClientRequest;
 import com.propertypal.SecurityFilter;
 import com.propertypal.CoreLogic;
 import com.propertypal.DbWrapper;
-import com.propertypal.network.responses.*;
+import com.propertypal.shared.network.responses.*;
 
 public class BaseFilters
 {

@@ -3,8 +3,8 @@ package com.propertypal.LogicBlocks;
 import com.propertypal.ClientRequest;
 import com.propertypal.SecurityFilter;
 import com.propertypal.DbWrapper;
-import com.propertypal.network.responses.*;
-import com.propertypal.network.packets.*;
+import com.propertypal.shared.network.responses.*;
+import com.propertypal.shared.network.packets.*;
 
 import java.sql.SQLException;
 import java.sql.ResultSet;

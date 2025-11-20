@@ -1,5 +1,7 @@
 plugins {
     id 'java'
+	id 'application'
+    id 'org.openjfx.javafxplugin' version '0.1.0'
 }
 
 group = 'com.propertypal'
@@ -9,12 +11,9 @@ repositories {
     mavenCentral()
 }
 
-sourceSets {
-    main {
-        java {
-            srcDirs = ['src']
-        }
-    }
+javafx {
+    version = "25"
+    modules = [ 'javafx.controls', 'javafx.fxml' ]
 }
 
 dependencies {
@@ -27,14 +26,20 @@ dependencies {
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
+application {
+    mainClass = 'com.propertypal.ClientInit'
+    mainModule = 'com.propertypal'
+}
+
 jar {
     manifest {
-        attributes 'Main-Class': 'com.propertypal.ClientInit'
+        attributes 'Main-Class': 'com.propertypal.client.ClientInit'
     }
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
     from {
         configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
     }
+	from "src/resource"
 }
 
 test {

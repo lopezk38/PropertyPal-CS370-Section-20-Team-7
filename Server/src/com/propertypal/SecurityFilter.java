@@ -1,8 +1,8 @@
 package com.propertypal;
 
 import com.propertypal.filters.*;
-import com.propertypal.network.responses.*;
-import com.propertypal.network.packets.*;
+import com.propertypal.shared.network.responses.*;
+import com.propertypal.shared.network.packets.*;
 
 public class SecurityFilter
 {

@@ -1,9 +1,9 @@
 package com.propertypal.filters;
 
 import com.propertypal.ClientRequest;
-import com.propertypal.network.packets.*;
-import com.propertypal.network.responses.*;
-import com.propertypal.network.enums.*;
+import com.propertypal.shared.network.packets.*;
+import com.propertypal.shared.network.responses.*;
+import com.propertypal.shared.network.enums.*;
 import com.propertypal.SecurityFilter;
 
 public class TicketFilters extends BaseFilters

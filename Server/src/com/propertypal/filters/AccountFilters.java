@@ -5,9 +5,9 @@ import com.propertypal.CoreLogic;
 import com.propertypal.DbWrapper;
 import com.propertypal.SecurityFilter;
 import com.propertypal.LogicBlocks.AccountLogic;
-import com.propertypal.network.responses.*;
-import com.propertypal.network.packets.*;
-import com.propertypal.network.enums.*;
+import com.propertypal.shared.network.responses.*;
+import com.propertypal.shared.network.packets.*;
+import com.propertypal.shared.network.enums.*;
 
 public class AccountFilters extends BaseFilters
 {

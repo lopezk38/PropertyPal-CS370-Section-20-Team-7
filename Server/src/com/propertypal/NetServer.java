@@ -10,7 +10,7 @@ import java.io.OutputStream;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import com.propertypal.network.packets.*;
+import com.propertypal.shared.network.packets.*;
 
 public class NetServer
 {

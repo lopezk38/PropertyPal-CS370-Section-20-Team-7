@@ -11,10 +11,10 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.time.LocalDateTime;
 
-import com.propertypal.network.responses.*;
-import com.propertypal.network.packets.*;
-import com.propertypal.network.enums.*;
-import com.propertypal.network.GsonAdapters.LocalDateTimeAdapter;
+import com.propertypal.shared.network.responses.*;
+import com.propertypal.shared.network.packets.*;
+import com.propertypal.shared.network.enums.*;
+import com.propertypal.shared.network.GsonAdapters.LocalDateTimeAdapter;
 
 public class Endpoint<T extends BasePacket> implements HttpHandler
 {

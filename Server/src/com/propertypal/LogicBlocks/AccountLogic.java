@@ -433,6 +433,7 @@ public class AccountLogic extends BaseLogic
     {
         AcceptInvitePacket packet = (AcceptInvitePacket) req.packet;
         long inviteID = packet.inviteID;
+        boolean accept = packet.accept;
 
         //Get userID
         long tenantID = userIDFromToken(packet.token);
@@ -499,74 +500,73 @@ public class AccountLogic extends BaseLogic
 
         //TODO Make sure property is not already occupied
 
-        //Create a new lease
-        long leaseID = -1;
-        PreparedStatement leaseQ = null;
-        try
+        if (accept)
         {
-            leaseQ = db.compileQuery("""
-                    INSERT INTO Leases (
-                    associatedProperty,
-                    tenantID,
-                    active,
-                    dateMade
-                    )
-                    VALUES (?, ?, ?, ?)""", Statement.RETURN_GENERATED_KEYS);
-
-            leaseQ.setLong(1, propertyID);
-            leaseQ.setLong(2, tenantID);
-            leaseQ.setBoolean(3, true);
-            leaseQ.setString(4, LocalDateTime.now().toString());
-
-            //Get the newly made primary key
-            ResultSet res = leaseQ.getGeneratedKeys();
-            if (res.next())
+            //Create a new lease
+            long leaseID = -1;
+            PreparedStatement leaseQ = null;
+            try
             {
-                leaseID = res.getLong(1);
+                leaseQ = db.compileQuery("""
+                        INSERT INTO Leases (
+                        associatedProperty,
+                        tenantID,
+                        active,
+                        dateMade
+                        )
+                        VALUES (?, ?, ?, ?)""", Statement.RETURN_GENERATED_KEYS);
+
+                leaseQ.setLong(1, propertyID);
+                leaseQ.setLong(2, tenantID);
+                leaseQ.setBoolean(3, true);
+                leaseQ.setString(4, LocalDateTime.now().toString());
+
+                //Get the newly made primary key
+                ResultSet res = leaseQ.getGeneratedKeys();
+                if (res.next())
+                {
+                    leaseID = res.getLong(1);
+                }
+                else throw new SQLException("Failed to generate lease primary key");
+            } catch (SQLException e)
+            {
+                System.out.println("ERROR: SQLException during handleAcceptInvite lease query: " + e.toString());
+
+                req.setUnknownErrResponse();
+                filter.sendResponse(req);
+                return;
+            } finally
+            {
+                db.closeConnection(leaseQ);
             }
-            else throw new SQLException("Failed to generate lease primary key");
-        }
-        catch (SQLException e)
-        {
-            System.out.println("ERROR: SQLException during handleAcceptInvite lease query: " + e.toString());
 
-            req.setUnknownErrResponse();
-            filter.sendResponse(req);
-            return;
-        }
-        finally
-        {
-            db.closeConnection(leaseQ);
-        }
+            //Update property state
+            PreparedStatement propQ2 = null;
+            try
+            {
+                propQ2 = db.compileQuery("""
+                        UPDATE Properties
+                        SET activeLease = ?
+                        WHERE propertyID = ?
+                        """);
 
-        //Update property state
-        PreparedStatement propQ2 = null;
-        try
-        {
-            propQ2 = db.compileQuery("""
-                    UPDATE Properties
-                    SET activeLease = ?
-                    WHERE propertyID = ?
-                    """);
+                propQ2.setLong(1, leaseID);
+                propQ2.setLong(2, propertyID);
+            } catch (SQLException e)
+            {
+                System.out.println("ERROR: SQLException during handleAcceptInvite property update query: " + e.toString());
 
-            propQ2.setLong(1, leaseID);
-            propQ2.setLong(2, propertyID);
+                req.setUnknownErrResponse();
+                filter.sendResponse(req);
+                return;
+            } finally
+            {
+                db.closeConnection(propQ2);
+            }
+
+            //TODO Set tenants permissions
+
         }
-        catch (SQLException e)
-        {
-            System.out.println("ERROR: SQLException during handleAcceptInvite property update query: " + e.toString());
-
-            req.setUnknownErrResponse();
-            filter.sendResponse(req);
-            return;
-        }
-        finally
-        {
-            db.closeConnection(propQ2);
-        }
-
-        //TODO Set tenants permissions
-
         //Delete invite
         PreparedStatement invQ2 = null;
         try

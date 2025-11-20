@@ -2,6 +2,6 @@ package com.propertypal.shared.network.packets;
 
 public class AcceptInvitePacket extends BasePacket
 {
-    public String inviteID;
+    public long inviteID;
     public boolean accept;
 }

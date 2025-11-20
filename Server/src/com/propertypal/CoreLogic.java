@@ -7,7 +7,6 @@ import javax.print.Doc;
 public class CoreLogic
 {
     private static CoreLogic instance = null;
-    private static int instanceCount = 0;
 
     private AuthLogic authLogic = null;
     private AccountLogic acctLogic = null;
@@ -45,7 +44,8 @@ public class CoreLogic
     public void handleCreateLandlordAcct(ClientRequest req) { acctLogic.handleCreateLandlordAccount(req); }
     public void handleCreateInvite(ClientRequest req) { acctLogic.handleCreateInvite(req); }
     public void handleAcceptInvite(ClientRequest req) { acctLogic.handleAcceptInvite(req); }
-    public void handleUploadDoc(ClientRequest req) { docLogic.handleUploadDoc(req); } //TODO: Create and connect to submodule
+    public void handleGetInviteList(ClientRequest req) { acctLogic.handleGetInviteList(req); }
+    public void handleUploadDoc(ClientRequest req) { docLogic.handleUploadDoc(req); }
 
     //DocLogic
     public void handleViewDoc(ClientRequest req) { ; } //TODO: Create and connect to submodule

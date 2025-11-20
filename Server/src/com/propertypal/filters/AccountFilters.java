@@ -45,11 +45,49 @@ public class AccountFilters extends BaseFilters
 
     public void filterCreateInvitePacket(ClientRequest req)
     {
+        if (!(req.packet instanceof CreateInvitePacket))
+        {
+            //Endpoint registered to wrong handler
+            System.out.println("ERROR: filterCreateInvitePacket is registered to the wrong endpoint");
+            BaseResponse resp = new BaseResponse();
+            resp.STATUS = BaseResponseEnum.ERR_UNKNOWN;
+            req.setResponse(resp);
+            filter.sendResponse(req);
+            return;
+        }
+
         logic.handleCreateInvite(req);
     }
 
     public void filterAcceptInvitePacket(ClientRequest req)
     {
+        if (!(req.packet instanceof AcceptInvitePacket))
+        {
+            //Endpoint registered to wrong handler
+            System.out.println("ERROR: filterAcceptInvitePacket is registered to the wrong endpoint");
+            BaseResponse resp = new BaseResponse();
+            resp.STATUS = BaseResponseEnum.ERR_UNKNOWN;
+            req.setResponse(resp);
+            filter.sendResponse(req);
+            return;
+        }
+
         logic.handleAcceptInvite(req);
+    }
+
+    public void filterGetInviteListPacket(ClientRequest req)
+    {
+        if (!(req.packet instanceof GetInviteListPacket))
+        {
+            //Endpoint registered to wrong handler
+            System.out.println("ERROR: filterGetInviteListPacket is registered to the wrong endpoint");
+            BaseResponse resp = new BaseResponse();
+            resp.STATUS = BaseResponseEnum.ERR_UNKNOWN;
+            req.setResponse(resp);
+            filter.sendResponse(req);
+            return;
+        }
+
+        logic.handleGetInviteList(req);
     }
 }

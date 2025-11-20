@@ -44,6 +44,7 @@ public class SecurityFilter
     public void filterCreateLandlordAcctPacket(ClientRequest req) { acctFilter.filterCreateLandlordAcctPacket(req); }
     public void filterCreateInvitePacket(ClientRequest req) { acctFilter.filterCreateInvitePacket(req); }
     public void filterAcceptInvitePacket(ClientRequest req) { acctFilter.filterAcceptInvitePacket(req); }
+    public void filterGetInviteListPacket(ClientRequest req) { acctFilter.filterGetInviteListPacket(req); }
 
     //DocFilters
     public void filterUploadDocPacket(ClientRequest req) { ; } //TODO: Create and connect to submodule

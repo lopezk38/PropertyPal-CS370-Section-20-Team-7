@@ -44,6 +44,7 @@ public class NetServer
 
         httpServer.createContext("/lease/genInvite", new Endpoint(CreateInvitePacket.class, (request) -> { filter.filterCreateInvitePacket(request); }));
         httpServer.createContext("/lease/acceptInvite", new Endpoint(AcceptInvitePacket.class, (request) -> { filter.filterAcceptInvitePacket(request); }));
+        httpServer.createContext("/lease/getInvites", new Endpoint(GetInviteListPacket.class, (request) -> { filter.filterGetInviteListPacket(request); }));
 
         httpServer.createContext("/doc/upload", new Endpoint(UploadDocPacket.class, (request) -> { filter.filterUploadDocPacket(request); }));
 

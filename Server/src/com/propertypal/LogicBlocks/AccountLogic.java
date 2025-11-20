@@ -5,12 +5,16 @@ import com.propertypal.SecurityFilter;
 import com.propertypal.DbWrapper;
 import com.propertypal.shared.network.responses.*;
 import com.propertypal.shared.network.packets.*;
+import com.propertypal.shared.network.enums.*;
 
 import java.sql.SQLException;
 import java.sql.ResultSet;
 import java.sql.PreparedStatement;
 //import java.security.SecureRandom;
 //import org.springframework.security.crypto.bcrypt.BCrypt;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import java.time.LocalDateTime;
 
@@ -353,6 +357,8 @@ public class AccountLogic extends BaseLogic
             db.closeConnection(propQ);
         }
 
+        //TODO Update their permissions
+
         //Succeeded, send OK
         CreateAcctResponse resp = new CreateAcctResponse();
         resp.TOKEN = token;
@@ -362,11 +368,315 @@ public class AccountLogic extends BaseLogic
 
     public void handleCreateInvite(ClientRequest req)
     {
-        //TODO
+        CreateInvitePacket packet = (CreateInvitePacket) req.packet;
+        long propertyId = packet.propertyId;
+        long target = packet.targetUser;
+
+        //Get userID
+        long landlordID = userIDFromToken(packet.token);
+        if (landlordID == -1)
+        {
+            req.setBaseErrResponse(BaseResponseEnum.ERR_BAD_TOKEN);
+            filter.sendResponse(req);
+        }
+
+        //TODO check if propertyID is valid
+
+        //Insert invite into DB
+        long inviteID = -1;
+        PreparedStatement invQ = null;
+        try
+        {
+            invQ = db.compileQuery("""
+                    INSERT INTO Invites (
+                    landlordID,
+                    tenantID,
+                    propertyID,
+                    dateMade
+                    )
+                    VALUES (?, ?, ?, ?)""", Statement.RETURN_GENERATED_KEYS);
+
+            invQ.setLong(1, landlordID);
+            invQ.setLong(2, target);
+            invQ.setLong(3, propertyId);
+            invQ.setString(4, LocalDateTime.now().toString());
+
+            //Get the newly made primary key
+            ResultSet res = invQ.getGeneratedKeys();
+            if (res.next())
+            {
+                inviteID = res.getLong(1);
+            }
+            else throw new SQLException("Failed to generate invite primary key");
+        }
+        catch (SQLException e)
+        {
+            System.out.println("ERROR: SQLException during handleCreateInvite account query: " + e.toString());
+
+            req.setUnknownErrResponse();
+            filter.sendResponse(req);
+            return;
+        }
+        finally
+        {
+            db.closeConnection(invQ);
+        }
+
+        //Succeeded, send OK
+        CreateInviteResponse resp = new CreateInviteResponse();
+        resp.INVITE_ID = inviteID;
+        req.setResponse(resp);
+        filter.sendResponse(req);
     }
 
     public void handleAcceptInvite(ClientRequest req)
     {
-        //TODO
+        AcceptInvitePacket packet = (AcceptInvitePacket) req.packet;
+        long inviteID = packet.inviteID;
+
+        //Get userID
+        long tenantID = userIDFromToken(packet.token);
+        if (tenantID == -1)
+        {
+            req.setBaseErrResponse(BaseResponseEnum.ERR_BAD_TOKEN);
+            filter.sendResponse(req);
+        }
+
+        //Retrieve invite data
+        long landlordID = -1;
+        long storedTenID = -1;
+        long propertyID = -1;
+        PreparedStatement invQ = null;
+        try
+        {
+            invQ = db.compileQuery("""
+            SELECT landlordID, tenantID, propertyID
+            FROM Invites
+            WHERE inviteID = ?
+            """);
+            invQ.setLong(1, propertyID);
+
+            ResultSet invR = invQ.executeQuery();
+
+            if (invR.next())
+            {
+                //Got an invite
+                landlordID = invR.getLong("landlordID");
+                storedTenID = invR.getLong("tenantID");
+                propertyID = invR.getLong("propertyID");
+            }
+            else
+            {
+                //Invite not found
+                req.setBaseErrResponse(AcceptInviteResponse.InviteStatus.ERR_BAD_INVITE);
+                filter.sendResponse(req);
+
+                return;
+            }
+        }
+        catch (SQLException e)
+        {
+            System.out.println("ERROR: SQLException during handleAcceptInvite query: " + e.toString());
+
+            req.setUnknownErrResponse();
+            filter.sendResponse(req);
+            return;
+        }
+        finally
+        {
+            db.closeConnection(invQ);
+        }
+
+        //Make sure invite is for this user
+        if (tenantID != storedTenID)
+        {
+            //Invite is for someone else
+            req.setBaseErrResponse(AcceptInviteResponse.InviteStatus.ERR_BAD_INVITE);
+            filter.sendResponse(req);
+
+            return;
+        }
+
+        //TODO Make sure property is not already occupied
+
+        //Create a new lease
+        long leaseID = -1;
+        PreparedStatement leaseQ = null;
+        try
+        {
+            leaseQ = db.compileQuery("""
+                    INSERT INTO Leases (
+                    associatedProperty,
+                    tenantID,
+                    active,
+                    dateMade
+                    )
+                    VALUES (?, ?, ?, ?)""", Statement.RETURN_GENERATED_KEYS);
+
+            leaseQ.setLong(1, propertyID);
+            leaseQ.setLong(2, tenantID);
+            leaseQ.setBoolean(3, true);
+            leaseQ.setString(4, LocalDateTime.now().toString());
+
+            //Get the newly made primary key
+            ResultSet res = leaseQ.getGeneratedKeys();
+            if (res.next())
+            {
+                leaseID = res.getLong(1);
+            }
+            else throw new SQLException("Failed to generate lease primary key");
+        }
+        catch (SQLException e)
+        {
+            System.out.println("ERROR: SQLException during handleAcceptInvite lease query: " + e.toString());
+
+            req.setUnknownErrResponse();
+            filter.sendResponse(req);
+            return;
+        }
+        finally
+        {
+            db.closeConnection(leaseQ);
+        }
+
+        //Update property state
+        PreparedStatement propQ2 = null;
+        try
+        {
+            propQ2 = db.compileQuery("""
+                    UPDATE Properties
+                    SET activeLease = ?
+                    WHERE propertyID = ?
+                    """);
+
+            propQ2.setLong(1, leaseID);
+            propQ2.setLong(2, propertyID);
+        }
+        catch (SQLException e)
+        {
+            System.out.println("ERROR: SQLException during handleAcceptInvite property update query: " + e.toString());
+
+            req.setUnknownErrResponse();
+            filter.sendResponse(req);
+            return;
+        }
+        finally
+        {
+            db.closeConnection(propQ2);
+        }
+
+        //TODO Set tenants permissions
+
+        //Delete invite
+        PreparedStatement invQ2 = null;
+        try
+        {
+            invQ2 = db.compileQuery("""
+                    DELETE FROM Invites
+                    WHERE inviteID = ?
+                    """);
+
+            invQ2.setLong(1, inviteID);
+        }
+        catch (SQLException e)
+        {
+            System.out.println("ERROR: SQLException during handleAcceptInvite invite delete query: " + e.toString());
+
+            req.setUnknownErrResponse();
+            filter.sendResponse(req);
+            return;
+        }
+        finally
+        {
+            db.closeConnection(invQ2);
+        }
+
+        //Succeeded, send OK
+        AcceptInviteResponse resp = new AcceptInviteResponse();
+        req.setResponse(resp);
+        filter.sendResponse(req);
+    }
+
+    public void handleGetInviteList(ClientRequest req)
+    {
+        GetInviteListPacket packet = (GetInviteListPacket) req.packet;
+
+        //Values to retrieve
+        List<Long> invites = new ArrayList<Long>();
+
+        //Get userID
+        long userID = userIDFromToken(packet.token);
+        if (userID == -1)
+        {
+            req.setBaseErrResponse(BaseResponseEnum.ERR_BAD_TOKEN);
+            filter.sendResponse(req);
+        }
+
+        //Query DB for invite list
+        PreparedStatement invitesQ = null;
+        try
+        {
+            invitesQ = db.compileQuery("""
+            SELECT inviteID
+            FROM Invites
+            WHERE tenantID = ?
+            """);
+            invitesQ.setLong(1, userID);
+        }
+        catch (SQLException e)
+        {
+            System.out.println("ERROR: SQLException during handleGetInviteList invite query compilation: " + e.toString());
+
+            req.setUnknownErrResponse();
+            filter.sendResponse(req);
+            return;
+        }
+
+        ResultSet invitesR = null;
+        try
+        {
+            invitesR = invitesQ.executeQuery();
+        }
+        catch (SQLException e)
+        {
+            System.out.println("ERROR: SQLException during handleGetInviteList invites query execution: " + e.toString());
+
+            req.setUnknownErrResponse();
+            filter.sendResponse(req);
+            db.closeConnection(invitesQ);
+            return;
+        }
+
+        try
+        {
+            while (invitesR.next())
+            {
+                //adds inviteID to invites list
+                invites.add(invitesR.getLong("inviteID"));
+            }
+        }
+        catch (SQLException e)
+        {
+            System.out.println("ERROR: SQLException during handleGetInviteList invite response parsing: " + e.toString());
+
+            req.setUnknownErrResponse();
+            filter.sendResponse(req);
+
+            db.closeConnection(invitesQ);
+            return;
+        }
+        finally
+        {
+            db.closeConnection(invitesQ);
+        }
+        if (invites.isEmpty()) { invites = null; }
+
+        //Build response and send
+        GetInviteListResponse resp = new GetInviteListResponse();
+        resp.STATUS = BaseResponseEnum.SUCCESS;
+        resp.INVITES = invites;
+
+        req.setResponse(resp);
+        filter.sendResponse(req);
     }
 }

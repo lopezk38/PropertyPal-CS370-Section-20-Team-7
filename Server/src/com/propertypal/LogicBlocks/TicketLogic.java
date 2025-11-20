@@ -483,7 +483,7 @@ public class TicketLogic extends BaseLogic
             while (ticketsR.next())
             {
                 //adds ticketID to tickets list
-                tickets.add(ticketsR.getLong("tickedID"));
+                tickets.add(ticketsR.getLong("ticketID"));
             }
         }
         catch (SQLException e)

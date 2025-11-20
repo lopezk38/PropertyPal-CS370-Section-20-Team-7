@@ -53,7 +53,7 @@ public class SecurityFilter
     //TicketFilters
     public void filterCreateTicketPacket(ClientRequest req) { ticketFilter.filterCreateTicketPacket(req); }
     public void filterEditTicketPacket(ClientRequest req) { ; } //TODO: Create and connect to submodule
-    public void filterViewTicketPacket(ClientRequest req) { ; }  //TODO: Create and connect to submodule
+    public void filterViewTicketPacket(ClientRequest req) { ticketFilter.filterViewTicketPacket(req);}  //TODO: Create and connect to submodule
     public void filterGetTicketListPacket(ClientRequest req) { ticketFilter.filterGetTicketList(req);}
 
     //PaymentFilters

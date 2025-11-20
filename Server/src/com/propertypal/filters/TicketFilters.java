@@ -71,7 +71,7 @@ public class TicketFilters extends BaseFilters
         int authSuccess = filter.enforceLoggedIn(req);
         if (authSuccess != BaseResponseEnum.SUCCESS) return;
 
-        //Verify user is allowed to view
+        //Verify user is allowed to ask for tickets on this lease
 
         //All tests passed, let it through
         logic.handleGetTicketList(req);

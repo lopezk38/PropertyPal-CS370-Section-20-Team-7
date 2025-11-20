@@ -326,7 +326,8 @@ public class DbWrapper
                 """);
 
             //DEBUG
-            con.createStatement().execute("INSERT INTO Users (email, hashedPW) VALUES ('1@2.com', 'pass')");
+            con.createStatement().execute("INSERT INTO Users (email, hashedPW, requirePWReset, isLandlord) VALUES ('land@lord.com', 'landpass', false, true)");
+            con.createStatement().execute("INSERT INTO Users (email, hashedPW, requirePWReset, isLandlord) VALUES ('ten@ant.com', 'tenpass', false, false)");
         }
         catch (SQLException e)
         {

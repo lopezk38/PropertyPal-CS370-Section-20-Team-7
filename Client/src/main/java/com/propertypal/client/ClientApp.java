@@ -12,12 +12,11 @@ public class ClientApp extends Application
     @Override
     public void start(Stage stage) throws IOException
     {
-        //TEMPORARY HELLO WINDOW TESTBENCH
-        FXMLLoader fxmlLoader = new FXMLLoader(ClientApp.class.getResource("/fxml/hello-view.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 320, 240);
-        stage.setTitle("Hello!");
+        // Login page
+        FXMLLoader fxmlLoader = new FXMLLoader(ClientApp.class.getResource("/fxml/login.fxml"));
+        Scene scene = new Scene(fxmlLoader.load(), 1280, 720);
+        stage.setTitle("Login");
         stage.setScene(scene);
         stage.show();
-        //END TESTBENCH
     }
 }

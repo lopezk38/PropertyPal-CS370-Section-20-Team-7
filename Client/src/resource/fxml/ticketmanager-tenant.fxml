@@ -24,7 +24,7 @@
     </VBox>
 
     <!-- CREATE TICKET button -->
-    <Button fx:id="createBtn" layoutX="232.0" layoutY="277.0" prefHeight="40" prefWidth="136.0" style="-fx-font-size: 12px;" text="Create a Ticket" AnchorPane.leftAnchor="232.0" AnchorPane.rightAnchor="232.0" />
+    <Button fx:id="createBtn" layoutX="233.0" layoutY="286.0" prefHeight="40" prefWidth="136.0" style="-fx-font-size: 12px;" text="Create a Ticket" AnchorPane.leftAnchor="233.0" AnchorPane.rightAnchor="231.0" />
 
     <Label fx:id="ticketCountLabel" layoutX="225.0" layoutY="135.0" style="-fx-font-size: 14px;" text="You have 0 open tickets." />
 

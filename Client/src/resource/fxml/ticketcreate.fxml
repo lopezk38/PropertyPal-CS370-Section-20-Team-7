@@ -20,13 +20,11 @@
         </Text>
 
         <Region prefHeight="30" />
-
     </VBox>
-
-    <Button fx:id="submitBtn" layoutX="241.0" layoutY="356.0" onAction="#onSubmitBtnClick" prefHeight="30.0" prefWidth="119.0" style="-fx-font-size: 12px;" text="Submit Ticket" />
 
     <TextField fx:id="titleField" layoutX="55.0" layoutY="117.0" prefHeight="25.0" prefWidth="490.0" promptText="Ticket Title" />
 
-    <TextArea fx:id="descriptionField" layoutX="55.0" layoutY="159.0" prefHeight="177.0" prefWidth="490.0" promptText="Describe the issue..." />
+    <TextArea fx:id="descriptionField" layoutX="55.0" layoutY="159.0" prefHeight="177.0" prefWidth="490.0" promptText="Ticket Description" />
 
+    <Button fx:id="submitBtn" layoutX="241.0" layoutY="356.0" onAction="#onSubmitBtnClick" prefHeight="30.0" prefWidth="119.0" text="Submit Ticket" />
 </AnchorPane>

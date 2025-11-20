@@ -15,7 +15,6 @@ tasks.register('buildAll') {
     dependsOn gradle.includedBuild('shared').task(':build')
     dependsOn gradle.includedBuild('server').task(':build')
     dependsOn gradle.includedBuild('client').task(':build')
-    dependsOn gradle.includedBuild('gui').task(':build')
 
     //Copy artifacts to testing folder for execution
     //dependsOn 'copyServerArtifacts'
@@ -42,15 +41,4 @@ tasks.register('debugClient', JavaExec) {
     FileTree jars = fileTree('/Client/build/libs/') { include '*.jar' }
     classpath = jars
     debug = true
-}
-
-tasks.register('runGUI', JavaExec) {
-    FileTree jars = fileTree('/GUI/build/libs/') { include '*.jar' }
-    classpath = jars
-}
-
-tasks.register('debugGUI', JavaExec) {
-    FileTree jars = fileTree('/GUI/build/libs/') { include '*.jar' }
-    classpath = jars
-	debug = true
 }

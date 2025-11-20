@@ -12,6 +12,7 @@ public class CoreLogic
     private AuthLogic authLogic = null;
     private AccountLogic acctLogic = null;
     private DocLogic docLogic = null;
+    private TicketLogic ticketLogic = null;
 
     private CoreLogic()
     {
@@ -22,6 +23,7 @@ public class CoreLogic
         authLogic = new AuthLogic();
         acctLogic = new AccountLogic();
         docLogic = new DocLogic();
+        ticketLogic = new TicketLogic();
     }
 
     public static CoreLogic getInstance()
@@ -53,6 +55,7 @@ public class CoreLogic
     public void handleCreateTicket(ClientRequest req) { ; } //TODO: Create and connect to submodule
     public void handleEditTicket(ClientRequest req) { ; } //TODO: Create and connect to submodule
     public void handleViewTicket(ClientRequest req) { ; } //TODO: Create and connect to submodule
+    public void handleGetTicketList(ClientRequest req) { ticketLogic.handleGetTicketList(req); } //TODO
 
     //PaymentLogic
     public void handleRequestRent(ClientRequest req) { ; } //TODO: Create and connect to submodule
@@ -63,5 +66,6 @@ public class CoreLogic
     public void handleTenantLandingPgInfo(ClientRequest req) { ; } //TODO: Create and connect to submodule
     public void handleLandlordLandingPgInfo(ClientRequest req) { ; } //TODO: Create and connect to submodule
     public void handleNotifications(ClientRequest req) { ; } //TODO: Create and connect to submodule
+
 
 }

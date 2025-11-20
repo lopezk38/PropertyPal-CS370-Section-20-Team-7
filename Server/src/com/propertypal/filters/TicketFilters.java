@@ -56,4 +56,25 @@ public class TicketFilters extends BaseFilters
         logic.handleViewTicket(req);
     }
 
+    public void filterGetTicketList(ClientRequest req)
+    {
+        if (!(req.packet instanceof GetTicketListPacket))
+        {
+            //Endpoint registered to wrong handler
+            System.out.println("ERROR: GetTicketListPacket is registered to the wrong endpoint");
+            req.setUnknownErrResponse();
+            filter.sendResponse(req);
+            return;
+        }
+
+        //Validate user is logged in
+        int authSuccess = filter.enforceLoggedIn(req);
+        if (authSuccess != BaseResponseEnum.SUCCESS) return;
+
+        //Verify user is allowed to view
+
+        //All tests passed, let it through
+        logic.handleGetTicketList(req);
+
+    }
 }

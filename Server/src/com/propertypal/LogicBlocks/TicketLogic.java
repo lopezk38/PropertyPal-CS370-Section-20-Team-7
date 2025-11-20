@@ -422,4 +422,92 @@ public class TicketLogic extends BaseLogic
         req.setResponse(resp);
         filter.sendResponse(req);
     }
+
+    public void handleGetTicketList(ClientRequest req)
+    {
+        GetTicketListPacket packet = (GetTicketListPacket) req.packet;
+        long parentLease = packet.lease_id;
+
+        //Values to retrieve
+        List<Long> tickets = new ArrayList<Long>();
+
+        //Get userID
+        long userID = userIDFromToken(packet.token);
+        if (userID == -1)
+        {
+            req.setBaseErrResponse(BaseResponseEnum.ERR_BAD_TOKEN);
+            filter.sendResponse(req);
+        }
+
+        //Query DB for ticket list
+        PreparedStatement ticketsQ = null;
+        try
+        {
+            ticketsQ = db.compileQuery("""
+            SELECT ticketID
+            FROM Tickets
+            WHERE parentLease = ?
+            """);
+            ticketsQ.setLong(1, parentLease);
+        }
+        catch (SQLException e)
+        {
+            System.out.println("ERROR: SQLException during handleGetTicketList ticket query compilation: " + e.toString());
+
+            req.setUnknownErrResponse();
+            filter.sendResponse(req);
+            return;
+        }
+
+        ResultSet ticketsR = null;
+        try
+        {
+            ticketsR = ticketsQ.executeQuery();
+        }
+        catch (SQLException e)
+        {
+            System.out.println("ERROR: SQLException during handleGetTicketList ticket query execution: " + e.toString());
+
+            req.setUnknownErrResponse();
+            filter.sendResponse(req);
+            db.closeConnection(ticketsQ);
+            return;
+        }
+
+        //TODO check if user is allowed to access each ticket
+
+        //TODO add response for ERR_BAD_LEASE somewhere
+
+        try
+        {
+            while (ticketsR.next())
+            {
+                //adds ticketID to tickets list
+                tickets.add(ticketsR.getLong("tickedID"));
+            }
+        }
+        catch (SQLException e)
+        {
+            System.out.println("ERROR: SQLException during getTicketList ticket response parsing: " + e.toString());
+
+            req.setUnknownErrResponse();
+            filter.sendResponse(req);
+
+            db.closeConnection(ticketsQ);
+            return;
+        }
+        finally
+        {
+            db.closeConnection(ticketsQ);
+        }
+        if (tickets.isEmpty()) { tickets = null; }
+
+        //Build response and send
+        GetTicketListResponse resp = new GetTicketListResponse();
+        resp.STATUS = BaseResponseEnum.SUCCESS;
+        resp.TICKETS = tickets;
+
+        req.setResponse(resp);
+        filter.sendResponse(req);
+    }
 }

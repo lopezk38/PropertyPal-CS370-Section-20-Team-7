@@ -7,50 +7,34 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.AnchorPane;
 
-import java.time.LocalDateTime;
+public class TicketReviewController {
 
-public class TicketReviewLandlordController {
+    @FXML private AnchorPane root;
 
-    @FXML
-    private AnchorPane root;
+    @FXML private Button backBtn;
+    @FXML private Button closeBtn;
 
-    @FXML
-    private Button backBtn;
+    @FXML private Label ticketTitle;
+    @FXML private Label ticketDate;
 
-    @FXML
-    private Button closeBtn;
-
-    @FXML
-    private Label ticketTitle;
+    @FXML private TextArea ticketDescription;
 
     @FXML
-    private Label ticketDate;
-
-    @FXML
-    private TextArea ticketDescription;
-
-    @FXML
-    private void initialize()
-    {
+    private void initialize() {
         Platform.runLater(() -> root.requestFocus());
     }
 
-    private void loadTicket(String title, String date, String description)
-    {
+    public void loadTicket(String title, String date, String description) {
         ticketTitle.setText(title);
         ticketDate.setText("Ticket date: " + date);
         ticketDescription.setText(description);
     }
 
-    @FXML
-    private void onBackBtnClick()
-    {
-        System.out.println("REDIRECT: Back to Ticket Manager");
+    @FXML private void onBackBtnClick() {
+        System.out.println("REDIRECT: Ticket Manager");
     }
 
-    @FXML
-    private void onCloseBtnClick()
-    {
+    @FXML private void onCloseBtnClick() {
         System.out.println("ACTION: Close Ticket");
     }
 }

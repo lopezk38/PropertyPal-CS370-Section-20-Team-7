@@ -23,6 +23,5 @@
 
     <Label fx:id="ticketCountLabel" layoutX="225.0" layoutY="135.0" style="-fx-font-size: 14px;" text="You have 0 open tickets." />
 
-    <Button fx:id="reviewBtn" layoutX="229.0" layoutY="290.0" onAction="#onReviewButtonClick" prefHeight="40" prefWidth="144.0" style="-fx-font-size: 12px;" text="Review Open Tickets" />
-
+    <Button fx:id="reviewBtn" layoutX="228.0" layoutY="285.0" onAction="#onReviewButtonClick" prefHeight="40" prefWidth="144.0" style="-fx-font-size: 12px;" text="Review Open Tickets" />
 </AnchorPane>

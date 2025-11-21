@@ -1,5 +1,7 @@
 package com.propertypal.client;
 
+import com.propertypal.client.SceneManager;
+
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -12,28 +14,25 @@ public class LoginController
     private VBox root;
 
     @FXML
+    private Label errorLabel;
+
+    @FXML
     private TextField emailField;
 
     @FXML
     private TextField passwordField;
 
     @FXML
-    private Label errorLabel;
-
-    // Prevents focus of the Email field when page spawns
-    @FXML
     private void initialize()
     {
-        Platform.runLater(() -> {
-            root.requestFocus();
-        });
+        Platform.runLater(() -> root.requestFocus());   // Prevents focus of elements when page loads
     }
 
     // Log In button trigger
     @FXML
     private void onLogInButtonClick()
     {
-        handleLogin();
+        validateLogin();
     }
 
     // TEMPORARY Create Account button trigger
@@ -43,7 +42,7 @@ public class LoginController
         errorLabel.setText("REDIRECT: CREATE ACCOUNT PAGE");
     }
 
-    private void handleLogin()
+    private void validateLogin()
     {
         String email = emailField.getText().trim();
         String password = passwordField.getText().trim();
@@ -62,7 +61,7 @@ public class LoginController
             return;
         }
 
-        // TEMPORARY Valid email + non-empty password
-        errorLabel.setText("LOGIN SUCCESS");
+        // Valid email + non-empty password
+        SceneManager.switchTo("/fxml/mainLandlord.fxml");
     }
 }

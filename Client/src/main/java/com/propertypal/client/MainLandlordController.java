@@ -1,5 +1,7 @@
 package com.propertypal.client;
 
+import com.propertypal.client.SceneManager;
+
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -25,17 +27,14 @@ public class MainLandlordController
     @FXML
     private Label phoneXLabel;
 
-    // Prevents focus elements when page spawns
+
     @FXML
     private void initialize()
     {
-        Platform.runLater(() -> {
-            root.requestFocus();
-        });
+        Platform.runLater(() -> root.requestFocus());   // Prevents focus of elements when page loads
     }
 
-    // TEMPORARY DEMO button trigger
-
+    // DEMO button trigger START
     private boolean demoActive = false;
 
     @FXML
@@ -60,14 +59,14 @@ public class MainLandlordController
 
             demoActive = false;
         }
-
+        // DEMO button trigger END
     }
 
-    // TEMPORARY Log Out button trigger
+    // Log Out button trigger
     @FXML
     private void onLogOutButtonClick()
     {
-        errorLabel.setText("REDIRECT: LOGIN PAGE");
+        SceneManager.switchTo("/fxml/login.fxml");
     }
 
     // TEMPORARY Document Manager button trigger
@@ -77,11 +76,11 @@ public class MainLandlordController
         errorLabel.setText("REDIRECT: DOCUMENT MANAGER PAGE");
     }
 
-    // TODO Ticket Manager button trigger
+    // Ticket Manager button trigger
     @FXML
     private void onTktMgrButtonClick()
     {
-        errorLabel.setText("REDIRECT: TICKET MANAGER PAGE");
+        SceneManager.switchTo("/fxml/ticketManagerLandlord.fxml");
     }
 
     // TEMPORARY Payment Manager button trigger

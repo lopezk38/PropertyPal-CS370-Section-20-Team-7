@@ -8,6 +8,8 @@ import java.sql.Statement;
 import java.sql.PreparedStatement;
 import java.util.HashMap;
 
+import java.time.LocalDateTime;
+
 public class DbWrapper
 {
     private static DbWrapper instance = null;
@@ -118,6 +120,7 @@ public class DbWrapper
                         city VARCHAR,
                         state VARCHAR,
                         zipCode VARCHAR,
+                        country VARCHAR,
                         CONSTRAINT PK_PROPS_ID PRIMARY KEY (propertyID)
                     )""");
 
@@ -326,8 +329,38 @@ public class DbWrapper
                 """);
 
             //DEBUG
-            con.createStatement().execute("INSERT INTO Users (email, hashedPW, requirePWReset, isLandlord) VALUES ('land@lord.com', 'landpass', false, true)");
-            con.createStatement().execute("INSERT INTO Users (email, hashedPW, requirePWReset, isLandlord) VALUES ('ten@ant.com', 'tenpass', false, false)");
+            PreparedStatement rLL = con.prepareStatement("INSERT INTO Users (email, hashedPW, requirePWReset, isLandlord) VALUES ('land@lord.com', 'landpass', false, true)", Statement.RETURN_GENERATED_KEYS);
+            rLL.execute();
+            ResultSet rLLKey = rLL.getGeneratedKeys();
+            rLLKey.next();
+            long llID = rLLKey.getLong(1);
+            PreparedStatement rTT = con.prepareStatement("INSERT INTO Users (email, hashedPW, requirePWReset, isLandlord) VALUES ('ten@ant.com', 'tenpass', false, false)", Statement.RETURN_GENERATED_KEYS);
+            rTT.execute();
+            ResultSet rTTKey = rTT.getGeneratedKeys();
+            rTTKey.next();
+            long ttID = rTTKey.getLong(1);
+            PreparedStatement rProp = con.prepareStatement("INSERT INTO Properties(owner, addr1, addr2, city, state, zipCode, country) VALUES (?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+            rProp.setLong(1, llID);
+            rProp.setString(2, "street");
+            rProp.setString(3, "suite 1");
+            rProp.setString(4, "San Diego");
+            rProp.setString(5, "CA");
+            rProp.setString(6, "12345");
+            rProp.setString(7, "USA");
+            rProp.execute();
+            ResultSet rPropKey = rProp.getGeneratedKeys();
+            rPropKey.next();
+            long ptID = rPropKey.getLong(1);
+            PreparedStatement rLease = con.prepareStatement("INSERT INTO Leases(associatedProperty, tenantID, active, dateMade) VALUES (?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+            rLease.setLong(1, ptID);
+            rLease.setLong(2, ttID);
+            rLease.setBoolean(3, true);
+            rLease.setString(4, LocalDateTime.now().toString());
+            rLease.execute();
+            ResultSet rLeaseKey = rLease.getGeneratedKeys();
+            rLeaseKey.next();
+            long leID = rLeaseKey.getLong(1);
+            con.createStatement().execute("UPDATE Properties SET activeLease = " + Long.toString(leID) + " WHERE propertyID = " + Long.toString(ptID));
         }
         catch (SQLException e)
         {

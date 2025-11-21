@@ -15,6 +15,10 @@ public class SceneManager
     {
         primaryStage = stage;
 
+        // Set the minimum size constraints
+        primaryStage.setMinWidth(1280); // Minimum width
+        primaryStage.setMinHeight(720); // Minimum height
+
         // Initialize the scene with the default size (1280x720)
         currentScene = new Scene(new Parent() {}, 1280, 720);
         primaryStage.setScene(currentScene);

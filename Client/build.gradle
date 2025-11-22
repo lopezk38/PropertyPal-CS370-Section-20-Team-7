@@ -27,7 +27,7 @@ dependencies {
 }
 
 application {
-    mainClass = 'com.propertypal.ClientInit'
+    mainClass = 'com.propertypal.client.ClientInit'
     mainModule = 'com.propertypal'
 }
 

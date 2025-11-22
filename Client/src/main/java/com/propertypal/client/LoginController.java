@@ -1,15 +1,18 @@
 package com.propertypal.client;
 
 import com.propertypal.client.SceneManager;
-
+import com.propertypal.client.ClientLogic.AcctLogic;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 
+import java.io.IOException;
+
 public class LoginController
 {
+    public AcctLogic login_info = new AcctLogic();
     @FXML
     private VBox root;
 
@@ -47,6 +50,8 @@ public class LoginController
         String email = emailField.getText().trim();
         String password = passwordField.getText().trim();
 
+        ;
+
         // Check empty fields
         if (email.isEmpty() || password.isEmpty())
         {
@@ -62,6 +67,19 @@ public class LoginController
         }
 
         // Valid email + non-empty password
-        SceneManager.switchTo("/fxml/mainLandlord.fxml");
+        try
+        {
+            // send login info to AcctLogic
+            login_info.acctLogin(email, password);
+
+            // if no exception, go to landlord main screen
+            SceneManager.switchTo("/fxml/mainLandlord.fxml");
+        }
+        catch (IOException e)
+        {
+            System.out.println("ERROR: acctLogin threw IOException");
+            // optional: show an error to the user
+            errorLabel.setText("Login failed. Please try again.");
+        }
     }
 }

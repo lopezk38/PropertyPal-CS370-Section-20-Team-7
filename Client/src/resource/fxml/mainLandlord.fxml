@@ -32,7 +32,7 @@
         </font>
     </Label>
     <Region layoutX="30.0" layoutY="76.0" minHeight="-Infinity" prefHeight="50.0" prefWidth="1240.0" />
-    <VBox maxWidth="-Infinity" prefHeight="200.0" prefWidth="800.0">
+    <VBox maxWidth="-Infinity" minHeight="-Infinity" prefHeight="225.0" prefWidth="800.0">
         <children>
             <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Tenant Snapshot">
                 <font>

@@ -65,15 +65,18 @@ public class LoginController
             errorLabel.setText("Please enter a valid email address");
             return;
         }
-
+        boolean loginSuccess = false;
         // Valid email + non-empty password
         try
         {
             // send login info to AcctLogic
-            login_info.acctLogin(email, password);
+            loginSuccess = login_info.acctLogin(email, password);
 
             // if no exception, go to landlord main screen
-            SceneManager.switchTo("/fxml/mainLandlord.fxml");
+            if(loginSuccess)
+            {
+                SceneManager.switchTo("/fxml/mainLandlord.fxml");
+            }
         }
         catch (IOException e)
         {

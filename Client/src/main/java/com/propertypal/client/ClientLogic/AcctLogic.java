@@ -16,9 +16,10 @@ public class AcctLogic
 
     }
 
-    public void acctLogin(String email, String pass) throws IOException
+    public boolean acctLogin(String email, String pass) throws IOException
     {
         LoginPacket loginPkt = new LoginPacket();
+        boolean loginSuccess = false;
         loginPkt.email = email;
         loginPkt.password = pass;
 
@@ -33,9 +34,12 @@ public class AcctLogic
         else
         {
             System.out.println("Token successfully received");
+            loginSuccess = true;
+            return loginSuccess;
+
         }
 
         //example for future client logics like GetTicketList
-        LoginResponse loginResp = (LoginResponse) resp;
+        //LoginResponse loginResp = (LoginResponse) resp;
     }
 }

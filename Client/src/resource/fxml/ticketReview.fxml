@@ -56,7 +56,7 @@
                <Font size="18.0" />
             </font>
          </Text>
-         <TextArea fx:id="descArea" editable="false" prefHeight="200.0" prefWidth="200.0" />
+         <TextArea fx:id="descArea" editable="false" prefHeight="200.0" prefWidth="200.0" wrapText="true" />
         </children>
     </VBox>
     <Region prefHeight="250.0" prefWidth="1240.0" />

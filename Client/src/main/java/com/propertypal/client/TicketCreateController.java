@@ -1,5 +1,6 @@
 package com.propertypal.client;
 
+import com.propertypal.client.SceneManager;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -31,7 +32,7 @@ public class TicketCreateController {
 
     @FXML
     private void onBackBtnClick() {
-        System.out.println("REDIRECT: Back to Ticket Manager");
+        SceneManager.switchTo("/fxml/ticketManagerTenant.fxml");
     }
 
     @FXML

@@ -49,7 +49,7 @@ public class LoginController
     {
         String email = emailField.getText().trim();
         String password = passwordField.getText().trim();
-
+        boolean loginSuccess = false;
         ;
 
         // Check empty fields
@@ -65,16 +65,20 @@ public class LoginController
             errorLabel.setText("Please enter a valid email address");
             return;
         }
-        boolean loginSuccess = false;
+
         // Valid email + non-empty password
         try
         {
+            //TODO need to direct tenant or landlord to corresponding landing pages
+
             // send login info to AcctLogic
             loginSuccess = login_info.acctLogin(email, password);
 
             // if no exception, go to landlord main screen
             if(loginSuccess)
             {
+                System.out.println("Login info correctly matches the database.");
+                System.out.println("Now switching to mainLandlord.fxml");
                 SceneManager.switchTo("/fxml/mainLandlord.fxml");
             }
         }

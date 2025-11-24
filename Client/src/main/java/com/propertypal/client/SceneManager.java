@@ -11,6 +11,10 @@ public class SceneManager
 
     private static Scene currentScene;  // Store current scene
 
+    public static void init(Stage stage, Scene scene) {
+        primaryStage = stage;
+        currentScene = scene;
+    }
     public static void setStage(Stage stage)
     {
         primaryStage = stage;
@@ -50,6 +54,9 @@ public class SceneManager
 
             // Optional: Update the scene size just to ensure it reflects the stage size
             primaryStage.sizeToScene();
+
+            //debugging
+            System.out.println("currentScene is: " + currentScene);
         }
 
         catch (Exception e)

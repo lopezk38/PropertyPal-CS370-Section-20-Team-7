@@ -1,6 +1,6 @@
 module com.propertypal.shared.network {
 	requires com.google.gson;
-	
+
 
     exports com.propertypal.shared.network;
 	exports com.propertypal.shared.network.enums;

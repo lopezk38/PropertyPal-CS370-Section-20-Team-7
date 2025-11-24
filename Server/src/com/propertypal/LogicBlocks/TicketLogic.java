@@ -145,7 +145,168 @@ public class TicketLogic extends BaseLogic
 
     public void handleEditTicketPacket(ClientRequest req)
     {
-        ;
+        EditTicketPacket packet = (EditTicketPacket) req.packet;
+        long ticketID = packet.ticket_id;
+        Integer ticketType = packet.ticket_type;
+        Integer ticketState = packet.ticket_state;
+        String desc = packet.description;
+        List<Long> addAtt = packet.attachment_ids;
+        List<Long> remAtt = packet.remove_attachment_ids;
+
+        if (ticketType != null)
+        {
+            PreparedStatement ticketQ = null;
+            try
+            {
+                ticketQ = db.compileQuery("""
+                        UPDATE TICKETS
+                        SET type = ?
+                        WHERE ticketID = ?
+                        """);
+                ticketQ.setInt(1, ticketType);
+                ticketQ.setLong(2, ticketID);
+
+                ticketQ.executeQuery();
+            }
+            catch (SQLException e)
+            {
+                System.out.println("ERROR: SQLException during handleEditTicketPacket ticket type query: " + e.toString());
+
+                req.setUnknownErrResponse();
+                filter.sendResponse(req);
+                return;
+            }
+            finally
+            {
+                db.closeConnection(ticketQ);
+            }
+        }
+
+        if (ticketState != null)
+        {
+            PreparedStatement ticketQ = null;
+            try
+            {
+                ticketQ = db.compileQuery("""
+                        UPDATE TICKETS
+                        SET state = ?
+                        WHERE ticketID = ?
+                        """);
+                ticketQ.setInt(1, ticketState);
+                ticketQ.setLong(2, ticketID);
+
+                ticketQ.executeQuery();
+            }
+            catch (SQLException e)
+            {
+                System.out.println("ERROR: SQLException during handleEditTicketPacket ticket state query: " + e.toString());
+
+                req.setUnknownErrResponse();
+                filter.sendResponse(req);
+                return;
+            }
+            finally
+            {
+                db.closeConnection(ticketQ);
+            }
+        }
+
+        if (desc != null)
+        {
+            PreparedStatement ticketQ = null;
+            try
+            {
+                ticketQ = db.compileQuery("""
+                        UPDATE TICKETS
+                        SET description = ?
+                        WHERE ticketID = ?
+                        """);
+                ticketQ.setString(1, desc);
+                ticketQ.setLong(2, ticketID);
+
+                ticketQ.executeQuery();
+            }
+            catch (SQLException e)
+            {
+                System.out.println("ERROR: SQLException during handleEditTicketPacket ticket description query: " + e.toString());
+
+                req.setUnknownErrResponse();
+                filter.sendResponse(req);
+                return;
+            }
+            finally
+            {
+                db.closeConnection(ticketQ);
+            }
+        }
+
+        if (addAtt != null && !addAtt.isEmpty())
+        {
+            for (Long attID : addAtt)
+            {
+                if (attID != null && attID >= 0)
+                {
+                    PreparedStatement ticketQ = null;
+                    try
+                    {
+                        ticketQ = db.compileQuery("""
+                                INSERT INTO TicketAttachmentsMap
+                                (
+                                    docID,
+                                    ticketID
+                                )
+                                VALUES (?, ?)
+                                """);
+                        ticketQ.setLong(1, attID);
+                        ticketQ.setLong(2, ticketID);
+
+                        ticketQ.executeQuery();
+                    } catch (SQLException e)
+                    {
+                        System.out.println("ERROR: SQLException during handleEditTicketPacket ticket attachment add query: " + e.toString());
+
+                        req.setUnknownErrResponse();
+                        filter.sendResponse(req);
+                        return;
+                    } finally
+                    {
+                        db.closeConnection(ticketQ);
+                    }
+                }
+            }
+        }
+
+        if (remAtt != null && !remAtt.isEmpty())
+        {
+            for (Long attID : remAtt)
+            {
+                if (attID != null && attID >= 0)
+                {
+                    PreparedStatement ticketQ = null;
+                    try
+                    {
+                        ticketQ = db.compileQuery("""
+                                DELETE FROM TicketAttachmentsMap
+                                WHERE docID = ? AND ticketID = ?
+                                """);
+                        ticketQ.setLong(1, attID);
+                        ticketQ.setLong(2, ticketID);
+
+                        ticketQ.executeQuery();
+                    } catch (SQLException e)
+                    {
+                        System.out.println("ERROR: SQLException during handleEditTicketPacket ticket attachment remove query: " + e.toString());
+
+                        req.setUnknownErrResponse();
+                        filter.sendResponse(req);
+                        return;
+                    } finally
+                    {
+                        db.closeConnection(ticketQ);
+                    }
+                }
+            }
+        }
     }
 
     public void handleViewTicketPacket(ClientRequest req)

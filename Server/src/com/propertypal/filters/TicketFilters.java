@@ -32,7 +32,23 @@ public class TicketFilters extends BaseFilters
 
     public void filterEditTicketPacket(ClientRequest req)
     {
-        ;
+        if (!(req.packet instanceof EditTicketPacket))
+        {
+            //Endpoint registered to wrong handler
+            System.out.println("ERROR: EditTicketPacket is registered to the wrong endpoint");
+            req.setUnknownErrResponse();
+            filter.sendResponse(req);
+            return;
+        }
+
+        //Validate user is logged in
+        int authSuccess = filter.enforceLoggedIn(req);
+        if (authSuccess != BaseResponseEnum.SUCCESS) return;
+
+        //TODO Verify user is allowed to edit
+
+        //All tests passed, let it through
+        logic.handleEditTicket(req);
     }
 
     public void filterViewTicketPacket(ClientRequest req)
@@ -50,7 +66,7 @@ public class TicketFilters extends BaseFilters
         int authSuccess = filter.enforceLoggedIn(req);
         if (authSuccess != BaseResponseEnum.SUCCESS) return;
 
-        //Verify user is allowed to view
+        //TODO Verify user is allowed to view
 
         //All tests passed, let it through
         logic.handleViewTicket(req);

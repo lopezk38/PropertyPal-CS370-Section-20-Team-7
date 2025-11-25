@@ -45,7 +45,7 @@ public class DocLogic extends BaseLogic
         byte[] fileContent = null;
         try
         {
-            fileContent = ungzip(compressed);
+            fileContent = CompressionUtil.ungzip(compressed);
         }
         catch (IOException e)
         {

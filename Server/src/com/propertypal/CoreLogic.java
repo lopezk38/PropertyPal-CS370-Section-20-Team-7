@@ -52,7 +52,7 @@ public class CoreLogic
     public void handleEditDoc(ClientRequest req) { ; } //TODO: Create and connect to submodule
 
     //TicketLogic
-    public void handleCreateTicket(ClientRequest req) { ; } //TODO: Create and connect to submodule
+    public void handleCreateTicket(ClientRequest req) { ticketLogic.handleCreateTicketPacket(req); } //TODO: Create and connect to submodule
     public void handleEditTicket(ClientRequest req) { ; } //TODO: Create and connect to submodule
     public void handleViewTicket(ClientRequest req) { ; } //TODO: Create and connect to submodule
     public void handleGetTicketList(ClientRequest req) { ticketLogic.handleGetTicketList(req); } //TODO

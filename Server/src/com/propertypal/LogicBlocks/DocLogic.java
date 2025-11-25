@@ -37,6 +37,9 @@ public class DocLogic extends BaseLogic
         catch (IllegalArgumentException e)
         {
             System.out.println("Bad base64 in doc_data");
+            req.setUnknownErrResponse();
+            filter.sendResponse(req);
+
             return;
         }
 
@@ -50,13 +53,16 @@ public class DocLogic extends BaseLogic
         catch (IOException e)
         {
             System.out.println("Failed to ungzip doc_data");
+            req.setUnknownErrResponse();
+            filter.sendResponse(req);
+
             return;
         }
 
         // Compare size with file_bytes
         if (fileBytes > 0 && fileContent.length != fileBytes)
         {
-            System.out.println("[WARNING] Size mismatch! expected " + fileBytes +
+            System.out.println("WARNING: Size mismatch! expected " + fileBytes +
                     " but got " + fileContent.length);
         }
 

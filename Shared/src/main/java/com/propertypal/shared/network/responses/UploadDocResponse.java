@@ -4,7 +4,7 @@ import com.propertypal.shared.network.enums.BaseResponseEnum;
 
 public class UploadDocResponse extends BaseResponse
 {
-    public String DOC_ID;
+    public Long DOC_ID;
     public static class UploadStatus extends BaseResponseEnum
     {
         public static final int ERR_BAD_PARENT = 1;

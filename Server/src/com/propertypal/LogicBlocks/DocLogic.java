@@ -41,7 +41,8 @@ public class DocLogic extends BaseLogic
         }
 
         // Decompress gzip
-        byte[] fileContent;
+
+        byte[] fileContent = null;
         try
         {
             fileContent = ungzip(compressed);
@@ -60,6 +61,7 @@ public class DocLogic extends BaseLogic
         }
 
         //TODO query
+        Long docID = null;
 
 
         //Build response and send

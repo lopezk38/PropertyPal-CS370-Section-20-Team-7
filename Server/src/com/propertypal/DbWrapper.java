@@ -145,6 +145,9 @@ public class DbWrapper
                     tenantID bigint,
                     active boolean,
                     dateMade timestamp,
+                    rentDueDay int,
+                    rentAmount numeric(20, 2),
+                    rentLastUpdated timestamp,
                     CONSTRAINT PK_LEASES_ID PRIMARY KEY (leaseID)
                 )""");
 

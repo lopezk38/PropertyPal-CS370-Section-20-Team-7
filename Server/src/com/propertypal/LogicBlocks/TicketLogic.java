@@ -114,6 +114,8 @@ public class TicketLogic extends BaseLogic
 
                         mapQ.setLong(1, docID);
                         mapQ.setLong(2, ticketID);
+
+                        mapQ.executeUpdate();
                     }
                     else { System.out.println("WARNING: Got null attachment for ticket. Ignoring..."); }
                 }
@@ -261,14 +263,16 @@ public class TicketLogic extends BaseLogic
                         ticketQ.setLong(2, ticketID);
 
                         ticketQ.executeQuery();
-                    } catch (SQLException e)
+                    }
+                    catch (SQLException e)
                     {
                         System.out.println("ERROR: SQLException during handleEditTicketPacket ticket attachment add query: " + e.toString());
 
                         req.setUnknownErrResponse();
                         filter.sendResponse(req);
                         return;
-                    } finally
+                    }
+                    finally
                     {
                         db.closeConnection(ticketQ);
                     }
@@ -293,14 +297,16 @@ public class TicketLogic extends BaseLogic
                         ticketQ.setLong(2, ticketID);
 
                         ticketQ.executeQuery();
-                    } catch (SQLException e)
+                    }
+                    catch (SQLException e)
                     {
                         System.out.println("ERROR: SQLException during handleEditTicketPacket ticket attachment remove query: " + e.toString());
 
                         req.setUnknownErrResponse();
                         filter.sendResponse(req);
                         return;
-                    } finally
+                    }
+                    finally
                     {
                         db.closeConnection(ticketQ);
                     }

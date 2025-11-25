@@ -11,6 +11,7 @@ public class SecurityFilter
     private AuthFilters authFilter = null;
     private AccountFilters acctFilter = null;
     private TicketFilters ticketFilter = null;
+    private PaymentFilters paymentFilter = null;
 
     private SecurityFilter()
     {
@@ -21,6 +22,7 @@ public class SecurityFilter
         authFilter = new AuthFilters();
         acctFilter = new AccountFilters();
         ticketFilter = new TicketFilters();
+        paymentFilter = new PaymentFilters();
     }
 
     public static SecurityFilter getInstance()
@@ -58,8 +60,8 @@ public class SecurityFilter
     public void filterGetTicketListPacket(ClientRequest req) { ticketFilter.filterGetTicketList(req);}
 
     //PaymentFilters
-    public void filterRequestRentPacket(ClientRequest req) { ; } //TODO: Create and connect to submodule
-    public void filterUpdAmountDuePacket(ClientRequest req) { ; } //TODO: Create and connect to submodule
+    public void filterRequestRentPacket(ClientRequest req) { paymentFilter.filterRequestRentPacket(req); }
+    public void filterUpdAmountDuePacket(ClientRequest req) { paymentFilter.filterUpdAmountDuePacket(req); }
     public void filterPayRentPacket(ClientRequest req) { ; } //TODO: Create and connect to submodule
 
     //NavigationFilters

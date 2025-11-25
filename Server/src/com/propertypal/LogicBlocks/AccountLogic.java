@@ -167,6 +167,7 @@ public class AccountLogic extends BaseLogic
 
         //Succeeded, send OK
         CreateAcctResponse resp = new CreateAcctResponse();
+        resp.STATUS = BaseResponseEnum.SUCCESS;
         resp.TOKEN = token;
         req.setResponse(resp);
         filter.sendResponse(req);
@@ -361,6 +362,7 @@ public class AccountLogic extends BaseLogic
 
         //Succeeded, send OK
         CreateAcctResponse resp = new CreateAcctResponse();
+        resp.STATUS = BaseResponseEnum.SUCCESS;
         resp.TOKEN = token;
         req.setResponse(resp);
         filter.sendResponse(req);
@@ -424,6 +426,7 @@ public class AccountLogic extends BaseLogic
 
         //Succeeded, send OK
         CreateInviteResponse resp = new CreateInviteResponse();
+        resp.STATUS = BaseResponseEnum.SUCCESS;
         resp.INVITE_ID = inviteID;
         req.setResponse(resp);
         filter.sendResponse(req);
@@ -593,6 +596,7 @@ public class AccountLogic extends BaseLogic
 
         //Succeeded, send OK
         AcceptInviteResponse resp = new AcceptInviteResponse();
+        resp.STATUS = BaseResponseEnum.SUCCESS;
         req.setResponse(resp);
         filter.sendResponse(req);
     }

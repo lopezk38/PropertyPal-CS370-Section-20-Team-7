@@ -12,6 +12,7 @@ public class CoreLogic
     private AccountLogic acctLogic = null;
     private DocLogic docLogic = null;
     private TicketLogic ticketLogic = null;
+    private PaymentLogic paymentLogic = null;
 
     private CoreLogic()
     {
@@ -23,6 +24,7 @@ public class CoreLogic
         acctLogic = new AccountLogic();
         docLogic = new DocLogic();
         ticketLogic = new TicketLogic();
+        paymentLogic = new PaymentLogic();
     }
 
     public static CoreLogic getInstance()
@@ -58,8 +60,8 @@ public class CoreLogic
     public void handleGetTicketList(ClientRequest req) { ticketLogic.handleGetTicketList(req); } //TODO
 
     //PaymentLogic
-    public void handleRequestRent(ClientRequest req) { ; } //TODO: Create and connect to submodule
-    public void handleUpdAmountDue(ClientRequest req) { ; } //TODO: Create and connect to submodule
+    public void handleRequestRent(ClientRequest req) { paymentLogic.handleRequestRent(req); }
+    public void handleUpdAmountDue(ClientRequest req) { paymentLogic.handleUpdAmountDue(req); }
     public void handlePayRent(ClientRequest req) { ; } //TODO: Create and connect to submodule
 
     //NavigationLogic

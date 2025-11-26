@@ -60,9 +60,10 @@ public class TicketLogic extends BaseLogic
                         description,
                         dateCreated,
                         timeModified,
-                        status
+                        status,
+                        type
                     )
-                    VALUES (?, ?, ?, ?, ?)""", Statement.RETURN_GENERATED_KEYS);
+                    VALUES (?, ?, ?, ?, ?, ?, ?)""", Statement.RETURN_GENERATED_KEYS);
 
             ticketQ.setLong(1, userID);
             ticketQ.setLong(2, packet.lease_id);
@@ -70,6 +71,7 @@ public class TicketLogic extends BaseLogic
             ticketQ.setString(4, createTime);
             ticketQ.setString(5, createTime);
             ticketQ.setInt(6, ticketState);
+            ticketQ.setInt(7, ticketType);
             ticketQ.executeUpdate();
 
             //Get the newly made primary key

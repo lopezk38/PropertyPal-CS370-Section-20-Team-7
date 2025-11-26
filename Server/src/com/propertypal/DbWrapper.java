@@ -223,6 +223,7 @@ public class DbWrapper
                         dateCreated timestamp,
                         allowUnauthView boolean,
                         data blob,
+                        fileSize bigint,
                         CONSTRAINT PK_DOCS_ID PRIMARY KEY (docID)
                     )""");
 

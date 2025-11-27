@@ -1,8 +1,7 @@
-package com.propertypal.client;
+package main.java.com.propertypal.client;
 
 import com.propertypal.client.DEMOSelectedTicket;
 import com.propertypal.client.SceneManager;
-
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -12,7 +11,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.VBox;
 
-public class TicketReviewController
+public class LL_TicketReviewController
 {
 
     @FXML

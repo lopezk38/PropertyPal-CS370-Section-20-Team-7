@@ -1,5 +1,6 @@
-package com.propertypal.client;
+package main.java.com.propertypal.client;
 
+import com.propertypal.client.SceneManager;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;

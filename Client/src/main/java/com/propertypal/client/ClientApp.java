@@ -1,11 +1,10 @@
-package com.propertypal.client;
+package main.java.com.propertypal.client;   // Check this if any dependency issues come up
 
+import com.propertypal.client.SceneManager;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import com.propertypal.client.SceneManager;
-
 import java.io.IOException;
 
 public class ClientApp extends Application

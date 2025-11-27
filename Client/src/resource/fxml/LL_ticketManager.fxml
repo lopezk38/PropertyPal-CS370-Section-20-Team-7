@@ -11,7 +11,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<VBox fx:id="root" alignment="TOP_CENTER" prefHeight="720.0" prefWidth="1280.0" spacing="20.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.propertypal.client.TicketManagerTenantController">
+<VBox fx:id="root" alignment="TOP_CENTER" prefHeight="720.0" prefWidth="1280.0" spacing="20.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.propertypal.client.LL_TicketManagerController">
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
@@ -42,27 +42,21 @@
                 </font>
             </Label>
             <Region minHeight="-Infinity" prefHeight="25.0" prefWidth="1240.0" />
-            <TableView fx:id="ticketTable" prefHeight="200.0" prefWidth="200.0">
-                <placeholder>
-                    <Label text="No tickets available to display" />
-                </placeholder>
-                <columns>
-                    <TableColumn fx:id="statusCol" prefWidth="266.0" resizable="false" sortType="DESCENDING" text="Status" />
-                    <TableColumn fx:id="titleCol" prefWidth="266.0" resizable="false" text="Title" />
-                    <TableColumn fx:id="dateCol" prefWidth="266.0" resizable="false" text="Creation Date" />
-                </columns>
-            </TableView>
+         <TableView fx:id="ticketTable" prefHeight="200.0" prefWidth="200.0">
+             <placeholder>
+                 <Label text="No tickets available to display" />
+             </placeholder>
+           <columns>
+               <TableColumn fx:id="statusCol" prefWidth="266.0" resizable="false" sortType="DESCENDING" text="Status" />
+             <TableColumn fx:id="titleCol" prefWidth="266.0" resizable="false" text="Title" />
+             <TableColumn fx:id="dateCol" prefWidth="266.0" resizable="false" text="Creation Date" />
+           </columns>
+         </TableView>
         </children>
     </VBox>
     <Region prefHeight="250.0" prefWidth="1240.0" />
     <HBox alignment="TOP_CENTER" minHeight="-Infinity" prefHeight="50.0" prefWidth="200.0">
         <children>
-         <Button alignment="CENTER" onAction="#onTktCreateButtonClick" prefHeight="50.0" prefWidth="200.0" text="Create Ticket" textAlignment="CENTER" wrapText="true">
-            <font>
-               <Font size="18.0" />
-            </font>
-         </Button>
-         <Region prefHeight="200.0" prefWidth="200.0" />
             <Button alignment="CENTER" onAction="#onTktReviewButtonClick" prefHeight="50.0" prefWidth="200.0" text="Review Ticket" textAlignment="CENTER" wrapText="true">
                 <font>
                     <Font size="18.0" />

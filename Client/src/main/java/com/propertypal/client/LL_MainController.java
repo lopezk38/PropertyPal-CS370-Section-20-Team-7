@@ -1,13 +1,11 @@
 package com.propertypal.client;
 
-import com.propertypal.client.SceneManager;
-
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 
-public class MainLandlordController
+public class LL_MainController
 {
     @FXML
     private VBox root;
@@ -80,7 +78,7 @@ public class MainLandlordController
     @FXML
     private void onTktMgrButtonClick()
     {
-        SceneManager.switchTo("/fxml/ticketManagerLandlord.fxml");
+        SceneManager.switchTo("/fxml/LL_ticketManager.fxml");
     }
 
     // TEMPORARY Payment Manager button trigger

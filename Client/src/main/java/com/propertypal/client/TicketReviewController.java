@@ -46,7 +46,7 @@ public class TicketReviewController
     @FXML
     private void onBackButtonClick()
     {
-        SceneManager.switchTo("/fxml/ticketManagerLandlord.fxml");
+        SceneManager.switchTo("/fxml/LL_ticketManager.fxml");
     }
 
     @FXML

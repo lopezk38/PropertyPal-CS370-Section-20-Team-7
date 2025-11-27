@@ -1,8 +1,5 @@
 package com.propertypal.client;
 
-import com.propertypal.client.DEMOSelectedTicket;
-import com.propertypal.client.SceneManager;
-
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -12,7 +9,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.VBox;
 
-public class TicketManagerTenantController
+public class LL_TicketManagerController
 {
     @FXML
     private VBox root;
@@ -81,13 +78,7 @@ public class TicketManagerTenantController
     @FXML
     private void onBackButtonClick()
     {
-        SceneManager.switchTo("/fxml/mainTenant.fxml");   // Needs to be mainTenant.fxml
-    }
-
-    @FXML
-    private void onTktCreateButtonClick()
-    {
-        SceneManager.switchTo("/fxml/ticketCreate.fxml");   // Needs to be mainTenant.fxml
+        SceneManager.switchTo("/fxml/LL_main.fxml");
     }
 
     @FXML

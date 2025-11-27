@@ -33,7 +33,7 @@ public class TicketCreateController
     @FXML
     private void onBackButtonClick()
     {
-        SceneManager.switchTo("/fxml/ticketManagerTenant.fxml");
+        SceneManager.switchTo("/fxml/TT_ticketManager.fxml");
     }
 
     @FXML

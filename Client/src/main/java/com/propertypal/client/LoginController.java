@@ -79,8 +79,8 @@ public class LoginController
             if(loginSuccess)
             {
                 System.out.println("Login info correctly matches the database.");
-                System.out.println("Now switching to mainLandlord.fxml");
-                SceneManager.switchTo("/fxml/mainLandlord.fxml");
+                System.out.println("Now switching to LL_main.fxml");
+                SceneManager.switchTo("/fxml/LL_main.fxml");
             }
         }
         catch (IOException e)

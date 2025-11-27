@@ -20,6 +20,10 @@ public class NavigationFilters extends BaseFilters
             return;
         }
 
+        //Validate user is logged in
+        int authSuccess = filter.enforceLoggedIn(req);
+        if (authSuccess != BaseResponseEnum.SUCCESS) return;
+
         //All checks passed, forward packet to next layer
         logic.handleGetRolePacket(req);
     }

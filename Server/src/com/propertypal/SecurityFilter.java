@@ -51,6 +51,7 @@ public class SecurityFilter
     public void filterCreateInvitePacket(ClientRequest req) { acctFilter.filterCreateInvitePacket(req); }
     public void filterAcceptInvitePacket(ClientRequest req) { acctFilter.filterAcceptInvitePacket(req); }
     public void filterGetInviteListPacket(ClientRequest req) { acctFilter.filterGetInviteListPacket(req); }
+    public void filterGetAcctLeasePacket(ClientRequest req) { acctFilter.filterGetAcctLeasePacket(req); }
 
     //DocFilters
     public void filterUploadDocPacket(ClientRequest req) { docFilter.filterUploadDocPacket(req); }

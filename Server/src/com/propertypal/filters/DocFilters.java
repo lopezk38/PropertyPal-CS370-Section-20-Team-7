@@ -24,6 +24,10 @@ public class DocFilters extends BaseFilters
             return;
         }
 
+        //Validate user is logged in
+        int authSuccess = filter.enforceLoggedIn(req);
+        if (authSuccess != BaseResponseEnum.SUCCESS) return;
+
         logic.handleUploadDoc(req);
     }
 
@@ -40,6 +44,10 @@ public class DocFilters extends BaseFilters
             return;
         }
 
+        //Validate user is logged in
+        int authSuccess = filter.enforceLoggedIn(req);
+        if (authSuccess != BaseResponseEnum.SUCCESS) return;
+
         logic.handleDeleteDoc(req);
     }
 
@@ -55,6 +63,10 @@ public class DocFilters extends BaseFilters
             filter.sendResponse(req);
             return;
         }
+
+        //Validate user is logged in
+        int authSuccess = filter.enforceLoggedIn(req);
+        if (authSuccess != BaseResponseEnum.SUCCESS) return;
 
         logic.handleViewDoc(req);
     }

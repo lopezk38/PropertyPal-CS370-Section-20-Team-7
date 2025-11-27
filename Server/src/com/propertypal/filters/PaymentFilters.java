@@ -20,6 +20,10 @@ public class PaymentFilters extends BaseFilters
             return;
         }
 
+        //Validate user is logged in
+        int authSuccess = filter.enforceLoggedIn(req);
+        if (authSuccess != BaseResponseEnum.SUCCESS) return;
+
         //TODO - make sure user is landlord and owns this lease
 
         //All checks passed, let it through
@@ -38,6 +42,10 @@ public class PaymentFilters extends BaseFilters
             filter.sendResponse(req);
             return;
         }
+
+        //Validate user is logged in
+        int authSuccess = filter.enforceLoggedIn(req);
+        if (authSuccess != BaseResponseEnum.SUCCESS) return;
 
         //TODO - make sure user is landlord and owns this lease
 

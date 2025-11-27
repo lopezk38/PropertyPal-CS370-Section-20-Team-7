@@ -56,6 +56,10 @@ public class AccountFilters extends BaseFilters
             return;
         }
 
+        //Validate user is logged in
+        int authSuccess = filter.enforceLoggedIn(req);
+        if (authSuccess != BaseResponseEnum.SUCCESS) return;
+
         logic.handleCreateInvite(req);
     }
 
@@ -71,6 +75,10 @@ public class AccountFilters extends BaseFilters
             filter.sendResponse(req);
             return;
         }
+
+        //Validate user is logged in
+        int authSuccess = filter.enforceLoggedIn(req);
+        if (authSuccess != BaseResponseEnum.SUCCESS) return;
 
         logic.handleAcceptInvite(req);
     }
@@ -88,6 +96,30 @@ public class AccountFilters extends BaseFilters
             return;
         }
 
+        //Validate user is logged in
+        int authSuccess = filter.enforceLoggedIn(req);
+        if (authSuccess != BaseResponseEnum.SUCCESS) return;
+
         logic.handleGetInviteList(req);
+    }
+
+    public void filterGetAcctLeasePacket(ClientRequest req)
+    {
+        if (!(req.packet instanceof GetAcctLeasePacket))
+        {
+            //Endpoint registered to wrong handler
+            System.out.println("ERROR: filterGetAcctLeasePacket is registered to the wrong endpoint");
+            BaseResponse resp = new BaseResponse();
+            resp.STATUS = BaseResponseEnum.ERR_UNKNOWN;
+            req.setResponse(resp);
+            filter.sendResponse(req);
+            return;
+        }
+
+        //Validate user is logged in
+        int authSuccess = filter.enforceLoggedIn(req);
+        if (authSuccess != BaseResponseEnum.SUCCESS) return;
+
+        logic.handleGetAcctLeasePacket(req);
     }
 }

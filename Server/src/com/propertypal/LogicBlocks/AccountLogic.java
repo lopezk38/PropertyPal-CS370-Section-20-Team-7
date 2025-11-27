@@ -1,8 +1,6 @@
 package com.propertypal.LogicBlocks;
 
 import com.propertypal.ClientRequest;
-import com.propertypal.SecurityFilter;
-import com.propertypal.DbWrapper;
 import com.propertypal.shared.network.responses.*;
 import com.propertypal.shared.network.packets.*;
 import com.propertypal.shared.network.enums.*;
@@ -10,8 +8,6 @@ import com.propertypal.shared.network.enums.*;
 import java.sql.SQLException;
 import java.sql.ResultSet;
 import java.sql.PreparedStatement;
-//import java.security.SecureRandom;
-//import org.springframework.security.crypto.bcrypt.BCrypt;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
@@ -344,6 +340,8 @@ public class AccountLogic extends BaseLogic
             propQ.setString(4, packet.propState);
             propQ.setString(5, packet.propZip);
             propQ.setString(6, packet.propCountry);
+
+            propQ.executeUpdate();
         }
         catch (SQLException e)
         {
@@ -402,6 +400,8 @@ public class AccountLogic extends BaseLogic
             invQ.setLong(2, target);
             invQ.setLong(3, propertyId);
             invQ.setString(4, LocalDateTime.now().toString());
+
+            invQ.executeUpdate();
 
             //Get the newly made primary key
             ResultSet res = invQ.getGeneratedKeys();
@@ -524,6 +524,8 @@ public class AccountLogic extends BaseLogic
                 leaseQ.setBoolean(3, true);
                 leaseQ.setString(4, LocalDateTime.now().toString());
 
+                leaseQ.executeUpdate();
+
                 //Get the newly made primary key
                 ResultSet res = leaseQ.getGeneratedKeys();
                 if (res.next())
@@ -580,6 +582,8 @@ public class AccountLogic extends BaseLogic
                     """);
 
             invQ2.setLong(1, inviteID);
+
+            invQ2.executeUpdate();
         }
         catch (SQLException e)
         {
@@ -679,8 +683,189 @@ public class AccountLogic extends BaseLogic
         GetInviteListResponse resp = new GetInviteListResponse();
         resp.STATUS = BaseResponseEnum.SUCCESS;
         resp.INVITES = invites;
-
         req.setResponse(resp);
+
         filter.sendResponse(req);
+    }
+
+    public void handleGetAcctLeasePacket(ClientRequest req)
+    {
+        GetAcctLeasePacket packet = (GetAcctLeasePacket) req.packet;
+
+        //Get userID
+        long userID = userIDFromToken(packet.token);
+        if (userID == -1)
+        {
+            req.setBaseErrResponse(BaseResponseEnum.ERR_BAD_TOKEN);
+            filter.sendResponse(req);
+        }
+
+        //Get if user is landlord or tenant
+        PreparedStatement roleQ = null;
+        Boolean isLandlord = null;
+        try
+        {
+            roleQ = db.compileQuery("""
+                SELECT isLandlord
+                FROM Users
+                WHERE userID = ?
+                """);
+
+            roleQ.setLong(1, userID);
+
+            ResultSet roleR = roleQ.executeQuery();
+
+            if (roleR.next())
+            {
+                isLandlord = roleR.getBoolean("isLandlord");
+            }
+            else
+            {
+                //User didn't exist in DB somehow
+                req.setUnknownErrResponse();
+                req.sendResponse();
+
+                return;
+            }
+        }
+        catch (SQLException e)
+        {
+            System.out.println("ERROR: SQLException during handleGetAcctLeasePacket user role query: " + e.toString());
+
+            req.setUnknownErrResponse();
+            filter.sendResponse(req);
+
+            return;
+        }
+        finally
+        {
+            db.closeConnection(roleQ);
+        }
+
+        //Check if account is fully configured yet
+        if (isLandlord == null)
+        {
+            //User is not part of a lease yet
+            GetAcctLeaseResponse resp = new GetAcctLeaseResponse();
+            resp.STATUS = GetAcctLeaseResponse.GetAcctLeaseStatus.ERR_NO_LEASE;
+            req.setResponse(resp);
+            filter.sendResponse(req);
+
+            return;
+        }
+
+        //Get the lease ID, looking at different tables depending on role
+        Long leaseID = null;
+        if (isLandlord)
+        {
+            //Look in properties table for active lease
+            PreparedStatement propQ = null;
+            try
+            {
+                propQ = db.compileQuery("""
+                SELECT activeLease
+                FROM Properties
+                WHERE owner = ?
+                """);
+
+                propQ.setLong(1, userID);
+
+                ResultSet propR = propQ.executeQuery();
+
+                if (propR.next())
+                {
+                    leaseID = propR.getLong("activeLease");
+                }
+                else
+                {
+                    //Property doesn't have a lease right now
+                    GetAcctLeaseResponse resp = new GetAcctLeaseResponse();
+                    resp.STATUS = GetAcctLeaseResponse.GetAcctLeaseStatus.ERR_NO_LEASE;
+                    req.setResponse(resp);
+                    filter.sendResponse(req);
+
+                    return;
+                }
+            }
+            catch (SQLException e)
+            {
+                System.out.println("ERROR: SQLException during handleGetAcctLeasePacket property query: " + e.toString());
+
+                req.setUnknownErrResponse();
+                filter.sendResponse(req);
+
+                return;
+            }
+            finally
+            {
+                db.closeConnection(propQ);
+            }
+        }
+        else
+        {
+            //Look in leases table for tenant
+            PreparedStatement leaseQ = null;
+            try
+            {
+                leaseQ = db.compileQuery("""
+                SELECT leaseID
+                FROM Leases
+                WHERE tenantID = ?
+                """);
+
+                leaseQ.setLong(1, userID);
+
+                ResultSet leaseR = leaseQ.executeQuery();
+
+                if (leaseR.next())
+                {
+                    leaseID = leaseR.getLong("leaseID");
+                }
+                else
+                {
+                    //Tenant doesn't have a lease yet
+                    GetAcctLeaseResponse resp = new GetAcctLeaseResponse();
+                    resp.STATUS = GetAcctLeaseResponse.GetAcctLeaseStatus.ERR_NO_LEASE;
+                    req.setResponse(resp);
+                    filter.sendResponse(req);
+
+                    return;
+                }
+            }
+            catch (SQLException e)
+            {
+                System.out.println("ERROR: SQLException during handleGetAcctLeasePacket lease query: " + e.toString());
+
+                req.setUnknownErrResponse();
+                filter.sendResponse(req);
+
+                return;
+            }
+            finally
+            {
+                db.closeConnection(leaseQ);
+            }
+
+            //Double check we actually got a lease
+            if (leaseID == null || leaseID < 1)
+            {
+                //No lease
+                GetAcctLeaseResponse resp = new GetAcctLeaseResponse();
+                resp.STATUS = GetAcctLeaseResponse.GetAcctLeaseStatus.ERR_NO_LEASE;
+                req.setResponse(resp);
+                filter.sendResponse(req);
+
+                return;
+            }
+
+            //If we got here, we got the lease successfully
+            GetAcctLeaseResponse resp = new GetAcctLeaseResponse();
+            resp.STATUS = BaseResponseEnum.SUCCESS;
+            resp.LEASE = leaseID;
+            req.setResponse(resp);
+            filter.sendResponse(req);
+
+            return;
+        }
     }
 }

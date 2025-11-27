@@ -48,12 +48,13 @@ public class CoreLogic
     public void handleCreateInvite(ClientRequest req) { acctLogic.handleCreateInvite(req); }
     public void handleAcceptInvite(ClientRequest req) { acctLogic.handleAcceptInvite(req); }
     public void handleGetInviteList(ClientRequest req) { acctLogic.handleGetInviteList(req); }
-    public void handleUploadDoc(ClientRequest req) { docLogic.handleUploadDoc(req); }
+    public void handleGetAcctLeasePacket(ClientRequest req) { acctLogic.handleGetAcctLeasePacket(req); }
 
     //DocLogic
     public void handleViewDoc(ClientRequest req) { docLogic.handleViewDoc(req); }
     public void handleEditDoc(ClientRequest req) { ; } //TODO: Create and connect to submodule
     public void handleDeleteDoc(ClientRequest req) { docLogic.handleDeleteDoc(req); }
+    public void handleUploadDoc(ClientRequest req) { docLogic.handleUploadDoc(req); }
 
     //TicketLogic
     public void handleCreateTicket(ClientRequest req) { ticketLogic.handleCreateTicketPacket(req); }

@@ -63,6 +63,9 @@ public class NetServer
         httpServer.createContext("/lease/reqRent", new Endpoint(RequestRentPacket.class, (request) -> { filter.filterRequestRentPacket(request); }));
         httpServer.createContext("/lease/setupRent", new Endpoint(UpdateAmountDuePacket.class, (request) -> { filter.filterUpdAmountDuePacket(request); }));
 
+        //navigation
+        httpServer.createContext("/lease/getRole", new Endpoint(GetRolePacket.class, (request) -> { filter.filterGetRolePacket(request); }));
+
         //httpServer.setExecutor(executor); //Multithreaded. Use for prod
         httpServer.setExecutor(null); //Singlethreaded. Use for easier debug
 

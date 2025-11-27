@@ -111,6 +111,8 @@ public class AuthLogic extends BaseLogic
             tokenQ.setString(2, exprTime.toString());
             tokenQ.setString(3, ip);
             tokenQ.setLong(4, userID);
+
+            tokenQ.executeUpdate();
         }
         catch (SQLException e)
         {
@@ -132,7 +134,60 @@ public class AuthLogic extends BaseLogic
         resp.TOKEN = token;
         req.setResponse(resp);
         filter.sendResponse(req);
+    }
 
+    public void handleLogout(ClientRequest req)
+    {
+        LogoutPacket packet = (LogoutPacket) req.packet;
 
+        //Delete auth token for this user in db
+        PreparedStatement userQ = null;
+        try
+        {
+            //Compile and execute query
+            userQ = db.compileQuery("""
+            UPDATE Users
+            SET loginAuthToken = NULL, loginTokenExpiration = NULL, loginTokenValidIP = NULL
+            WHERE loginAuthToken = ?
+            """);
+            userQ.setString(1, packet.token);
+
+            int changedRowCnt = userQ.executeUpdate();
+
+            //Verify a row was changed
+            if (changedRowCnt < 1)
+            {
+                //No row was changed. Bad user?
+                System.out.println("WARNING: User attempted to logout but handler changed no rows in DB");
+
+                req.setUnknownErrResponse();
+                filter.sendResponse(req);
+
+                return;
+            }
+            else if (changedRowCnt > 1)
+            {
+                System.out.println("WARNING: User logout affected multiple users somehow?");
+            }
+        }
+        catch (SQLException e)
+        {
+            System.out.println("ERROR: SQLException during logout query: " + e.toString());
+
+            req.setUnknownErrResponse();
+            filter.sendResponse(req);
+
+            return;
+        }
+        finally
+        {
+            db.closeConnection(userQ);
+        }
+
+        //Respond with success
+        LogoutResponse resp = new LogoutResponse();
+        resp.STATUS = BaseResponseEnum.SUCCESS;
+        req.setResponse(resp);
+        filter.sendResponse(req);
     }
 }

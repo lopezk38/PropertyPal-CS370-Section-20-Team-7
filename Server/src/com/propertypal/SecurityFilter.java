@@ -13,6 +13,7 @@ public class SecurityFilter
     private TicketFilters ticketFilter = null;
     private PaymentFilters paymentFilter = null;
     private DocFilters docFilter = null;
+    private NavigationFilters navFilter = null;
 
     private SecurityFilter()
     {
@@ -25,6 +26,7 @@ public class SecurityFilter
         ticketFilter = new TicketFilters();
         paymentFilter = new PaymentFilters();
         docFilter = new DocFilters();
+        navFilter = new NavigationFilters();
     }
 
     public static SecurityFilter getInstance()
@@ -68,6 +70,7 @@ public class SecurityFilter
     public void filterPayRentPacket(ClientRequest req) { ; } //TODO: Create and connect to submodule
 
     //NavigationFilters
+    public void filterGetRolePacket(ClientRequest req) { navFilter.filterGetRolePacket(req); }
     public void filterTenantLandingPgInfoPacket(ClientRequest req) { ; } //TODO: Create and connect to submodule
     public void filterLandlordLandingPgInfoPacket(ClientRequest req) { ; } //TODO: Create and connect to submodule
     public void filterNotificationsPacket(ClientRequest req) { ; } //TODO: Create and connect to submodule

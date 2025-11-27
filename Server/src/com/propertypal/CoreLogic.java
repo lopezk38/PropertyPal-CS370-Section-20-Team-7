@@ -13,6 +13,7 @@ public class CoreLogic
     private DocLogic docLogic = null;
     private TicketLogic ticketLogic = null;
     private PaymentLogic paymentLogic = null;
+    private NavigationLogic navLogic = null;
 
     private CoreLogic()
     {
@@ -66,6 +67,7 @@ public class CoreLogic
     public void handlePayRent(ClientRequest req) { ; } //TODO: Create and connect to submodule
 
     //NavigationLogic
+    public void handleGetRolePacket(ClientRequest req) { navLogic.handleGetRolePacket(req); }
     public void handleTenantLandingPgInfo(ClientRequest req) { ; } //TODO: Create and connect to submodule
     public void handleLandlordLandingPgInfo(ClientRequest req) { ; } //TODO: Create and connect to submodule
     public void handleNotifications(ClientRequest req) { ; } //TODO: Create and connect to submodule

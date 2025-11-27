@@ -542,7 +542,7 @@ public class TicketLogic extends BaseLogic
             //Compile and execute query
             commentQ = db.compileQuery("""
             SELECT commentID
-            FROM TicketCommentssMap
+            FROM TicketCommentsMap
             WHERE ticketID = ?
             """);
             commentQ.setLong(1, ticketID);

@@ -222,6 +222,8 @@ public class DbWrapper
                         docType int,
                         dateCreated timestamp,
                         allowUnauthView boolean,
+                        name VARCHAR,
+                        description VARCHAR,
                         data blob,
                         fileSize bigint,
                         CONSTRAINT PK_DOCS_ID PRIMARY KEY (docID)

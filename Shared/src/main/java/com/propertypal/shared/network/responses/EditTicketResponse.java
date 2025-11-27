@@ -2,7 +2,7 @@ package com.propertypal.shared.network.responses;
 
 import com.propertypal.shared.network.enums.BaseResponseEnum;
 
-public class EditTicketResponse
+public class EditTicketResponse extends BaseResponse
 {
     public static class EditTicketStatus extends BaseResponseEnum
     {

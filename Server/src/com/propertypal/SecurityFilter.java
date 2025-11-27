@@ -12,6 +12,7 @@ public class SecurityFilter
     private AccountFilters acctFilter = null;
     private TicketFilters ticketFilter = null;
     private PaymentFilters paymentFilter = null;
+    private DocFilters docFilter = null;
 
     private SecurityFilter()
     {
@@ -23,6 +24,7 @@ public class SecurityFilter
         acctFilter = new AccountFilters();
         ticketFilter = new TicketFilters();
         paymentFilter = new PaymentFilters();
+        docFilter = new DocFilters();
     }
 
     public static SecurityFilter getInstance()
@@ -49,9 +51,10 @@ public class SecurityFilter
     public void filterGetInviteListPacket(ClientRequest req) { acctFilter.filterGetInviteListPacket(req); }
 
     //DocFilters
-    public void filterUploadDocPacket(ClientRequest req) { ; } //TODO: Create and connect to submodule
-    public void filterViewDocPacket(ClientRequest req) { ; } //TODO: Create and connect to submodule
+    public void filterUploadDocPacket(ClientRequest req) { docFilter.filterUploadDocPacket(req); }
+    public void filterViewDocPacket(ClientRequest req) { docFilter.filterViewDocPacket(req); }
     public void filterEditDocPacket(ClientRequest req) { ; } //TODO: Create and connect to submodule
+    public void filterDeleteDocPacket(ClientRequest req) { docFilter.filterDeleteDocPacket(req); }
 
     //TicketFilters
     public void filterCreateTicketPacket(ClientRequest req) { ticketFilter.filterCreateTicketPacket(req); }
@@ -71,6 +74,5 @@ public class SecurityFilter
 
     //Outbound
     public void sendResponse(ClientRequest request) { request.sendResponse(); }
-
 
 }

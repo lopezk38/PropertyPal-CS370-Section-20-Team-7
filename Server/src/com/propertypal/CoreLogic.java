@@ -50,14 +50,15 @@ public class CoreLogic
     public void handleUploadDoc(ClientRequest req) { docLogic.handleUploadDoc(req); }
 
     //DocLogic
-    public void handleViewDoc(ClientRequest req) { ; } //TODO: Create and connect to submodule
+    public void handleViewDoc(ClientRequest req) { docLogic.handleViewDoc(req); }
     public void handleEditDoc(ClientRequest req) { ; } //TODO: Create and connect to submodule
+    public void handleDeleteDoc(ClientRequest req) { docLogic.handleDeleteDoc(req); }
 
     //TicketLogic
-    public void handleCreateTicket(ClientRequest req) { ticketLogic.handleCreateTicketPacket(req); } //TODO: Create and connect to submodule
+    public void handleCreateTicket(ClientRequest req) { ticketLogic.handleCreateTicketPacket(req); }
     public void handleEditTicket(ClientRequest req) { ; } //TODO: Create and connect to submodule
     public void handleViewTicket(ClientRequest req) { ; } //TODO: Create and connect to submodule
-    public void handleGetTicketList(ClientRequest req) { ticketLogic.handleGetTicketList(req); } //TODO
+    public void handleGetTicketList(ClientRequest req) { ticketLogic.handleGetTicketList(req); }
 
     //PaymentLogic
     public void handleRequestRent(ClientRequest req) { paymentLogic.handleRequestRent(req); }
@@ -68,6 +69,7 @@ public class CoreLogic
     public void handleTenantLandingPgInfo(ClientRequest req) { ; } //TODO: Create and connect to submodule
     public void handleLandlordLandingPgInfo(ClientRequest req) { ; } //TODO: Create and connect to submodule
     public void handleNotifications(ClientRequest req) { ; } //TODO: Create and connect to submodule
+
 
 
 }

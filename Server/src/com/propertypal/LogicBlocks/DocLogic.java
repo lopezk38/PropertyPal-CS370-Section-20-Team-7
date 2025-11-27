@@ -122,4 +122,53 @@ public class DocLogic extends BaseLogic
         req.setResponse(resp);
         filter.sendResponse(req);
     }
+
+    public void handleViewDoc(ClientRequest req)
+    {
+
+
+    }
+
+    public void handleDeleteDoc(ClientRequest req)
+    {
+        DeleteDocPacket packet = (DeleteDocPacket) req.packet;
+        Long docID = packet.doc_id;
+        PreparedStatement deldocQ = null;
+
+        try
+        {
+            deldocQ = db.compileQuery("""
+                    DELETE FROM Documents
+                    WHERE docID = ?
+                    """);
+            deldocQ.setLong(1, docID);
+
+            int rows = deldocQ.executeUpdate();
+
+            if (rows == 0)
+            {
+                throw new SQLException("No document found with docID = " + docID);
+            }
+        }
+        catch (SQLException e)
+        {
+            System.out.println("ERROR: SQLException during DeleteUploadDoc DB insert: " + e.toString());
+
+            req.setUnknownErrResponse();
+            filter.sendResponse(req);
+
+            return;
+        }
+        finally
+        {
+            db.closeConnection(deldocQ);
+        }
+
+            //Build response and send
+            DeleteDocResponse resp = new DeleteDocResponse();
+            resp.STATUS = BaseResponseEnum.SUCCESS;
+            req.setResponse(resp);
+            filter.sendResponse(req);
+    }
 }
+

@@ -26,4 +26,36 @@ public class DocFilters extends BaseFilters
 
         logic.handleUploadDoc(req);
     }
+
+    public void filterDeleteDocPacket(ClientRequest req)
+    {
+        if (!(req.packet instanceof DeleteDocPacket))
+        {
+            //Endpoint registered to wrong handler
+            System.out.println("ERROR: filterDeleteDocPacket is registered to the wrong endpoint");
+            BaseResponse resp = new BaseResponse();
+            resp.STATUS = BaseResponseEnum.ERR_UNKNOWN;
+            req.setResponse(resp);
+            filter.sendResponse(req);
+            return;
+        }
+
+        logic.handleDeleteDoc(req);
+    }
+
+    public void filterViewDocPacket(ClientRequest req)
+    {
+        if (!(req.packet instanceof ViewDocPacket))
+        {
+            //Endpoint registered to wrong handler
+            System.out.println("ERROR: filterViewDocPacket is registered to the wrong endpoint");
+            BaseResponse resp = new BaseResponse();
+            resp.STATUS = BaseResponseEnum.ERR_UNKNOWN;
+            req.setResponse(resp);
+            filter.sendResponse(req);
+            return;
+        }
+
+        logic.handleViewDoc(req);
+    }
 }

@@ -87,7 +87,7 @@ public class TicketManagerTenantController
     @FXML
     private void onTktCreateButtonClick()
     {
-        SceneManager.switchTo("/fxml/ticketcreate.fxml");   // Needs to be mainTenant.fxml
+        SceneManager.switchTo("/fxml/ticketCreate.fxml");   // Needs to be mainTenant.fxml
     }
 
     @FXML

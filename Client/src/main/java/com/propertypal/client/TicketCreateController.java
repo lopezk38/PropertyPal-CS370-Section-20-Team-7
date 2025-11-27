@@ -1,49 +1,66 @@
 package com.propertypal.client;
 
+import com.propertypal.client.DEMOSelectedTicket;
 import com.propertypal.client.SceneManager;
+
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.control.*;
+import javafx.scene.layout.VBox;
 
-public class TicketCreateController {
-
-    @FXML
-    private AnchorPane root;
+public class TicketCreateController
+{
 
     @FXML
-    private Button backBtn;
+    private VBox root;
 
     @FXML
-    private Button submitBtn;
+    private Label errorLabel;
 
     @FXML
     private TextField titleField;
 
     @FXML
-    private TextArea descriptionField;
+    private TextArea descArea;
 
     @FXML
-    private void initialize() {
-        Platform.runLater(() -> root.requestFocus());
+    private void initialize()
+    {
+        Platform.runLater(() -> root.requestFocus());   // Prevents focus of elements when page loads
     }
 
     @FXML
-    private void onBackBtnClick() {
+    private void onBackButtonClick()
+    {
         SceneManager.switchTo("/fxml/ticketManagerTenant.fxml");
     }
 
     @FXML
-    private void onSubmitBtnClick() {
+    private void onTktCreateButtonClick()
+    {
+        // Get the values from the text fields
         String title = titleField.getText().trim();
-        String desc = descriptionField.getText().trim();
+        String description = descArea.getText().trim();
 
-        System.out.println("SUBMIT: Title=" + title);
-        System.out.println("SUBMIT: Description=" + desc);
+        // Check if both fields are filled
+        if (title.isEmpty() || description.isEmpty())
+        {
+            // Display error message if any of the fields are empty
+            errorLabel.setText("Both title and description are required");
+            errorLabel.setStyle("-fx-text-fill: red;");
+        }
+        else
+        {
+            // If both fields are valid, show success message
+
+            // TODO: SUBMISSION LOGIC HERE
+
+            errorLabel.setText("Your ticket has been successfully submitted");
+            errorLabel.setStyle("-fx-text-fill: green;");
+
+            titleField.clear();
+            descArea.clear();
+        }
     }
 }
-
-
-

@@ -17,7 +17,7 @@ public class ClientApp extends Application
         // Login page
         FXMLLoader fxmlLoader = new FXMLLoader(ClientApp.class.getResource("/fxml/login.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 1280, 720);
-        stage.setTitle("Login");
+        stage.setTitle("PropertyPal");
         stage.setScene(scene);
 
         // Initialize SceneManager with the primary stage + scene

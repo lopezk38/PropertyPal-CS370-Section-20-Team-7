@@ -28,7 +28,6 @@ public class AcctLogic
 
         if(resp.STATUS != 0)
         {
-            //TODO error
             throw new IOException("Login failed with error: " + Integer.toString(resp.STATUS));
         }
         else

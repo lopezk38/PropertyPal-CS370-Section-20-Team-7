@@ -1,8 +1,7 @@
-package com.propertypal.client;
+package main.java.com.propertypal.client;
 
 import com.propertypal.client.DEMOSelectedTicket;
 import com.propertypal.client.SceneManager;
-
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -12,7 +11,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.VBox;
 
-public class TicketReviewController
+public class TT_TicketReviewController
 {
 
     @FXML
@@ -46,7 +45,7 @@ public class TicketReviewController
     @FXML
     private void onBackButtonClick()
     {
-        SceneManager.switchTo("/fxml/LL_ticketManager.fxml");
+        SceneManager.switchTo("/fxml/TT_ticketManager.fxml");
     }
 
     @FXML
@@ -70,8 +69,8 @@ public class TicketReviewController
 
         // Create confirmation dialog
         Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
-        confirmAlert.setTitle("Confirm Close Ticket");
-        confirmAlert.setHeaderText("Are you sure you want to close this ticket?");
+        confirmAlert.setTitle("Confirm Cancel Ticket");
+        confirmAlert.setHeaderText("Are you sure you want to cancel this ticket?");
         confirmAlert.setContentText("Ticket: " + currentTicket.get(0));
 
         // Wait for user response
@@ -82,12 +81,12 @@ public class TicketReviewController
                         // User confirmed: close the ticket
                         currentTicket.set(2, "Closed");
                         statusLabel.setText("Status: Closed");
-                        errorLabel.setText("Ticket closed successfully");
+                        errorLabel.setText("Ticket cancelled successfully");
                         errorLabel.setStyle("-fx-text-fill: green;");
                     } else
                     {
                         // User cancelled
-                        errorLabel.setText("Ticket not closed");
+                        errorLabel.setText("Ticket not cancelled");
                         errorLabel.setStyle("-fx-text-fill: red;");
                     }
         });

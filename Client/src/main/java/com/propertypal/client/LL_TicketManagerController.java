@@ -1,5 +1,7 @@
-package com.propertypal.client;
+package main.java.com.propertypal.client;
 
+import com.propertypal.client.DEMOSelectedTicket;
+import com.propertypal.client.SceneManager;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -94,7 +96,7 @@ public class LL_TicketManagerController
 
         DEMOSelectedTicket.set(selected);   // DEMO
 
-        SceneManager.switchTo("/fxml/ticketReview.fxml");
+        SceneManager.switchTo("/fxml/LL_ticketReview.fxml");
     }
 
     // Helper functions

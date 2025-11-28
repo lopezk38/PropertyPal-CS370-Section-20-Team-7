@@ -55,13 +55,14 @@ public class CoreLogic
     public void handleEditDoc(ClientRequest req) { ; } //TODO: Create and connect to submodule
     public void handleDeleteDoc(ClientRequest req) { docLogic.handleDeleteDoc(req); }
     public void handleUploadDoc(ClientRequest req) { docLogic.handleUploadDoc(req); }
-
+    public void handleGetDocInfo(ClientRequest req) { docLogic.handleGetDocInfo(req);}
     //TicketLogic
     public void handleCreateTicket(ClientRequest req) { ticketLogic.handleCreateTicketPacket(req); }
     public void handleEditTicket(ClientRequest req) { ticketLogic.handleEditTicketPacket(req); }
     public void handleViewTicket(ClientRequest req) { ticketLogic.handleViewTicketPacket(req); }
     public void handleGetTicketList(ClientRequest req) { ticketLogic.handleGetTicketList(req); }
     public void handleGetTicketInfo(ClientRequest req) { ticketLogic.handleGetTicketInfo(req); }
+
 
     //PaymentLogic
     public void handleRequestRent(ClientRequest req) { paymentLogic.handleRequestRent(req); }

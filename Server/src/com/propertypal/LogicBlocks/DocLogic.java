@@ -258,5 +258,71 @@ public class DocLogic extends BaseLogic
             req.setResponse(resp);
             filter.sendResponse(req);
     }
+
+    public void handleGetDocInfo(ClientRequest req)
+    {
+        GetDocInfoPacket packet = (GetDocInfoPacket) req.packet;
+        Long doc_id = packet.docID;
+
+        //values to retrieve
+        int fileType = 0;
+        String docName = null;
+        String docDesc = null;
+
+        PreparedStatement infoQ = null;
+        ResultSet res = null;
+
+        try
+        {
+            infoQ = db.compileQuery("""
+            SELECT docType,
+                   name,
+                   description
+            FROM Documents
+            WHERE docID = ?
+            """);
+
+            infoQ.setLong(1, doc_id);
+            res = infoQ.executeQuery();
+
+            if (!res.next())
+            {
+                System.out.println("docID not found");
+                req.setUnknownErrResponse();
+                filter.sendResponse(req);
+                return;
+            }
+
+            fileType = res.getInt("docType");
+            docName = res.getString("name");
+            docDesc = res.getString("description");
+
+        }
+        catch(SQLException e)
+        {
+            System.out.println("ERROR: SQLException during  GetDocInfo: " + e.toString());
+
+            req.setUnknownErrResponse();
+            filter.sendResponse(req);
+            return;
+        }
+        finally
+        {
+            db.closeConnection(infoQ);
+        }
+
+        GetDocInfoResponse resp = new GetDocInfoResponse();
+        resp.MIME_TYPE = fileType;
+        resp.NAME = docName;
+        resp.DESCRIPTION = docDesc;
+        req.setResponse(resp);
+        filter.sendResponse(req);
+    }
+
+    public void handleGetDocList(ClientRequest req)
+    {
+
+
+    }
 }
 

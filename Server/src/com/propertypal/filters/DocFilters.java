@@ -70,4 +70,24 @@ public class DocFilters extends BaseFilters
 
         logic.handleViewDoc(req);
     }
+    public void filterGetDocInfoPacket(ClientRequest req)
+    {
+        if (!(req.packet instanceof GetDocInfoPacket))
+        {
+            //Endpoint registered to wrong handler
+            System.out.println("ERROR: filterGetDocInfoPacket is registered to the wrong endpoint");
+            BaseResponse resp = new BaseResponse();
+            resp.STATUS = BaseResponseEnum.ERR_UNKNOWN;
+            req.setResponse(resp);
+            filter.sendResponse(req);
+            return;
+        }
+
+        //Validate user is logged in
+        int authSuccess = filter.enforceLoggedIn(req);
+        if (authSuccess != BaseResponseEnum.SUCCESS) return;
+
+        logic.handleGetDocInfo(req);
+    }
+
 }

@@ -59,6 +59,7 @@ public class NetServer
         httpServer.createContext("/ticket/view", new Endpoint(ViewTicketPacket.class, (request) -> { filter.filterViewTicketPacket(request); }));
         httpServer.createContext("/ticket/edit", new Endpoint(EditTicketPacket.class, (request) -> { filter.filterEditTicketPacket(request); }));
         httpServer.createContext("/ticket/list", new Endpoint(GetTicketListPacket.class, (request) -> { filter.filterGetTicketListPacket(request); }));
+        httpServer.createContext("/ticket/info", new Endpoint(GetTicketInfoPacket.class, (request) -> { filter.filterGetTicketInfoPacket(request); }));
 
         //payments
         httpServer.createContext("/lease/reqRent", new Endpoint(RequestRentPacket.class, (request) -> { filter.filterRequestRentPacket(request); }));

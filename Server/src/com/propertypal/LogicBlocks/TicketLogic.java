@@ -10,6 +10,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.PreparedStatement;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -679,5 +680,94 @@ public class TicketLogic extends BaseLogic
 
         req.setResponse(resp);
         filter.sendResponse(req);
+    }
+
+    public void handleGetTicketInfo(ClientRequest req)
+    {
+        GetTicketInfoPacket packet = (GetTicketInfoPacket) req.packet;
+        Long ticketID = packet.ticket_id;
+
+        if (ticketID == null || ticketID < 1)
+        {
+            req.setBaseErrResponse(GetTicketInfoResponse.GetTicketInfoStatus.ERR_BAD_TICKET);
+            filter.sendResponse(req);
+
+            return;
+        }
+
+        //Query DB for info
+        PreparedStatement ticketQ = null;
+        String desc = null;
+        String rawLastUpdTime = null;
+        Integer state = null;
+        Integer type = null;
+        try
+        {
+            //Compile and execute query
+            ticketQ = db.compileQuery("""
+            SELECT description, timeModified, state, type
+            FROM Tickets
+            WHERE ticketID = ?
+            """);
+            ticketQ.setLong(1, ticketID);
+
+            ResultSet ticketR = ticketQ.executeQuery();
+
+            //Extract results
+            if (ticketR.next())
+            {
+                //Got data for this ticket ID
+                desc = ticketR.getString("description");
+                rawLastUpdTime = ticketR.getString("timeModified");
+                state = ticketR.getInt("state");
+                type = ticketR.getInt("type");
+            }
+            else
+            {
+                //Ticket ID was not in DB
+                req.setBaseErrResponse(GetTicketInfoResponse.GetTicketInfoStatus.ERR_BAD_TICKET);
+                filter.sendResponse(req);
+
+                return;
+            }
+
+        }
+        catch (SQLException e)
+        {
+            System.out.println("ERROR: SQLException during handleGetTicketInfo ticket query: " + e.toString());
+
+            req.setUnknownErrResponse();
+            filter.sendResponse(req);
+
+            return;
+        }
+        finally
+        {
+            db.closeConnection(ticketQ);
+        }
+
+        //Convert last update time real timestamp
+        LocalDateTime lastUpdTime = null;
+        try
+        {
+            lastUpdTime = LocalDateTime.parse(rawLastUpdTime);
+        }
+        catch (DateTimeParseException e)
+        {
+            //Couldn't parse the saved time
+            System.out.println("WARNING: Could not parse last updated time for ticket during handleGetTicketInfo: " + e.toString());
+        }
+
+        //Return the data to the client
+        GetTicketInfoResponse resp = new GetTicketInfoResponse();
+        resp.STATUS = BaseResponseEnum.SUCCESS;
+        resp.DESCRIPTION = desc;
+        resp.STATE = state;
+        resp.TYPE = type;
+        resp.LAST_UPDATED = lastUpdTime;
+        req.setResponse(resp);
+        req.sendResponse();
+
+        return;
     }
 }

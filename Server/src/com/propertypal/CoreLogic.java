@@ -58,9 +58,10 @@ public class CoreLogic
 
     //TicketLogic
     public void handleCreateTicket(ClientRequest req) { ticketLogic.handleCreateTicketPacket(req); }
-    public void handleEditTicket(ClientRequest req) { ; } //TODO: Create and connect to submodule
-    public void handleViewTicket(ClientRequest req) { ; } //TODO: Create and connect to submodule
+    public void handleEditTicket(ClientRequest req) { ticketLogic.handleEditTicketPacket(req); }
+    public void handleViewTicket(ClientRequest req) { ticketLogic.handleViewTicketPacket(req); }
     public void handleGetTicketList(ClientRequest req) { ticketLogic.handleGetTicketList(req); }
+    public void handleGetTicketInfo(ClientRequest req) { ticketLogic.handleGetTicketInfo(req); }
 
     //PaymentLogic
     public void handleRequestRent(ClientRequest req) { paymentLogic.handleRequestRent(req); }

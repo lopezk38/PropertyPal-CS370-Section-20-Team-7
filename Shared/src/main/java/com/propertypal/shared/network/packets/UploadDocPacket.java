@@ -6,4 +6,6 @@ public class UploadDocPacket extends BasePacket
     public Long file_size;
     public String doc_data;
     public boolean allow_unauth;
+    public String name;
+    public String description;
 }

@@ -3,12 +3,18 @@ package com.propertypal.shared.network.responses;
 import com.propertypal.shared.network.enums.BaseResponseEnum;
 import com.propertypal.shared.network.enums.PermissionsEnum;
 
+import java.sql.Timestamp;
+
 public class ViewDocResponse extends BaseResponse
 {
-    public int PERMISSIONS;
+    public boolean ALLOW_UNAUTH;
     public int MIME_TYPE;
     public Long FILE_SIZE;
     public String DOC_DATA;
+    public String NAME;
+    public String DESCRIPTION;
+    public Long OWNER;
+    public Timestamp DATE_CREATED;
 
     public static class ViewDocPerms extends PermissionsEnum
     {

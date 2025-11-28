@@ -8,10 +8,7 @@ import com.propertypal.shared.network.responses.*;
 import com.propertypal.shared.network.enums.*;
 import com.propertypal.shared.network.helpers.*;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.PreparedStatement;
+import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +23,9 @@ public class DocLogic extends BaseLogic
         String mimeType = packet.mime_type;
         Long fileSize = packet.file_size;
         String docData = packet.doc_data;
+        String docName = packet.name;
+        String docDesc = packet.description;
+        boolean UnauthViewAllow = packet.allow_unauth;
 
         // Decode Base64
         byte[] compressed;
@@ -69,28 +69,30 @@ public class DocLogic extends BaseLogic
         //Create document entry in DB, keep ID around
         PreparedStatement updocQ = null;
         Long docID = null;
-        boolean UnauthViewAllow = true; //TODO currently unauthorized view always allowed - fix later
-        String createTime = LocalDateTime.now().toString();
 
+        Timestamp createTime = Timestamp.valueOf(LocalDateTime.now());
         try
         {
-            //TODO insert document name once added to table
             //create new document upload
             updocQ = db.compileQuery("""
                     INSERT INTO Documents (
                         docType,
                         dateCreated,
                         allowUnauthView,
+                        name,
+                        description
                         data,
                         fileSize,
                     )
-                    VALUES (?, ?, ?, ?, ?)""", Statement.RETURN_GENERATED_KEYS);
+                    VALUES (?, ?, ?, ?, ?, ?, ?)""", Statement.RETURN_GENERATED_KEYS);
 
             updocQ.setInt(1, mimeTypeInt); //docType
-            updocQ.setString(2, createTime); //dataCreated
+            updocQ.setTimestamp(2, createTime); //dateCreated
             updocQ.setBoolean(3, UnauthViewAllow); //allowUnauthView
-            updocQ.setBytes(5, fileContent); //data
-            updocQ.setLong(4, fileSize); //fileSize
+            updocQ.setString(4, docName); //name
+            updocQ.setString(5, docDesc); //description
+            updocQ.setBytes(6, fileContent); //data
+            updocQ.setLong(7, fileSize); //fileSize
             updocQ.executeUpdate();
 
             //Get the newly made primary key
@@ -125,7 +127,93 @@ public class DocLogic extends BaseLogic
 
     public void handleViewDoc(ClientRequest req)
     {
+        ViewDocPacket packet = (ViewDocPacket) req.packet;
+        Long docID = packet.doc_id;
 
+        //values to retrieve
+        Long doc_owner = null;
+        int fileType = 0;
+        Timestamp date_uploaded = null;
+        boolean allow_unauth = false;
+        String doc_name = null;
+        String desc = null;
+        byte[] doc_data = null;
+        Long file_size = null;
+
+        //initialize gzip and encode raw data for response
+        byte[] gzipped = null;
+        String encodedData = null;
+
+        PreparedStatement viewdocQ = null;
+        ResultSet res = null;
+
+        try
+        {
+            viewdocQ = db.compileQuery("""
+            SELECT owner
+                   docType,
+                   dateCreated,
+                   allowUnauthView,
+                   name,
+                   description,
+                   data,
+                   fileSize
+            FROM Documents
+            WHERE docID = ?
+            """);
+
+            viewdocQ.setLong(1, docID);
+            res = viewdocQ.executeQuery();
+
+            if (!res.next())
+            {
+                System.out.println("docID not found");
+                req.setUnknownErrResponse();
+                filter.sendResponse(req);
+                return;
+            }
+
+            doc_owner = res.getLong("owner");
+            fileType = res.getInt("docType");
+            date_uploaded = res.getTimestamp("dateCreated");
+            allow_unauth = res.getBoolean("allowUnauthView");
+            doc_name = res.getString("name");
+            desc = res.getString("description");
+            doc_data = res.getBytes("data");
+            file_size = res.getLong("fileSize");
+
+            //gzip and encode raw data for response
+            gzipped = CompressionUtil.gzip(doc_data);
+            encodedData = Base64.getEncoder().encodeToString(gzipped);
+
+        }
+        catch(SQLException | IOException e)
+        {
+            System.out.println("ERROR: SQLException during  ViewDoc: " + e.toString());
+
+            req.setUnknownErrResponse();
+            filter.sendResponse(req);
+
+            db.closeConnection(viewdocQ);
+            return;
+        }
+        finally
+        {
+            db.closeConnection(viewdocQ);
+        }
+
+        ViewDocResponse resp = new ViewDocResponse();
+
+        resp.OWNER = doc_owner;
+        resp.MIME_TYPE = fileType;
+        resp.DATE_CREATED = date_uploaded;
+        resp.ALLOW_UNAUTH = allow_unauth;
+        resp.NAME = doc_name;
+        resp.DESCRIPTION = desc;
+        resp.DOC_DATA = encodedData;
+        resp.FILE_SIZE = file_size;
+        req.setResponse(resp);
+        filter.sendResponse(req);
 
     }
 

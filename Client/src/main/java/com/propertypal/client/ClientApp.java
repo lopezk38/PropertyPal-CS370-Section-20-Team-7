@@ -1,4 +1,4 @@
-package main.java.com.propertypal.client;   // Check this if any dependency issues come up
+package com.propertypal.client;   // Check this if any dependency issues come up
 
 import com.propertypal.client.SceneManager;
 import javafx.application.Application;

@@ -1,6 +1,7 @@
 package main.java.com.propertypal.client;
 
 import com.propertypal.client.SceneManager;
+import com.propertypal.client.ClientLogic.TicketLogic;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -20,6 +21,8 @@ public class TicketCreateController
 
     @FXML
     private TextArea descArea;
+
+    private TicketLogic logic = new TicketLogic();
 
     @FXML
     private void initialize()
@@ -51,13 +54,24 @@ public class TicketCreateController
         {
             // If both fields are valid, show success message
 
-            // TODO: SUBMISSION LOGIC HERE
+            //SUBMISSION LOGIC
+            try
+            {
+                long leaseID = 1; //temp until login provides real lease ID
+                logic.createticket(leaseID, description);
 
-            errorLabel.setText("Your ticket has been successfully submitted");
-            errorLabel.setStyle("-fx-text-fill: green;");
+                errorLabel.setText("Your ticket has been successfully submitted");
+                errorLabel.setStyle("-fx-text-fill: green;");
 
-            titleField.clear();
-            descArea.clear();
+                titleField.clear();
+                descArea.clear();
+            }
+            catch (Exception error)
+            {
+                errorLabel.setText("Your ticket has failed to submit. Please try again");
+                errorLabel.setStyle("-fx-text-fill: red;");
+            }
+
         }
     }
 }

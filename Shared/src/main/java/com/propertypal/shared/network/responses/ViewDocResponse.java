@@ -7,8 +7,8 @@ import java.sql.Timestamp;
 
 public class ViewDocResponse extends BaseResponse
 {
-    public boolean ALLOW_UNAUTH;
-    public int MIME_TYPE;
+    public Boolean ALLOW_UNAUTH;
+    public Integer MIME_TYPE;
     public Long FILE_SIZE;
     public String DOC_DATA;
     public String NAME;

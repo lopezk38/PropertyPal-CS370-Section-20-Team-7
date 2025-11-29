@@ -4,7 +4,7 @@ import com.propertypal.shared.network.enums.BaseResponseEnum;
 
 public class GetRoleResponse extends BaseResponse
 {
-    public int ROLE; //Use RoleEnum to set this
+    public Integer ROLE; //Use RoleEnum to set this
 
     public static class GetRoleStatus extends BaseResponseEnum
     {

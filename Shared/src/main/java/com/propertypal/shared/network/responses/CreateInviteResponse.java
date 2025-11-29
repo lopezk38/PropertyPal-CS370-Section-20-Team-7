@@ -4,7 +4,7 @@ import com.propertypal.shared.network.enums.BaseResponseEnum;
 
 public class CreateInviteResponse extends BaseResponse
 {
-    public long INVITE_ID;
+    public Long INVITE_ID;
 
     public static class InviteStatus extends BaseResponseEnum
     {

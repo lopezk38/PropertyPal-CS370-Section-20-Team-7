@@ -4,7 +4,7 @@ import com.propertypal.shared.network.enums.BaseResponseEnum;
 
 public class GetDocInfoResponse extends BaseResponse
 {
-    public int MIME_TYPE;
+    public Integer MIME_TYPE;
     public String NAME;
     public String DESCRIPTION;
 

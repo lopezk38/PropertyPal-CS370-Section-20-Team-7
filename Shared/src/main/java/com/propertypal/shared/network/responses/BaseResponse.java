@@ -10,7 +10,7 @@ import com.propertypal.shared.network.enums.BaseResponseEnum;
 
 public class BaseResponse
 {
-    public int STATUS;
+    public Integer STATUS;
     public LocalDateTime TIMESTAMP;
 
     public BaseResponse()

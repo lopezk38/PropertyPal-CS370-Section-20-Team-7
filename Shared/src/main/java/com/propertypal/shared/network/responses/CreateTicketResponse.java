@@ -4,7 +4,7 @@ import com.propertypal.shared.network.enums.BaseResponseEnum;
 
 public class CreateTicketResponse extends BaseResponse
 {
-    public long TICKET_ID;
+    public Long TICKET_ID;
 
     public static class CreateTicketStatus extends BaseResponseEnum
     {

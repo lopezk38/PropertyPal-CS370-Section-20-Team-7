@@ -6,10 +6,10 @@ import java.util.List;
 
 public class ViewTicketResponse extends BaseResponse
 {
-    public int TICKET_TYPE; //Use TicketEnums to set
-    public int TICKET_STATE; //Use TicketEnums to set
+    public Integer TICKET_TYPE; //Use TicketEnums to set
+    public Integer TICKET_STATE; //Use TicketEnums to set
     public String DESCRIPTION;
-    public int PERMISSIONS; //Use PermissionsEnum to set
+    public Integer PERMISSIONS; //Use PermissionsEnum to set
     public List<Long> ATTACHMENT_IDS;
     public List<Long> COMMENT_IDS;
 

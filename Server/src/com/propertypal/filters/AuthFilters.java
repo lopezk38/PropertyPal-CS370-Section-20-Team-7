@@ -5,23 +5,99 @@ import com.propertypal.shared.network.responses.*;
 import com.propertypal.shared.network.packets.*;
 import com.propertypal.shared.network.enums.*;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
+
 public class AuthFilters extends BaseFilters
 {
     public int enforceLoggedIn(ClientRequest req)
     {
+        String token = req.packet.token;
+
         //Check DB for token, validate
-        //TODO
+        PreparedStatement tokenQ = null;
+        String rawExprTime = null;
+        LocalDateTime exprTime = null;
+        String validIP = null;
+        try
+        {
+            tokenQ = db.compileQuery("""
+                    SELECT loginTokenExpiration, loginTokenValidIP
+                    FROM Users
+                    WHERE loginAuthToken = ?
+                    """);
 
-        //If approved, allow packet to proceed
+            tokenQ.setString(1, token);
+
+            ResultSet tokenR = tokenQ.executeQuery();
+
+            if (tokenR.next())
+            {
+                rawExprTime = tokenR.getString("loginTokenExpiration");
+                validIP = tokenR.getString("loginTokenValidIP");
+            }
+            else
+            {
+                //Token wasn't in the DB
+                req.setBaseErrResponse(BaseResponseEnum.ERR_BAD_TOKEN);
+                filter.sendResponse(req);
+
+                return BaseResponseEnum.ERR_BAD_TOKEN;
+            }
+        }
+        catch (SQLException e)
+        {
+            System.out.println("ERROR: SQLException during enforceLoggedIn token query: " + e.toString());
+
+            req.setUnknownErrResponse();
+            filter.sendResponse(req);
+
+            return BaseResponseEnum.ERR_UNKNOWN;
+        }
+        finally
+        {
+            db.closeConnection(tokenQ);
+        }
+
+        //Convert from string to localdatetime
+        try
+        {
+            exprTime = LocalDateTime.parse(rawExprTime);
+        }
+        catch (DateTimeParseException e)
+        {
+            System.out.println("ERROR: Failed to parse datetime while checking login token: " + e.toString());
+
+            req.setUnknownErrResponse();
+            filter.sendResponse(req);
+
+            return BaseResponseEnum.ERR_UNKNOWN;
+        }
+
+        //Token existed, but still need to check constraints
+        if (LocalDateTime.now().isAfter(exprTime))
+        {
+            //Token has expired
+            req.setBaseErrResponse(BaseResponseEnum.ERR_BAD_TOKEN);
+            filter.sendResponse(req);
+
+            return BaseResponseEnum.ERR_BAD_TOKEN;
+        }
+
+        if (!req.getRemoteIP().equals(validIP))
+        {
+            //IP does not match IP which owns the token. Stolen token?
+            req.setBaseErrResponse(BaseResponseEnum.ERR_BAD_TOKEN);
+            filter.sendResponse(req);
+
+            return BaseResponseEnum.ERR_BAD_TOKEN;
+        }
+
+        //All checks passed, allow packet to proceed
         return BaseResponseEnum.SUCCESS;
-
-        //If rejected, respond with rejection and return with why
-        //UNCOMMENT BELOW AFTER LOGIC ABOVE IS IMPLEMENTED
-        //BaseResponse resp = new BaseResponse();
-        //resp.STATUS = BaseResponseEnum.ERR_BAD_TOKEN;
-        //req.setResponse(resp);
-        //req.sendResponse();
-        //return resp.STATUS;
     }
 
     public void filterLoginPacket(ClientRequest req)
@@ -47,8 +123,11 @@ public class AuthFilters extends BaseFilters
     public void filterLogoutPacket(ClientRequest req)
     {
         int loggedInCheckResult = enforceLoggedIn(req);
-        if (loggedInCheckResult == BaseResponseEnum.ERR_BAD_TOKEN){ return; }
+        if (loggedInCheckResult != BaseResponseEnum.SUCCESS) { return; }
 
-        //TODO logout path
+        //Forward request
+        logic.handleLogout(req);
+
+        return;
     }
 }

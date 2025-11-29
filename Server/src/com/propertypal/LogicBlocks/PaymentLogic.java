@@ -82,15 +82,17 @@ public class PaymentLogic extends BaseLogic
 
             req.setBaseErrResponse(RequestRentResponse.RequestRentStatus.ERR_NO_RENT_SETUP);
             filter.sendResponse(req);
+            return;
         }
 
-        if (amount == null) //TODO also check for negative or zero
+        if (amount == null || amount.compareTo(BigDecimal.ZERO) < 0) //is null or negative
         {
             //Invalid amount
             System.out.println("WARNING: handleRequestRent rent data query returned invalid amount");
 
             req.setBaseErrResponse(RequestRentResponse.RequestRentStatus.ERR_NO_RENT_SETUP);
             filter.sendResponse(req);
+            return;
         }
 
         //Get date of last request
@@ -224,6 +226,14 @@ public class PaymentLogic extends BaseLogic
             return;
         }
 
+        if (amount == null || amount.compareTo(BigDecimal.ZERO) < 0) //is null or negative
+        {
+            //Invalid amount
+            req.setBaseErrResponse(UpdateAmountDueResponse.UpdateAmountDueStatus.ERR_BAD_AMOUNT);
+            filter.sendResponse(req);
+            return;
+        }
+
         if (dueDay == null || dueDay < 1 || dueDay > 31)
         {
             //Invalid due day given
@@ -233,7 +243,6 @@ public class PaymentLogic extends BaseLogic
             filter.sendResponse(req);
             return;
         }
-        //TODO check for zero or negative amounts
 
         //Update lease state
         PreparedStatement leaseQ = null;

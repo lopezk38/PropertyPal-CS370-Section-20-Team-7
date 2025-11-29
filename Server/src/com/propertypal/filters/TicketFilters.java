@@ -23,8 +23,7 @@ public class TicketFilters extends BaseFilters
         int authSuccess = filter.enforceLoggedIn(req);
         if (authSuccess != BaseResponseEnum.SUCCESS) return;
 
-        //Verify user is a part of this lease
-        //TODO
+        //TODO Verify user is allowed to create
 
         //All tests passed, let it through
         logic.handleCreateTicket(req);
@@ -87,7 +86,7 @@ public class TicketFilters extends BaseFilters
         int authSuccess = filter.enforceLoggedIn(req);
         if (authSuccess != BaseResponseEnum.SUCCESS) return;
 
-        //Verify user is allowed to ask for tickets on this lease
+        //TODO Verify user is allowed to ask for tickets on this lease
 
         //All tests passed, let it through
         logic.handleGetTicketList(req);
@@ -109,7 +108,7 @@ public class TicketFilters extends BaseFilters
         int authSuccess = filter.enforceLoggedIn(req);
         if (authSuccess != BaseResponseEnum.SUCCESS) return;
 
-        //Verify user is allowed to ask for tickets on this lease
+        //TODO Verify user is allowed to ask for tickets on this lease
 
         //All tests passed, let it through
         logic.handleGetTicketInfo(req);

@@ -10,5 +10,6 @@ public class CreateInviteResponse extends BaseResponse
     {
         public static final int ERR_BAD_TARGET_USER = 1;
         public static final int ERR_BAD_LEASE = 2;
+        public static final int ERR_BAD_PROPERTY = 4;
     }
 }

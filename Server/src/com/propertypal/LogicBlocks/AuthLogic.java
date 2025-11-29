@@ -22,6 +22,22 @@ public class AuthLogic extends BaseLogic
         String email = packet.email;
         String password = packet.password;
 
+        if (email == null || email.isEmpty())
+        {
+            //No username given
+            req.setBaseErrResponse(LoginResponse.LoginStatus.ERR_BAD_EMAIL);
+            filter.sendResponse(req);
+            return;
+        }
+
+        if (password == null || password.isEmpty())
+        {
+            //No password given
+            req.setBaseErrResponse(LoginResponse.LoginStatus.ERR_BAD_PASSWORD);
+            filter.sendResponse(req);
+            return;
+        }
+
         //Query for user ID belonging to username
         //Query for hashed pw in db
         PreparedStatement userNameQ = null;

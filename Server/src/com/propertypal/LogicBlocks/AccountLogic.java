@@ -356,8 +356,6 @@ public class AccountLogic extends BaseLogic
             db.closeConnection(propQ);
         }
 
-        //TODO Update their permissions
-
         //Succeeded, send OK
         CreateAcctResponse resp = new CreateAcctResponse();
         resp.STATUS = BaseResponseEnum.SUCCESS;
@@ -369,8 +367,8 @@ public class AccountLogic extends BaseLogic
     public void handleCreateInvite(ClientRequest req)
     {
         CreateInvitePacket packet = (CreateInvitePacket) req.packet;
-        long propertyId = packet.propertyId;
-        long target = packet.targetUser;
+        Long propertyId = packet.propertyId;
+        Long target = packet.targetUser;
 
         //Get userID
         long landlordID = userIDFromToken(packet.token);
@@ -380,7 +378,60 @@ public class AccountLogic extends BaseLogic
             filter.sendResponse(req);
         }
 
-        //TODO check if propertyID is valid
+        //Check if propertyID is valid and they own it
+        if (propertyId == null || propertyId < 1)
+        {
+            req.setBaseErrResponse(CreateInviteResponse.InviteStatus.ERR_BAD_PROPERTY);
+            filter.sendResponse(req);
+        }
+
+        PreparedStatement propQ = null;
+        Long ownerID = null;
+        try
+        {
+            propQ = db.compileQuery("""
+                    SELECT owner
+                    FROM Properties
+                    WHERE propertyID = ?
+                    """);
+
+            propQ.setLong(1, propertyId);
+
+            ResultSet propR = propQ.executeQuery();
+
+            if (propR.next())
+            {
+                ownerID = propR.getLong("owner");
+            }
+            else
+            {
+                //PropID didn't exist in DB
+                System.out.println("WARNING: PropertyID was invalid in handleCreateInvite");
+                req.setBaseErrResponse(CreateInviteResponse.InviteStatus.ERR_BAD_PROPERTY);
+                filter.sendResponse(req);
+
+                return;
+            }
+        }
+        catch (SQLException e)
+        {
+            System.out.println("ERROR: SQLException during handleCreateInvite property query: " + e.toString());
+
+            req.setUnknownErrResponse();
+            filter.sendResponse(req);
+            return;
+        }
+        finally
+        {
+            db.closeConnection(propQ);
+        }
+
+        if (ownerID == null || ownerID != landlordID)
+        {
+            //Requesting user is not the owner, reject
+            req.setBaseErrResponse(BaseResponseEnum.ERR_PERMISSION_DENIED);
+            filter.sendResponse(req);
+        }
 
         //Insert invite into DB
         long inviteID = -1;
@@ -447,9 +498,9 @@ public class AccountLogic extends BaseLogic
         }
 
         //Retrieve invite data
-        long landlordID = -1;
-        long storedTenID = -1;
-        long propertyID = -1;
+        Long landlordID = null;
+        Long storedTenID = null;
+        Long propertyID = null;
         PreparedStatement invQ = null;
         try
         {
@@ -480,7 +531,7 @@ public class AccountLogic extends BaseLogic
         }
         catch (SQLException e)
         {
-            System.out.println("ERROR: SQLException during handleAcceptInvite query: " + e.toString());
+            System.out.println("ERROR: SQLException during handleAcceptInvite invite query: " + e.toString());
 
             req.setUnknownErrResponse();
             filter.sendResponse(req);
@@ -489,6 +540,37 @@ public class AccountLogic extends BaseLogic
         finally
         {
             db.closeConnection(invQ);
+        }
+
+        //Validate IDs
+        if (landlordID == null || landlordID < 1)
+        {
+            //Bad landlord
+            System.out.println("ERROR: Invite did not have a landlord");
+            req.setBaseErrResponse(AcceptInviteResponse.InviteStatus.ERR_BAD_INVITE);
+            filter.sendResponse(req);
+
+            return;
+        }
+
+        if (storedTenID == null || storedTenID < 1)
+        {
+            //Bad stored tenant
+            System.out.println("ERROR: Invite did not have a tenant");
+            req.setBaseErrResponse(AcceptInviteResponse.InviteStatus.ERR_BAD_INVITE);
+            filter.sendResponse(req);
+
+            return;
+        }
+
+        if (propertyID == null || propertyID < 1)
+        {
+            //Bad property
+            System.out.println("ERROR: Invite did not have a property");
+            req.setBaseErrResponse(AcceptInviteResponse.InviteStatus.ERR_BAD_INVITE);
+            filter.sendResponse(req);
+
+            return;
         }
 
         //Make sure invite is for this user
@@ -501,7 +583,53 @@ public class AccountLogic extends BaseLogic
             return;
         }
 
-        //TODO Make sure property is not already occupied
+        //Make sure property is not already occupied
+        PreparedStatement propQ = null;
+        Long activeLease = null;
+        try
+        {
+            propQ = db.compileQuery("""
+            SELECT activeLease
+            FROM Properties
+            WHERE propertyID = ?
+            """);
+            propQ.setLong(1, propertyID);
+
+            ResultSet propR = propQ.executeQuery();
+
+            if (propR.next())
+            {
+                //Got the property
+                activeLease = propR.getLong("activeLease");
+            }
+            else
+            {
+                //Property not found, malformed invite
+                req.setBaseErrResponse(AcceptInviteResponse.InviteStatus.ERR_BAD_INVITE);
+                filter.sendResponse(req);
+
+                return;
+            }
+        }
+        catch (SQLException e)
+        {
+            System.out.println("ERROR: SQLException during handleAcceptInvite property query: " + e.toString());
+
+            req.setUnknownErrResponse();
+            filter.sendResponse(req);
+            return;
+        }
+        finally
+        {
+            db.closeConnection(propQ);
+        }
+
+        if (activeLease != null && activeLease > 0)
+        {
+            //A lease already exists for this property
+            req.setBaseErrResponse(AcceptInviteResponse.InviteStatus.ERR_LEASE_OCCUPIED);
+            filter.sendResponse(req);
+        }
 
         if (accept)
         {
@@ -533,14 +661,16 @@ public class AccountLogic extends BaseLogic
                     leaseID = res.getLong(1);
                 }
                 else throw new SQLException("Failed to generate lease primary key");
-            } catch (SQLException e)
+            }
+            catch (SQLException e)
             {
                 System.out.println("ERROR: SQLException during handleAcceptInvite lease query: " + e.toString());
 
                 req.setUnknownErrResponse();
                 filter.sendResponse(req);
                 return;
-            } finally
+            }
+            finally
             {
                 db.closeConnection(leaseQ);
             }
@@ -557,20 +687,118 @@ public class AccountLogic extends BaseLogic
 
                 propQ2.setLong(1, leaseID);
                 propQ2.setLong(2, propertyID);
-            } catch (SQLException e)
+
+                propQ2.executeUpdate();
+            }
+            catch (SQLException e)
             {
                 System.out.println("ERROR: SQLException during handleAcceptInvite property update query: " + e.toString());
 
                 req.setUnknownErrResponse();
                 filter.sendResponse(req);
                 return;
-            } finally
+            }
+            finally
             {
                 db.closeConnection(propQ2);
             }
 
-            //TODO Set tenants permissions
+            //Set landlord and tenant permissions
+            PreparedStatement permsLQ = null;
+            PreparedStatement permsTQ = null;
+            try
+            {
+                //Landlord
+                permsLQ = db.compileQuery("""
+                        INSERT INTO LeasePermissions (
+                        userID,
+                        leaseID,
+                        editName,
+                        editAddress,
+                        viewPaymentsPage,
+                        genericTicketPerms,
+                        maintTicketPerms,
+                        taxTicketPerms,
+                        rentTicketPerms,
+                        viewTaxFinData,
+                        addLeaseContract,
+                        proposeLeaseChange,
+                        viewLeaseContract,
+                        addGenericDoc,
+                        viewGenericDoc
+                        )
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""");
 
+                permsLQ.setLong(1, landlordID);
+                permsLQ.setLong(2, leaseID);
+                permsLQ.setBoolean(3, true);
+                permsLQ.setBoolean(4, true);
+                permsLQ.setBoolean(5, true);
+                permsLQ.setInt(6, PermissionsEnum.Allowed.READ | PermissionsEnum.Allowed.WRITE | PermissionsEnum.Allowed.COMMENT);
+                permsLQ.setInt(7, PermissionsEnum.Allowed.READ | PermissionsEnum.Allowed.WRITE | PermissionsEnum.Allowed.COMMENT);
+                permsLQ.setInt(8, PermissionsEnum.Allowed.READ | PermissionsEnum.Allowed.WRITE | PermissionsEnum.Allowed.COMMENT);
+                permsLQ.setInt(9, PermissionsEnum.Allowed.READ | PermissionsEnum.Allowed.WRITE | PermissionsEnum.Allowed.COMMENT);
+                permsLQ.setBoolean(10, true);
+                permsLQ.setBoolean(11, true);
+                permsLQ.setBoolean(12, true);
+                permsLQ.setBoolean(13, true);
+                permsLQ.setBoolean(14, true);
+                permsLQ.setBoolean(15, true);
+
+                permsLQ.executeUpdate();
+
+                //Tenant
+                permsTQ = db.compileQuery("""
+                        INSERT INTO LeasePermissions (
+                        userID,
+                        leaseID,
+                        editName,
+                        editAddress,
+                        viewPaymentsPage,
+                        genericTicketPerms,
+                        maintTicketPerms,
+                        taxTicketPerms,
+                        rentTicketPerms,
+                        viewTaxFinData,
+                        addLeaseContract,
+                        proposeLeaseChange,
+                        viewLeaseContract,
+                        addGenericDoc,
+                        viewGenericDoc
+                        )
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""");
+
+                permsTQ.setLong(1, tenantID);
+                permsTQ.setLong(2, leaseID);
+                permsTQ.setBoolean(3, false);
+                permsTQ.setBoolean(4, false);
+                permsTQ.setBoolean(5, true);
+                permsTQ.setInt(6, PermissionsEnum.Allowed.READ | PermissionsEnum.Allowed.WRITE | PermissionsEnum.Allowed.COMMENT);
+                permsTQ.setInt(7, PermissionsEnum.Allowed.READ | PermissionsEnum.Allowed.WRITE | PermissionsEnum.Allowed.COMMENT);
+                permsTQ.setInt(8, PermissionsEnum.Allowed.NONE);
+                permsTQ.setInt(9, PermissionsEnum.Allowed.READ);
+                permsTQ.setBoolean(10, false);
+                permsTQ.setBoolean(11, false);
+                permsTQ.setBoolean(12, true);
+                permsTQ.setBoolean(13, true);
+                permsTQ.setBoolean(14, true);
+                permsTQ.setBoolean(15, true);
+
+                permsTQ.executeUpdate();
+            }
+            catch (SQLException e)
+            {
+                System.out.println("ERROR: SQLException during handleAcceptInvite permissions query: " + e.toString());
+
+                req.setUnknownErrResponse();
+                filter.sendResponse(req);
+                return;
+            }
+            finally
+            {
+                db.closeConnection(permsLQ);
+                db.closeConnection(permsTQ);
+            }
         }
         //Delete invite
         PreparedStatement invQ2 = null;

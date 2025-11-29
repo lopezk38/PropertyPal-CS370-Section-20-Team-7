@@ -58,8 +58,6 @@ public class LoginController
 
     private void validateLogin()
     {
-        boolean loginSuccess = false;
-
         // Client-side validation
 
         String email = emailField.getText().trim();
@@ -81,24 +79,38 @@ public class LoginController
 
         // Client-side validation passed
 
+        Integer userRole = null;
+
         try
         {
-            //TODO need to direct tenant or landlord to corresponding landing pages
+            //If a valid role is returned, login was a success and user will be navigated to their page
+            //acctLogin returns RoleEnum Integer value
+            userRole = login_info.acctLogin(email, password);
 
-            // send login info to AcctLogic
-            loginSuccess = login_info.acctLogin(email, password);
-
-            // if no exception, go to landlord main screen
-            if(loginSuccess)
-            {
-                System.out.println("Login info correctly matches the database.");
-                System.out.println("Now switching to LL_main.fxml");
-                SceneManager.switchTo("/fxml/LL_main.fxml");
+            if (userRole == null) {
+                System.out.println("No role returned");
+            } else {
+                switch (userRole) {
+                    case 0:
+                        System.out.println("Switching to Landlord page");
+                        SceneManager.switchTo("/fxml/LL_main.fxml");
+                        break;
+                    case 1:
+                        System.out.println("Switching to Tenant page");
+                        SceneManager.switchTo("/fxml/TT_main.fxml");
+                        break;
+                    case -1:
+                        System.out.println("Unknown role");
+                        break;
+                    default:
+                        System.out.println("Invalid role value: " + userRole);
+                        break;
+                }
             }
         }
         catch (IOException e)
         {
-            System.out.println("ERROR: acctLogin threw IOException");
+            System.out.println("ERROR in acctLogin: " + e.getMessage());
             // optional: show an error to the user
             errorLabel.setText("Login failed. Please try again.");
         }

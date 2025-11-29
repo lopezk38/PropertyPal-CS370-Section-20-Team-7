@@ -56,6 +56,8 @@ public class CoreLogic
     public void handleDeleteDoc(ClientRequest req) { docLogic.handleDeleteDoc(req); }
     public void handleUploadDoc(ClientRequest req) { docLogic.handleUploadDoc(req); }
     public void handleGetDocInfo(ClientRequest req) { docLogic.handleGetDocInfo(req);}
+    public void handleGetDocList(ClientRequest req) { docLogic.handleGetDocList(req); }
+
     //TicketLogic
     public void handleCreateTicket(ClientRequest req) { ticketLogic.handleCreateTicketPacket(req); }
     public void handleEditTicket(ClientRequest req) { ticketLogic.handleEditTicketPacket(req); }
@@ -74,7 +76,6 @@ public class CoreLogic
     public void handleTenantLandingPgInfo(ClientRequest req) { ; } //TODO: Create and connect to submodule
     public void handleLandlordLandingPgInfo(ClientRequest req) { ; } //TODO: Create and connect to submodule
     public void handleNotifications(ClientRequest req) { ; } //TODO: Create and connect to submodule
-
 
 
 }

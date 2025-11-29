@@ -59,6 +59,8 @@ public class SecurityFilter
     public void filterEditDocPacket(ClientRequest req) { ; } //TODO: Create and connect to submodule
     public void filterDeleteDocPacket(ClientRequest req) { docFilter.filterDeleteDocPacket(req); }
     public void filterGetDocInfoPacket(ClientRequest req) { docFilter.filterGetDocInfoPacket(req); }
+    public void filterGetDocListPacket(ClientRequest req) { docFilter.filterGetDocListPacket(req); }
+
     //TicketFilters
     public void filterCreateTicketPacket(ClientRequest req) { ticketFilter.filterCreateTicketPacket(req); }
     public void filterEditTicketPacket(ClientRequest req) { ticketFilter.filterEditTicketPacket(req); }
@@ -79,6 +81,7 @@ public class SecurityFilter
 
     //Outbound
     public void sendResponse(ClientRequest request) { request.sendResponse(); }
+
 
 
 }

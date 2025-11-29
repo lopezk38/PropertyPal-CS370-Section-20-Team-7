@@ -130,6 +130,14 @@ public class DocLogic extends BaseLogic
         ViewDocPacket packet = (ViewDocPacket) req.packet;
         Long docID = packet.doc_id;
 
+        //Get userID
+        long userID = userIDFromToken(packet.token);
+        if (userID == -1)
+        {
+            req.setBaseErrResponse(BaseResponseEnum.ERR_BAD_TOKEN);
+            filter.sendResponse(req);
+        }
+
         //values to retrieve
         Long doc_owner = null;
         int fileType = 0;
@@ -203,6 +211,7 @@ public class DocLogic extends BaseLogic
         }
 
         ViewDocResponse resp = new ViewDocResponse();
+        resp.STATUS = BaseResponseEnum.SUCCESS;
 
         resp.OWNER = doc_owner;
         resp.MIME_TYPE = fileType;
@@ -221,8 +230,16 @@ public class DocLogic extends BaseLogic
     {
         DeleteDocPacket packet = (DeleteDocPacket) req.packet;
         Long docID = packet.doc_id;
-        PreparedStatement deldocQ = null;
 
+        //Get userID
+        long userID = userIDFromToken(packet.token);
+        if (userID == -1)
+        {
+            req.setBaseErrResponse(BaseResponseEnum.ERR_BAD_TOKEN);
+            filter.sendResponse(req);
+        }
+
+        PreparedStatement deldocQ = null;
         try
         {
             deldocQ = db.compileQuery("""
@@ -263,6 +280,14 @@ public class DocLogic extends BaseLogic
     {
         GetDocInfoPacket packet = (GetDocInfoPacket) req.packet;
         Long doc_id = packet.docID;
+
+        //Get userID
+        long userID = userIDFromToken(packet.token);
+        if (userID == -1)
+        {
+            req.setBaseErrResponse(BaseResponseEnum.ERR_BAD_TOKEN);
+            filter.sendResponse(req);
+        }
 
         //values to retrieve
         int fileType = 0;
@@ -312,6 +337,7 @@ public class DocLogic extends BaseLogic
         }
 
         GetDocInfoResponse resp = new GetDocInfoResponse();
+        resp.STATUS = BaseResponseEnum.SUCCESS;
         resp.MIME_TYPE = fileType;
         resp.NAME = docName;
         resp.DESCRIPTION = docDesc;
@@ -321,8 +347,67 @@ public class DocLogic extends BaseLogic
 
     public void handleGetDocList(ClientRequest req)
     {
+        GetDocListPacket packet = (GetDocListPacket) req.packet;
+        Long lease_id = packet.leaseID;
 
+        //Get userID
+        long userID = userIDFromToken(packet.token);
+        if (userID == -1)
+        {
+            req.setBaseErrResponse(BaseResponseEnum.ERR_BAD_TOKEN);
+            filter.sendResponse(req);
+        }
 
+        //values to retrieve
+        List<Long> docs = new ArrayList<Long>();
+
+        PreparedStatement listQ = null;
+
+        try
+        {
+            listQ = db.compileQuery("""
+               SELECT docID
+               FROM Documents
+               WHERE = ?
+               """);
+            listQ.setLong(1, lease_id);
+        }
+        catch (SQLException e)
+        {
+            System.out.println("Error: SQLException during GetDocList compilation: " + e);
+            req.setUnknownErrResponse();
+            filter.sendResponse(req);
+            return;
+        }
+
+        try
+        {
+            ResultSet res = listQ.executeQuery();
+
+            while(res.next())
+            {
+                docs.add(res.getLong("docID"));
+            }
+
+        }
+        catch (SQLException e)
+        {
+            System.out.println("Error: SQLException during execution");
+            req.setUnknownErrResponse();
+            filter.sendResponse(req);
+            return;
+        }
+        finally
+        {
+            db.closeConnection(listQ);
+        }
+
+        //Build and send response
+        GetDocListResponse resp = new GetDocListResponse();
+        resp.STATUS = BaseResponseEnum.SUCCESS;
+        resp.DOCS = docs;
+        req.setResponse(resp);
+        filter.sendResponse(req);
     }
 }
 

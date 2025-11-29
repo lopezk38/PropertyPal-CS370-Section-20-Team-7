@@ -54,6 +54,7 @@ public class NetServer
         httpServer.createContext("/doc/view", new Endpoint(ViewDocPacket.class, (ClientRequest request) -> { filter.filterViewDocPacket(request); }));
         httpServer.createContext("/doc/delete", new Endpoint(DeleteDocPacket.class, (ClientRequest request) -> { filter.filterDeleteDocPacket(request); }));
         httpServer.createContext("/doc/info", new Endpoint(GetDocInfoPacket.class, (ClientRequest request) -> { filter.filterGetDocInfoPacket(request); }));
+        httpServer.createContext("/doc/list", new Endpoint(GetDocListPacket.class, (ClientRequest request) -> { filter.filterGetDocListPacket(request); }));
 
         //tickets
         httpServer.createContext("/ticket/new", new Endpoint(CreateTicketPacket.class, (request) -> { filter.filterCreateTicketPacket(request); }));

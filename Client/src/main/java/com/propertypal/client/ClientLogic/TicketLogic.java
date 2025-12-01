@@ -1,22 +1,25 @@
 package com.propertypal.client.ClientLogic;
 
-import com.propertypal.shared.network.packets.*;
 import com.propertypal.client.APIHandler;
-import com.propertypal.shared.network.responses.*;
 import com.propertypal.shared.network.enums.TicketEnums;
+import com.propertypal.shared.network.packets.*;
+import com.propertypal.shared.network.responses.*;
 
 import java.io.IOException; //for throwing IOException
 import java.util.List; //for sending & receive lists (like ticket ID)
 
-public class TicketLogic {
+public class TicketLogic
+{
     APIHandler handler = null;
 
-    public TicketLogic() {
+    public TicketLogic()
+    {
         handler = APIHandler.getInstance(); //get shared APIHandler instance for sending network requests
     }
 
     //create new ticket (called by TicketCreateController)
-    public CreateTicketResponse createticket(long leaseID, String description) throws IOException {
+    public CreateTicketResponse createticket(long leaseID, String description) throws IOException
+    {
         CreateTicketPacket tktpkt = new CreateTicketPacket();
 
         tktpkt.lease_id = leaseID; //tells server which lease the ticket belongs to
@@ -33,5 +36,59 @@ public class TicketLogic {
         }
 
         return resp; //return server's response
+    }
+
+    //get ticket list
+    public List<Long> getTicketIDList(long leaseID) throws IOException
+    {
+        GetTicketListPacket tktpkt = new GetTicketListPacket();
+        tktpkt.lease_id = leaseID;
+
+        GetTicketListResponse resp = handler.sendRequest("/ticket/list", tktpkt, GetTicketListResponse.class);
+
+        if (resp.STATUS != 0)
+        {
+            throw new IOException("GetTicketList failed. STATUS = " + resp.STATUS);
+        }
+
+        return resp.TICKETS;
+
+    }
+
+    //get ticket info
+    public GetTicketInfoResponse getTicketInfo(long ticketID) throws IOException
+    {
+        GetTicketInfoPacket tktpkt = new GetTicketInfoPacket();
+        tktpkt.ticket_id = ticketID;
+
+        GetTicketInfoResponse resp = handler.sendRequest("/ticket/info", tktpkt, GetTicketInfoResponse.class);
+
+        if (resp.STATUS != 0)
+        {
+            throw new IOException("GetTicketInfo failed. STATUS = " + resp.STATUS);
+        }
+
+        return resp;
+
+    }
+
+    //close ticket
+    public void closeTicket(long ticketID) throws IOException
+    {
+        EditTicketPacket p = new EditTicketPacket();
+        p.ticket_id = ticketID;
+
+        p.ticket_state = TicketEnums.State.CLOSED; //mark ticket closed
+        p.ticket_type = null; //no type change
+        p.description = null; //no description change
+        p.attachment_ids = null;
+        p.remove_attachment_ids = null;
+
+        EditTicketResponse resp = handler.sendRequest("/ticket/edit", p, EditTicketResponse.class);
+
+        if (resp.STATUS != 0)
+        {
+            throw new IOException("CloseTicket failed. STATUS=" + resp.STATUS);
+        }
     }
 }

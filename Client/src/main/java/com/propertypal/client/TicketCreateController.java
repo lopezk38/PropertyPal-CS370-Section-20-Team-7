@@ -2,6 +2,7 @@ package main.java.com.propertypal.client;
 
 import com.propertypal.client.SceneManager;
 import com.propertypal.client.ClientLogic.TicketLogic;
+
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -49,6 +50,7 @@ public class TicketCreateController
             // Display error message if any of the fields are empty
             errorLabel.setText("Both title and description are required");
             errorLabel.setStyle("-fx-text-fill: red;");
+            return;
         }
         else
         {

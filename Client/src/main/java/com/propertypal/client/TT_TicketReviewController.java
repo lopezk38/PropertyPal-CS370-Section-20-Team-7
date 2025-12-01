@@ -1,6 +1,6 @@
 package main.java.com.propertypal.client;
 
-import com.propertypal.client.DEMOSelectedTicket;
+import com.propertypal.client.SelectedTicket;
 import com.propertypal.client.SceneManager;
 import com.propertypal.client.ClientLogic.TicketLogic;
 

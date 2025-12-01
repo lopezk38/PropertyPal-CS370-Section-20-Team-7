@@ -1,6 +1,6 @@
 package main.java.com.propertypal.client;
 
-import com.propertypal.client.DEMOSelectedTicket;
+import com.propertypal.client.SelectedTicket;
 import com.propertypal.client.SceneManager;
 import com.propertypal.client.ClientLogic.TicketLogic;
 import com.propertypal.shared.network.enums.TicketEnums;
@@ -92,7 +92,8 @@ public class LL_TicketManagerController
     @FXML
     private void onTktReviewButtonClick()
     {
-        ObservableList<String> selected = ticketTable.getSelectionModel().getSelectedItem();    // DEMO
+        var selected = ticketTable.getSelectionModel().getSelectedItem();
+        //ObservableList<String> selected = ticketTable.getSelectionModel().getSelectedItem();   //  DEMO
 
         if (selected == null)
         {
@@ -100,7 +101,8 @@ public class LL_TicketManagerController
             return;
         }
 
-        DEMOSelectedTicket.set(selected);   // DEMO
+        //DEMOSelectedTicket.set(selected);   // DEMO
+        SelectedTicket.set(selected);
 
         SceneManager.switchTo("/fxml/LL_ticketReview.fxml");
     }
@@ -113,7 +115,7 @@ public class LL_TicketManagerController
         {
             long leaseID = 1; //temp until login provides real lease ID
 
-            var ids = logic.getTicketIdList(leaseID);
+            var ids = logic.getTicketIDList(leaseID);
 
             ObservableList<ObservableList<String>> rows = FXCollections.observableArrayList();
 

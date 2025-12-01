@@ -1,6 +1,6 @@
 package main.java.com.propertypal.client;
 
-import com.propertypal.client.DEMOSelectedTicket;
+import com.propertypal.client.SelectedTicket;
 import com.propertypal.client.SceneManager;
 import com.propertypal.client.ClientLogic.TicketLogic;
 import com.propertypal.shared.network.enums.TicketEnums;
@@ -42,7 +42,7 @@ public class TT_TicketManagerController
     @FXML
     private void initialize()
     {
-        Platform.runLater(() -> root.requestFocus());   // Prevents focus of elements when page loads
+        Platform.runLater(() -> root.requestFocus()); // Prevents focus of elements when page loads
 
         setupTableColumns();
         loadTickets();
@@ -100,15 +100,16 @@ public class TT_TicketManagerController
     @FXML
     private void onTktReviewButtonClick()
     {
-        ObservableList<String> selected = ticketTable.getSelectionModel().getSelectedItem();    // DEMO
+        var selected = ticketTable.getSelectionModel().getSelectedItem();
 
         if (selected == null)
         {
             errorLabel.setText("Please select a ticket first");
+            errorLabel.setStyle("-fx-text-fill: red;");
             return;
         }
 
-        DEMOSelectedTicket.set(selected);   // DEMO
+        SelectedTicket.set(selected);
 
         SceneManager.switchTo("/fxml/TT_ticketReview.fxml");
     }
@@ -121,7 +122,7 @@ public class TT_TicketManagerController
         {
             long leaseID = 1; //temp until login provides real ID
 
-            var ids = logic.getTicketIdList(leaseID);
+            var ids = logic.getTicketIDList(leaseID);
 
             ObservableList<ObservableList<String>> rows = FXCollections.observableArrayList();
 

@@ -2,6 +2,8 @@ package main.java.com.propertypal.client;
 
 import com.propertypal.client.DEMOSelectedTicket;
 import com.propertypal.client.SceneManager;
+import com.propertypal.client.ClientLogic.TicketLogic;
+
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -34,6 +36,9 @@ public class TT_TicketReviewController
 
     private ObservableList<String> currentTicket;
 
+    private TicketLogic logic = new TicketLogic();
+    private long ticketID; //parsed from row
+
     @FXML
     private void initialize()
     {
@@ -60,7 +65,7 @@ public class TT_TicketReviewController
 
         String status = currentTicket.get(2);
 
-        if (!status.equalsIgnoreCase("Open"))
+        if (status.equalsIgnoreCase("Closed"))
         {
             errorLabel.setText("Ticket is already closed");
             errorLabel.setStyle("-fx-text-fill: red;");
@@ -76,19 +81,29 @@ public class TT_TicketReviewController
         // Wait for user response
         confirmAlert.showAndWait().ifPresent(response ->
         {
-                    if (response == ButtonType.OK)
-                    {
-                        // User confirmed: close the ticket
-                        currentTicket.set(2, "Closed");
-                        statusLabel.setText("Status: Closed");
-                        errorLabel.setText("Ticket cancelled successfully");
-                        errorLabel.setStyle("-fx-text-fill: green;");
-                    } else
-                    {
-                        // User cancelled
-                        errorLabel.setText("Ticket not cancelled");
-                        errorLabel.setStyle("-fx-text-fill: red;");
-                    }
+            if (response == ButtonType.OK)
+            {
+                try
+                {
+                    logic.closeTicket(ticketID); //server call
+                    currentTicket.set(2, "Closed");
+                    statusLabel.setText("Status: Closed");
+                    errorLabel.setText("Ticket cancelled successfully");
+                    errorLabel.setStyle("-fx-text-fill: green;");
+                }
+                catch (Exception error)
+                {
+                    errorLabel.setText("Failed to cancel ticket");
+                    errorLabel.setStyle("-fx-text-fill: red;");
+                }
+            }
+
+            else // User cancelled
+            {
+                errorLabel.setText("Ticket not closed");
+                errorLabel.setStyle("-fx-text-fill: red;");
+            }
+
         });
     }
 
@@ -98,15 +113,19 @@ public class TT_TicketReviewController
     {
         currentTicket = DEMOSelectedTicket.get();
 
-        if (currentTicket != null)
-        {
-            titleLabel.setText("Title: " + currentTicket.get(0));
-            dateLabel.setText("Created: " + currentTicket.get(1));
-            statusLabel.setText("Status: " + currentTicket.get(2));
-            descArea.setText(currentTicket.get(3));
-        } else
+        if (currentTicket == null)
         {
             errorLabel.setText("No ticket selected");
+            return;
         }
+
+        //extract ticket id from first cell
+        String first = currentTicket.get(0);
+        ticketID = Long.parseLong(first.split(" ")[1]);
+
+        titleLabel.setText("Title: " + currentTicket.get(0));
+        dateLabel.setText("Created: " + currentTicket.get(1));
+        statusLabel.setText("Status: " + currentTicket.get(2));
+        descArea.setText(currentTicket.get(3));
     }
 }

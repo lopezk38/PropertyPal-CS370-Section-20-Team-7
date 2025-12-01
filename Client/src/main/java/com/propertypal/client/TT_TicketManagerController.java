@@ -48,6 +48,13 @@ public class TT_TicketManagerController
         loadTickets();
     }
 
+    // TODO: DELETE THIS
+    @FXML
+    private void onDEMOButtonClick()
+    {
+        errorLabel.setText("NO DEMO");
+    }
+
     /*
     // DEMO button trigger START
     private boolean demoActive = false;

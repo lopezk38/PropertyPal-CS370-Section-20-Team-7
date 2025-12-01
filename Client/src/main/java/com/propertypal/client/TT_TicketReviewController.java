@@ -111,7 +111,7 @@ public class TT_TicketReviewController
 
     private void loadTicket()
     {
-        currentTicket = DEMOSelectedTicket.get();
+        currentTicket = SelectedTicket.get();
 
         if (currentTicket == null)
         {

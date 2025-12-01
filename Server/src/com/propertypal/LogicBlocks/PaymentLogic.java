@@ -278,7 +278,15 @@ public class PaymentLogic extends BaseLogic
         //Update paypal info if given
         if (paypalLink != null && !paypalLink.isEmpty())
         {
-            //TODO validate link
+            //Validate link syntax
+            if (!paypalLink.matches("(?i)^PayPal\\.Me\\/[a-z0-9]{1,20}$"))
+            {
+                //Link failed validation
+                req.setBaseErrResponse(UpdateAmountDueResponse.UpdateAmountDueStatus.ERR_BAD_PAYPAL_LINK);
+                filter.sendResponse(req);
+
+                return;
+            }
 
             PreparedStatement payQ = null;
             try

@@ -1,9 +1,9 @@
 module com.propertypal.client {
     requires javafx.controls;
     requires javafx.fxml;
-	requires org.apache.httpcomponents.httpclient;
+    requires javafx.swing;
+   	requires org.apache.httpcomponents.httpclient;
     requires com.propertypal.shared.network;
-
 
     opens com.propertypal.client to javafx.fxml;
     exports com.propertypal.client;

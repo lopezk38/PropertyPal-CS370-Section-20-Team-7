@@ -72,7 +72,7 @@ public class TT_MainController
     @FXML
     private void onDocMgrButtonClick()
     {
-        errorLabel.setText("REDIRECT: DOCUMENT MANAGER PAGE");
+        SceneManager.switchTo("/fxml/documentManager.fxml");
     }
 
     // Ticket Manager button trigger

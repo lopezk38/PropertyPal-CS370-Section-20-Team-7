@@ -129,6 +129,13 @@ public class TT_TicketManagerController
 
             var ids = logic.getTicketIDList(leaseID);
 
+            if (ids == null)
+            {
+                //No tickets
+                updateTicketCount(0);
+                return;
+            }
+
             ObservableList<ObservableList<String>> rows = FXCollections.observableArrayList();
 
             for (Long id : ids)

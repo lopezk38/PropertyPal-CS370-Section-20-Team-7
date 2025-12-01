@@ -48,47 +48,40 @@ public class LL_TicketManagerController
         loadTickets();
     }
 
-    // TODO: DELETE THIS
-    @FXML
-    private void onDEMOButtonClick()
-    {
-        errorLabel.setText("NO DEMO");
-    }
-
-    /* DEMO button trigger START
-    private boolean demoActive = false;
-
-    @FXML
-    private void onDEMOButtonClick()
-    {
-
-        if (!demoActive)
-        {
-            ObservableList<ObservableList<String>> rows = FXCollections.observableArrayList();
-
-            rows.add(createTicket("Request for maintenance", "2025-11-22", "Open", "The garage door is busted."));
-            rows.add(createTicket("Broken light", "2025-11-22", "Closed", "I don't know how to change a lightbulb."));
-            rows.add(createTicket("Plumbing issue", "2025-11-22", "Open", "I clogged the toilet."));
-
-            ticketTable.getItems().setAll(rows);
-
-            long openCount = rows.stream()
-                    .filter(r -> r.get(2).equalsIgnoreCase("Open"))
-                    .count();
-
-            updateTicketCount((int) openCount);
-
-            demoActive = true;
-        }
-        else
-        {
-            ticketTable.getItems().clear();
-            updateTicketCount(0);
-
-            demoActive = false;
-        }
-    }
-    DEMO button trigger END */
+//    // DEMO button trigger START
+//    private boolean demoActive = false;
+//
+//    @FXML
+//    private void onDEMOButtonClick()
+//    {
+//
+//        if (!demoActive)
+//        {
+//            ObservableList<ObservableList<String>> rows = FXCollections.observableArrayList();
+//
+//            rows.add(createTicket("Request for maintenance", "2025-11-22", "Open", "The garage door is busted."));
+//            rows.add(createTicket("Broken light", "2025-11-22", "Closed", "I don't know how to change a lightbulb."));
+//            rows.add(createTicket("Plumbing issue", "2025-11-22", "Open", "I clogged the toilet."));
+//
+//            ticketTable.getItems().setAll(rows);
+//
+//            long openCount = rows.stream()
+//                    .filter(r -> r.get(2).equalsIgnoreCase("Open"))
+//                    .count();
+//
+//            updateTicketCount((int) openCount);
+//
+//            demoActive = true;
+//        }
+//        else
+//        {
+//            ticketTable.getItems().clear();
+//            updateTicketCount(0);
+//
+//            demoActive = false;
+//        }
+//    }
+//    // DEMO button trigger END
 
     @FXML
     private void onBackButtonClick()

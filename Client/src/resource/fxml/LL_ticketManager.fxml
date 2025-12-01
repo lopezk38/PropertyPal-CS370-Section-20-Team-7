@@ -24,7 +24,7 @@
                     <Label fx:id="errorLabel" textFill="RED" />
                 </children>
             </HBox>
-            <Button alignment="CENTER" minWidth="-Infinity" onAction="#onDEMOButtonClick" prefHeight="25.0" prefWidth="100.0" text="DEMO" />
+         <Region minWidth="-Infinity" prefHeight="25.0" prefWidth="100.0" />
         </children>
     </HBox>
     <Region prefHeight="171.0" prefWidth="1240.0" />

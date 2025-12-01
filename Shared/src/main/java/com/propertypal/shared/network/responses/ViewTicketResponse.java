@@ -8,6 +8,7 @@ public class ViewTicketResponse extends BaseResponse
 {
     public Integer TICKET_TYPE; //Use TicketEnums to set
     public Integer TICKET_STATE; //Use TicketEnums to set
+    public String TITLE;
     public String DESCRIPTION;
     public Integer PERMISSIONS; //Use PermissionsEnum to set
     public List<Long> ATTACHMENT_IDS;

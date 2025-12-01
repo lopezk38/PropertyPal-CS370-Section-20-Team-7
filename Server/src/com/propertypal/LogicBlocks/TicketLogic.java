@@ -19,10 +19,28 @@ public class TicketLogic extends BaseLogic
     public void handleCreateTicketPacket(ClientRequest req)
     {
         CreateTicketPacket packet = (CreateTicketPacket) req.packet;
+        String title = packet.title;
+        String desc = packet.description;
         int ticketType = packet.ticket_type;
         int ticketState = packet.ticket_state;
 
         //Validate inputs
+        if (title == null || title.isEmpty() || title.length() > 50)
+        {
+            //Bad title
+            req.setBaseErrResponse(CreateTicketResponse.CreateTicketStatus.ERR_BAD_TITLE);
+            filter.sendResponse(req);
+            return;
+        }
+
+        if (desc == null || desc.isEmpty() || desc.length() > 500)
+        {
+            //Bad description
+            req.setBaseErrResponse(CreateTicketResponse.CreateTicketStatus.ERR_BAD_DESCRIPTION);
+            filter.sendResponse(req);
+            return;
+        }
+
         if (!TicketEnums.Type.validate(ticketType))
         {
             //Out of range
@@ -31,7 +49,7 @@ public class TicketLogic extends BaseLogic
             return;
         }
 
-        if (!TicketEnums.State.validate(ticketType))
+        if (!TicketEnums.State.validate(ticketState))
         {
             //Out of range
             req.setBaseErrResponse(CreateTicketResponse.CreateTicketStatus.ERR_BAD_TICKET_STATE);
@@ -58,21 +76,23 @@ public class TicketLogic extends BaseLogic
                     INSERT INTO Tickets (
                         owner,
                         parentLease,
+                        title,
                         description,
                         dateCreated,
                         timeModified,
                         status,
                         type
                     )
-                    VALUES (?, ?, ?, ?, ?, ?, ?)""", Statement.RETURN_GENERATED_KEYS);
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)""", Statement.RETURN_GENERATED_KEYS);
 
             ticketQ.setLong(1, userID);
             ticketQ.setLong(2, packet.lease_id);
-            ticketQ.setString(3, packet.description);
-            ticketQ.setString(4, createTime);
+            ticketQ.setString(3, packet.title);
+            ticketQ.setString(4, packet.description);
             ticketQ.setString(5, createTime);
-            ticketQ.setInt(6, ticketState);
-            ticketQ.setInt(7, ticketType);
+            ticketQ.setString(6, createTime);
+            ticketQ.setInt(7, ticketState);
+            ticketQ.setInt(8, ticketType);
             ticketQ.executeUpdate();
 
             //Get the newly made primary key
@@ -151,7 +171,7 @@ public class TicketLogic extends BaseLogic
     public void handleEditTicketPacket(ClientRequest req)
     {
         EditTicketPacket packet = (EditTicketPacket) req.packet;
-        long ticketID = packet.ticket_id;
+        Long ticketID = packet.ticket_id;
         Integer ticketType = packet.ticket_type;
         Integer ticketState = packet.ticket_state;
         String desc = packet.description;
@@ -160,6 +180,14 @@ public class TicketLogic extends BaseLogic
 
         if (ticketType != null)
         {
+            if (!TicketEnums.Type.validate(ticketType))
+            {
+                //Out of range
+                req.setBaseErrResponse(EditTicketResponse.EditTicketStatus.ERR_BAD_TICKET_STATE);
+                filter.sendResponse(req);
+                return;
+            }
+
             PreparedStatement ticketQ = null;
             try
             {
@@ -189,6 +217,14 @@ public class TicketLogic extends BaseLogic
 
         if (ticketState != null)
         {
+            if (!TicketEnums.State.validate(ticketState))
+            {
+                //Out of range
+                req.setBaseErrResponse(EditTicketResponse.EditTicketStatus.ERR_BAD_TICKET_STATE);
+                filter.sendResponse(req);
+                return;
+            }
+
             PreparedStatement ticketQ = null;
             try
             {
@@ -218,6 +254,14 @@ public class TicketLogic extends BaseLogic
 
         if (desc != null)
         {
+            if (desc.isEmpty() || desc.length() > 500)
+            {
+                //Bad description
+                req.setBaseErrResponse(CreateTicketResponse.CreateTicketStatus.ERR_BAD_DESCRIPTION);
+                filter.sendResponse(req);
+                return;
+            }
+
             PreparedStatement ticketQ = null;
             try
             {
@@ -324,14 +368,15 @@ public class TicketLogic extends BaseLogic
         long ticketID = packet.ticket_id;
 
         //Values to retrieve
-        int ticketType = -1;
-        int ticketState = -1;
+        Integer ticketType = null;
+        Integer ticketState = null;
+        String ticketTitle = null;
         String ticketDesc = null;
-        int genericTicketPerms = 0;
-        int maintTicketPerms = 0;
-        int taxTicketPerms = 0;
-        int rentTicketPerms = 0;
-        long parentLease = -1;
+        Integer genericTicketPerms = null;
+        Integer maintTicketPerms = null;
+        Integer taxTicketPerms = null;
+        Integer rentTicketPerms = null;
+        Long parentLease = null;
         List<Long> attachments = new ArrayList<Long>();
         List<Long> comments = new ArrayList<Long>();
 
@@ -348,7 +393,7 @@ public class TicketLogic extends BaseLogic
         try
         {
             ticketQ = db.compileQuery("""
-            SELECT parentLease, description, state, type
+            SELECT parentLease, title, description, state, type
             FROM Tickets
             WHERE ticketID = ?
             """);
@@ -386,6 +431,7 @@ public class TicketLogic extends BaseLogic
                 //Got a ticket
                 ticketType = ticketR.getInt("type");
                 ticketState = ticketR.getInt("state");
+                ticketTitle = ticketR.getString("title");
                 ticketDesc = ticketR.getString("description");
                 parentLease = ticketR.getLong("parentLease");
             }
@@ -411,7 +457,7 @@ public class TicketLogic extends BaseLogic
         }
 
         //Validate ticket data integrity
-        if (!TicketEnums.Type.validate(ticketType) || !TicketEnums.State.validate(ticketState) || parentLease <= 0)
+        if (ticketType == null || !TicketEnums.Type.validate(ticketType) || ticketState == null || !TicketEnums.State.validate(ticketState) || parentLease == null || parentLease <= 0)
         {
             //Out of range
             req.setBaseErrResponse(ViewTicketResponse.TicketStatus.ERR_BAD_TICKET);
@@ -419,6 +465,7 @@ public class TicketLogic extends BaseLogic
             return;
         }
 
+        if (ticketTitle == null) { ticketTitle = ""; }
         if (ticketDesc == null) { ticketDesc = ""; }
 
         //Retrieve permissions
@@ -462,7 +509,7 @@ public class TicketLogic extends BaseLogic
         }
 
         //Check if user is allowed to access this ticket
-        int relaventPerm = 0;
+        Integer relaventPerm = 0;
         switch (ticketType)
         {
             default:
@@ -586,6 +633,7 @@ public class TicketLogic extends BaseLogic
         resp.STATUS = BaseResponseEnum.SUCCESS;
         resp.TICKET_TYPE = ticketType;
         resp.TICKET_STATE = ticketState;
+        resp.TITLE = ticketTitle;
         resp.DESCRIPTION = ticketDesc;
         resp.PERMISSIONS = relaventPerm;
         resp.ATTACHMENT_IDS = attachments;
@@ -697,6 +745,7 @@ public class TicketLogic extends BaseLogic
 
         //Query DB for info
         PreparedStatement ticketQ = null;
+        String title = null;
         String desc = null;
         LocalDateTime lastUpdTime = null;
         Integer state = null;
@@ -705,7 +754,7 @@ public class TicketLogic extends BaseLogic
         {
             //Compile and execute query
             ticketQ = db.compileQuery("""
-            SELECT description, timeModified, state, type
+            SELECT title, description, timeModified, state, type
             FROM Tickets
             WHERE ticketID = ?
             """);
@@ -717,6 +766,7 @@ public class TicketLogic extends BaseLogic
             if (ticketR.next())
             {
                 //Got data for this ticket ID
+                title = ticketR.getString("title");
                 desc = ticketR.getString("description");
                 lastUpdTime = ticketR.getTimestamp("timeModified").toLocalDateTime();
                 state = ticketR.getInt("state");
@@ -750,6 +800,7 @@ public class TicketLogic extends BaseLogic
         //Return the data to the client
         GetTicketInfoResponse resp = new GetTicketInfoResponse();
         resp.STATUS = BaseResponseEnum.SUCCESS;
+        resp.TITLE = title;
         resp.DESCRIPTION = desc;
         resp.STATE = state;
         resp.TYPE = type;

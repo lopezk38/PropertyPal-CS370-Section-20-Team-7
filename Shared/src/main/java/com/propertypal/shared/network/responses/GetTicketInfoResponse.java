@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 
 public class GetTicketInfoResponse extends BaseResponse
 {
+    public String TITLE;
     public String DESCRIPTION;
     public Integer STATE; //Use TicketEnums.State to set this
     public Integer TYPE; //Use TicketEnums.Type to set this

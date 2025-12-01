@@ -13,5 +13,6 @@ public class CreateTicketResponse extends BaseResponse
         public static final int ERR_BAD_TICKET_STATE = 4;
         public static final int ERR_BAD_DESCRIPTION = 8;
         public static final int ERR_BAD_ATTACHMENT = 16;
+        public static final int ERR_BAD_TITLE = 32;
     }
 }

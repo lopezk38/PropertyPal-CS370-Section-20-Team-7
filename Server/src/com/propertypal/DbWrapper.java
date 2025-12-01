@@ -103,7 +103,7 @@ public class DbWrapper
                         loginAuthToken VARCHAR,
                         loginTokenExpiration timestamp,
                         loginTokenValidIP VARCHAR,
-                        paypalAPIToken VARCHAR,
+                        paypalMeLink VARCHAR,
                         isLandlord boolean,
                         CONSTRAINT PK_USERS_ID PRIMARY KEY (userID),
                         CONSTRAINT UQ_USERS_EM UNIQUE (email),

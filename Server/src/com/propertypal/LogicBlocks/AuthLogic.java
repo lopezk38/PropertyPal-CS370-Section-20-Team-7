@@ -43,7 +43,11 @@ public class AuthLogic extends BaseLogic
         PreparedStatement userNameQ = null;
         try
         {
-            userNameQ = db.compileQuery("SELECT userID, hashedPW FROM Users WHERE email = ?");
+            userNameQ = db.compileQuery("""
+            SELECT userID, hashedPW, isLandlord
+            FROM Users
+            WHERE email = ?
+            """);
             userNameQ.setString(1, email);
         }
         catch (SQLException e)
@@ -72,6 +76,7 @@ public class AuthLogic extends BaseLogic
 
         long userID;
         String validPW;
+        Boolean isLandlord;
         try
         {
             if (userNameR.next())
@@ -79,6 +84,7 @@ public class AuthLogic extends BaseLogic
                 //Got a user
                 userID = userNameR.getLong("userID");
                 validPW = userNameR.getString("hashedPW");
+                isLandlord = userNameR.getBoolean("isLandlord");
             }
             else
             {
@@ -148,6 +154,7 @@ public class AuthLogic extends BaseLogic
         LoginResponse resp = new LoginResponse();
         resp.STATUS = BaseResponseEnum.SUCCESS;
         resp.TOKEN = token;
+        resp.IS_LANDLORD = isLandlord;
         req.setResponse(resp);
         filter.sendResponse(req);
     }

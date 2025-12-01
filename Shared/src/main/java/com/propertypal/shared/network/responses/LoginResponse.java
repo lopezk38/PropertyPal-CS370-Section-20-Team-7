@@ -5,6 +5,7 @@ import com.propertypal.shared.network.enums.BaseResponseEnum;
 public class LoginResponse extends BaseResponse
 {
     public String TOKEN;
+    public Boolean IS_LANDLORD;
 
     public static class LoginStatus extends BaseResponseEnum
     {

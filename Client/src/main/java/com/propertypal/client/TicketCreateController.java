@@ -25,6 +25,10 @@ public class TicketCreateController
 
     private TicketLogic logic = new TicketLogic();
 
+    //--------------------
+    // UI Functions
+    //--------------------
+
     @FXML
     private void initialize()
     {
@@ -40,26 +44,24 @@ public class TicketCreateController
     @FXML
     private void onTktCreateButtonClick()
     {
-        // Get the values from the text fields
+        // Client-side validation
+
         String title = titleField.getText().trim();
         String description = descArea.getText().trim();
 
-        // Check if both fields are filled
+        // Check empty fields
         if (title.isEmpty() || description.isEmpty())
         {
-            // Display error message if any of the fields are empty
             errorLabel.setText("Both title and description are required");
             errorLabel.setStyle("-fx-text-fill: red;");
-            return;
         }
         else
         {
-            // If both fields are valid, show success message
+            // Client-side validation passed
 
-            //SUBMISSION LOGIC
             try
             {
-                long leaseID = 1; //temp until login provides real lease ID
+                long leaseID = 1;   // TODO: temp until login provides real lease ID
                 logic.createticket(leaseID, description);
 
                 errorLabel.setText("Your ticket has been successfully submitted");
@@ -73,7 +75,6 @@ public class TicketCreateController
                 errorLabel.setText("Your ticket has failed to submit. Please try again");
                 errorLabel.setStyle("-fx-text-fill: red;");
             }
-
         }
     }
 }

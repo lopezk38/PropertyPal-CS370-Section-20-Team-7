@@ -15,8 +15,6 @@ import java.io.IOException;
 
 public class LoginController
 {
-    public AcctLogic loginInfo = new AcctLogic();
-
     @FXML
     private VBox root;
     @FXML
@@ -26,6 +24,8 @@ public class LoginController
     private TextField emailField;
     @FXML
     private PasswordField passwordField;
+
+    public AcctLogic logic = new AcctLogic();
 
     //--------------------
     // UI Functions
@@ -82,7 +82,7 @@ public class LoginController
         try
         {
             //throws exception if login failed
-            Boolean userRole = loginInfo.loginAndGetRole(email, password);
+            Boolean userRole = logic.loginAndGetRole(email, password);
 
             if(userRole)
             {

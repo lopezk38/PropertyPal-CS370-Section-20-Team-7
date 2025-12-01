@@ -34,7 +34,7 @@
     <Region layoutX="30.0" layoutY="76.0" minHeight="-Infinity" prefHeight="50.0" prefWidth="1240.0" />
     <VBox maxWidth="-Infinity" minHeight="-Infinity" prefHeight="225.0" prefWidth="800.0">
         <children>
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Tenant Snapshot">
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Landlord Snapshot">
                 <font>
                     <Font name="System Bold" size="24.0" />
                 </font>

@@ -15,7 +15,7 @@ import java.io.IOException;
 
 public class LoginController
 {
-    public AcctLogic login_info = new AcctLogic();
+    public AcctLogic loginInfo = new AcctLogic();
 
     @FXML
     private VBox root;
@@ -79,38 +79,26 @@ public class LoginController
 
         // Client-side validation passed
 
-        Integer userRole = null;
-
         try
         {
-            //If a valid role is returned, login was a success and user will be navigated to their page
-            //acctLogin returns RoleEnum Integer value
-            userRole = login_info.acctLogin(email, password);
+            //throws exception if login failed
+            Boolean userRole = loginInfo.loginAndGetRole(email, password);
 
-            if (userRole == null) {
-                System.out.println("No role returned");
-            } else {
-                switch (userRole) {
-                    case 0:
-                        System.out.println("Switching to Landlord page");
-                        SceneManager.switchTo("/fxml/LL_main.fxml");
-                        break;
-                    case 1:
-                        System.out.println("Switching to Tenant page");
-                        SceneManager.switchTo("/fxml/TT_main.fxml");
-                        break;
-                    case -1:
-                        System.out.println("Unknown role");
-                        break;
-                    default:
-                        System.out.println("Invalid role value: " + userRole);
-                        break;
-                }
+            if(userRole)
+            {
+                System.out.println("Switching to Landlord page");
+                SceneManager.switchTo("/fxml/LL_main.fxml");
+            }
+            else
+            {
+                System.out.println("Switching to Tenant page");
+                SceneManager.switchTo("/fxml/TT_main.fxml");
+
             }
         }
         catch (IOException e)
         {
-            System.out.println("ERROR in acctLogin: " + e.getMessage());
+            System.out.println("ERROR in loginAndGetRole(String, String): " + e.getMessage());
             // optional: show an error to the user
             errorLabel.setText("Login failed. Please try again.");
         }

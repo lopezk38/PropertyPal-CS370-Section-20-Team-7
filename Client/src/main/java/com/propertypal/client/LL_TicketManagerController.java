@@ -2,6 +2,9 @@ package main.java.com.propertypal.client;
 
 import com.propertypal.client.DEMOSelectedTicket;
 import com.propertypal.client.SceneManager;
+import com.propertypal.client.ClientLogic.TicketLogic;
+import com.propertypal.shared.network.enums.TicketEnums;
+
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -34,15 +37,18 @@ public class LL_TicketManagerController
     @FXML
     private TableColumn<ObservableList<String>, String> statusCol;
 
+    private TicketLogic logic = new TicketLogic();
+
     @FXML
     private void initialize()
     {
         Platform.runLater(() -> root.requestFocus());   // Prevents focus of elements when page loads
 
         setupTableColumns();
+        loadTickets();
     }
 
-    // DEMO button trigger START
+    /* DEMO button trigger START
     private boolean demoActive = false;
 
     @FXML
@@ -75,7 +81,7 @@ public class LL_TicketManagerController
             demoActive = false;
         }
     }
-    // DEMO button trigger END
+    DEMO button trigger END */
 
     @FXML
     private void onBackButtonClick()
@@ -101,6 +107,53 @@ public class LL_TicketManagerController
 
     // Helper functions
 
+    private void loadTickets() //load tickets from server
+    {
+        try
+        {
+            long leaseID = 1; //temp until login provides real lease ID
+
+            var ids = logic.getTicketIdList(leaseID);
+
+            ObservableList<ObservableList<String>> rows = FXCollections.observableArrayList();
+
+            for (Long id : ids)
+            {
+                var info = logic.getTicketInfo(id); //get details
+                ObservableList<String> row = FXCollections.observableArrayList();
+
+                row.add("Ticket " + id); //ticket #
+                row.add(info.LAST_UPDATED.toString()); //date
+                row.add(getReadableState(info.STATE)); //state of ticket
+                row.add(info.DESCRIPTION); //store for review page
+                rows.add(row);
+            }
+
+            ticketTable.getItems().setAll(rows);
+
+            //count open tickets
+            long openCount = rows.stream().filter(r -> !r.get(2).equalsIgnoreCase("Closed")).count();
+            updateTicketCount((int) openCount);
+        }
+
+        catch (Exception error)
+        {
+            errorLabel.setText("Failed to load tickets");
+            errorLabel.setStyle("-fx-text-fill: red;");
+        }
+    }
+
+        /*
+    private ObservableList<String> createTicket(String title, String date, String status, String description)
+    {
+        ObservableList<String> ticket = FXCollections.observableArrayList();
+        ticket.add(title);
+        ticket.add(date);
+        ticket.add(status);
+        ticket.add(description);
+        return ticket;
+    } */
+
     private void setupTableColumns()
     {
         titleCol.setCellValueFactory(data ->
@@ -116,14 +169,19 @@ public class LL_TicketManagerController
         );
     }
 
-    private ObservableList<String> createTicket(String title, String date, String status, String description)
+    //convert ticket state int to readable words
+    private String getReadableState(int state)
     {
-        ObservableList<String> ticket = FXCollections.observableArrayList();
-        ticket.add(title);
-        ticket.add(date);
-        ticket.add(status);
-        ticket.add(description);
-        return ticket;
+        return switch (state)
+        {
+            case TicketEnums.State.NEW -> "New";
+            case TicketEnums.State.UNDER_REVIEW -> "Under Review";
+            case TicketEnums.State.NEEDS_PREPAYMENT -> "Needs Prepayment";
+            case TicketEnums.State.IN_PROGRESS -> "In Progress";
+            case TicketEnums.State.NEEDS_PAYMENT -> "Needs Payment";
+            case TicketEnums.State.CLOSED -> "Closed";
+            default -> "Unknown";
+        };
     }
 
     private void updateTicketCount(int count)

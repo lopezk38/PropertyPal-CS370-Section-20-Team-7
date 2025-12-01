@@ -698,7 +698,7 @@ public class TicketLogic extends BaseLogic
         //Query DB for info
         PreparedStatement ticketQ = null;
         String desc = null;
-        String rawLastUpdTime = null;
+        LocalDateTime lastUpdTime = null;
         Integer state = null;
         Integer type = null;
         try
@@ -718,7 +718,7 @@ public class TicketLogic extends BaseLogic
             {
                 //Got data for this ticket ID
                 desc = ticketR.getString("description");
-                rawLastUpdTime = ticketR.getString("timeModified");
+                lastUpdTime = ticketR.getTimestamp("timeModified").toLocalDateTime();
                 state = ticketR.getInt("state");
                 type = ticketR.getInt("type");
             }
@@ -746,17 +746,6 @@ public class TicketLogic extends BaseLogic
             db.closeConnection(ticketQ);
         }
 
-        //Convert last update time real timestamp
-        LocalDateTime lastUpdTime = null;
-        try
-        {
-            lastUpdTime = LocalDateTime.parse(rawLastUpdTime);
-        }
-        catch (DateTimeParseException e)
-        {
-            //Couldn't parse the saved time
-            System.out.println("WARNING: Could not parse last updated time for ticket during handleGetTicketInfo: " + e.toString());
-        }
 
         //Return the data to the client
         GetTicketInfoResponse resp = new GetTicketInfoResponse();

@@ -19,7 +19,6 @@ public class AuthFilters extends BaseFilters
 
         //Check DB for token, validate
         PreparedStatement tokenQ = null;
-        String rawExprTime = null;
         LocalDateTime exprTime = null;
         String validIP = null;
         try
@@ -36,7 +35,7 @@ public class AuthFilters extends BaseFilters
 
             if (tokenR.next())
             {
-                rawExprTime = tokenR.getString("loginTokenExpiration");
+                exprTime = tokenR.getTimestamp("loginTokenExpiration").toLocalDateTime();
                 validIP = tokenR.getString("loginTokenValidIP");
             }
             else
@@ -60,21 +59,6 @@ public class AuthFilters extends BaseFilters
         finally
         {
             db.closeConnection(tokenQ);
-        }
-
-        //Convert from string to localdatetime
-        try
-        {
-            exprTime = LocalDateTime.parse(rawExprTime);
-        }
-        catch (DateTimeParseException e)
-        {
-            System.out.println("ERROR: Failed to parse datetime while checking login token: " + e.toString());
-
-            req.setUnknownErrResponse();
-            filter.sendResponse(req);
-
-            return BaseResponseEnum.ERR_UNKNOWN;
         }
 
         //Token existed, but still need to check constraints

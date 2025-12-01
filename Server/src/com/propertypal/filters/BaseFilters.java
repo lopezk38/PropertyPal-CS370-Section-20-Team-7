@@ -8,7 +8,7 @@ import com.propertypal.shared.network.responses.*;
 
 public class BaseFilters
 {
-    protected SecurityFilter filter = null;
+    protected SecurityFilter filter = SecurityFilter.getInstance();
     protected CoreLogic logic = CoreLogic.getInstance();
     protected DbWrapper db = DbWrapper.getInstance();
 }

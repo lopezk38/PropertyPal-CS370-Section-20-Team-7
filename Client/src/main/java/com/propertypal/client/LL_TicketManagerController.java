@@ -39,6 +39,10 @@ public class LL_TicketManagerController
 
     private TicketLogic logic = new TicketLogic();
 
+    //--------------------
+    // UI Functions
+    //--------------------
+
     @FXML
     private void initialize()
     {
@@ -107,7 +111,9 @@ public class LL_TicketManagerController
         SceneManager.switchTo("/fxml/LL_ticketReview.fxml");
     }
 
-    // Helper functions
+    //--------------------
+    // Helper Functions
+    //--------------------
 
     private void loadTickets() //load tickets from server
     {
@@ -137,7 +143,6 @@ public class LL_TicketManagerController
             long openCount = rows.stream().filter(r -> !r.get(2).equalsIgnoreCase("Closed")).count();
             updateTicketCount((int) openCount);
         }
-
         catch (Exception error)
         {
             errorLabel.setText("Failed to load tickets");
@@ -145,16 +150,15 @@ public class LL_TicketManagerController
         }
     }
 
-        /*
-    private ObservableList<String> createTicket(String title, String date, String status, String description)
-    {
-        ObservableList<String> ticket = FXCollections.observableArrayList();
-        ticket.add(title);
-        ticket.add(date);
-        ticket.add(status);
-        ticket.add(description);
-        return ticket;
-    } */
+//    private ObservableList<String> createTicket(String title, String date, String status, String description)
+//    {
+//        ObservableList<String> ticket = FXCollections.observableArrayList();
+//        ticket.add(title);
+//        ticket.add(date);
+//        ticket.add(status);
+//        ticket.add(description);
+//        return ticket;
+//    }
 
     private void setupTableColumns()
     {

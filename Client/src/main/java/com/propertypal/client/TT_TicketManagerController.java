@@ -39,6 +39,10 @@ public class TT_TicketManagerController
 
     private TicketLogic logic = new TicketLogic();
 
+    //--------------------
+    // UI Functions
+    //--------------------
+
     @FXML
     private void initialize()
     {
@@ -87,13 +91,13 @@ public class TT_TicketManagerController
     @FXML
     private void onBackButtonClick()
     {
-        SceneManager.switchTo("/fxml/TT_main.fxml");   // Needs to be TT_main.fxml
+        SceneManager.switchTo("/fxml/TT_main.fxml");
     }
 
     @FXML
     private void onTktCreateButtonClick()
     {
-        SceneManager.switchTo("/fxml/ticketCreate.fxml");   // Needs to be TT_main.fxml
+        SceneManager.switchTo("/fxml/ticketCreate.fxml");
     }
 
     @FXML
@@ -113,7 +117,9 @@ public class TT_TicketManagerController
         SceneManager.switchTo("/fxml/TT_ticketReview.fxml");
     }
 
-    // Helper functions
+    //--------------------
+    // Helper Functions
+    //--------------------
 
     private void loadTickets()
     {
@@ -179,16 +185,15 @@ public class TT_TicketManagerController
         );
     }
 
-    /*
-    private ObservableList<String> createTicket(String title, String date, String status, String description)
-    {
-        ObservableList<String> ticket = FXCollections.observableArrayList();
-        ticket.add(title);
-        ticket.add(date);
-        ticket.add(status);
-        ticket.add(description);
-        return ticket;
-    } */
+//    private ObservableList<String> createTicket(String title, String date, String status, String description)
+//    {
+//        ObservableList<String> ticket = FXCollections.observableArrayList();
+//        ticket.add(title);
+//        ticket.add(date);
+//        ticket.add(status);
+//        ticket.add(description);
+//        return ticket;
+//    }
 
     private void updateTicketCount(int count)
     {

@@ -2,8 +2,8 @@ package com.propertypal.client;
 
 import javafx.collections.ObservableList;
 
-//static class to store currently selected ticket
-//similar to DEMOSelectedTicket class
+// Static class to store currently selected ticket
+// similar to DEMOSelectedTicket class
 
 public class SelectedTicket
 {

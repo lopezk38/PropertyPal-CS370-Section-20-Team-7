@@ -45,6 +45,9 @@ public class APIHandler
         if (endpoint == null || endpoint.length() < 1) { throw new IllegalArgumentException("Invalid endpoint given"); }
         if (packet == null) { throw new IllegalArgumentException("Packet must not be null"); }
 
+        //Inject login token
+        if (activeToken != null) { packet.token = activeToken; }
+
         String serialized = null;
         try
         {
@@ -54,9 +57,6 @@ public class APIHandler
         {
             throw new IllegalArgumentException("Malformed packet given, could not be serialized");
         }
-
-        //Inject login token
-        if (activeToken != null) { packet.token = activeToken; }
 
         //Build request
         HttpPost post = new HttpPost(baseURI + endpoint);

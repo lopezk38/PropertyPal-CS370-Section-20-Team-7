@@ -199,6 +199,7 @@ public class PaymentLogic extends BaseLogic
         String rawAmount = packet.amount;
         BigDecimal amount;
         Integer dueDay = packet.dueDay;
+        String paypalLink = packet.paypalLink;
 
         //Validate vars
         if (leaseID == null || leaseID <= 0)
@@ -274,6 +275,39 @@ public class PaymentLogic extends BaseLogic
             db.closeConnection(leaseQ);
         }
 
+        //Update paypal info if given
+        if (paypalLink != null && !paypalLink.isEmpty())
+        {
+            //TODO validate link
+
+            PreparedStatement payQ = null;
+            try
+            {
+                payQ = db.compileQuery("""
+                        UPDATE Users
+                        SET paypalMeLink = ?
+                        WHERE loginAuthToken = ?
+                        """);
+
+                payQ.setString(1, paypalLink);
+                payQ.setString(2, packet.token);
+
+                payQ.executeUpdate();
+            }
+            catch (SQLException e)
+            {
+                System.out.println("ERROR: SQLException during handleUpdAmountDue PayPal link update query: " + e.toString());
+
+                req.setUnknownErrResponse();
+                filter.sendResponse(req);
+                return;
+            }
+            finally
+            {
+                db.closeConnection(payQ);
+            }
+        }
+
         //Succeeded, send OK
         UpdateAmountDueResponse resp = new UpdateAmountDueResponse();
         resp.STATUS = BaseResponseEnum.SUCCESS;
@@ -281,5 +315,90 @@ public class PaymentLogic extends BaseLogic
         filter.sendResponse(req);
     }
 
-    public void handlePayRent(ClientRequest req) { ; } //TODO
+    public void handleGetPayLinkPacket(ClientRequest req)
+    {
+        GetPayLinkPacket packet = (GetPayLinkPacket) req.packet;
+
+        Long leaseID = packet.lease_id;
+
+        //Query for landlord's paypal link, amount, etc
+        PreparedStatement linkQ = null;
+        String link = null;
+        Integer dueDay = null;
+        BigDecimal rentAmount = null;
+        try
+        {
+            linkQ = db.compileQuery("""
+                        SELECT paypalMeLink, rentDueDay, rentAmount
+                        FROM Users, Properties, Leases
+                        WHERE leaseID = ? AND propertyID = associatedProperty AND owner = userID
+                        """);
+
+            linkQ.setLong(1, leaseID);
+
+            ResultSet linkR = linkQ.executeQuery();
+
+            if (linkR.next())
+            {
+                //Got data
+                link = linkR.getString("paypalMeLink");
+                dueDay = linkR.getInt("rentDueDay");
+                rentAmount = linkR.getBigDecimal("rentAmount");
+            }
+            else
+            {
+                //No data. Bad lease ID?
+
+                req.setBaseErrResponse(GetPayLinkResponse.GetPayLinkStatus.ERR_BAD_LEASE);
+                filter.sendResponse(req);
+
+                return;
+            }
+        }
+        catch (SQLException e)
+        {
+            System.out.println("ERROR: SQLException during handleGetPayLinkPacket link query: " + e.toString());
+
+            req.setUnknownErrResponse();
+            filter.sendResponse(req);
+            return;
+        }
+        finally
+        {
+            db.closeConnection(linkQ);
+        }
+
+        //Validate data
+        //Link
+        if (link == null || link.isEmpty())
+        {
+            req.setBaseErrResponse(GetPayLinkResponse.GetPayLinkStatus.ERR_NOT_SETUP);
+            filter.sendResponse(req);
+
+            return;
+        }
+
+        //Amount
+        if (rentAmount == null || rentAmount.compareTo(BigDecimal.ZERO) < 1)
+        {
+            req.setBaseErrResponse(GetPayLinkResponse.GetPayLinkStatus.ERR_NO_RENT_DUE);
+            filter.sendResponse(req);
+
+            return;
+        }
+
+        //Append payment amount to paylink
+        link = link.concat("/"  + rentAmount.toString());
+
+        //Got all data, return it
+        GetPayLinkResponse resp = new GetPayLinkResponse();
+        resp.STATUS = BaseResponseEnum.SUCCESS;
+        resp.PAYLINK = link;
+        resp.DUE_DAY = dueDay;
+        resp.AMOUNT = rentAmount;
+        req.setResponse(resp);
+        req.sendResponse();
+
+        return;
+    }
 }

@@ -61,7 +61,28 @@ public class PaymentFilters extends BaseFilters
         logic.handleUpdAmountDue(req);
     }
 
-    public void filterPayRentPacket(ClientRequest req) { ; }//TODO
+    public void filterGetPayLinkPacket(ClientRequest req)
+    {
+        if (!(req.packet instanceof GetPayLinkPacket))
+        {
+            //Endpoint registered to wrong handler
+            System.out.println("ERROR: filterGetPayLinkPacket is registered to the wrong endpoint");
+            BaseResponse resp = new BaseResponse();
+            resp.STATUS = BaseResponseEnum.ERR_UNKNOWN;
+            req.setResponse(resp);
+            filter.sendResponse(req);
+            return;
+        }
+
+        //Validate user is logged in
+        int authSuccess = filter.enforceLoggedIn(req);
+        if (authSuccess != BaseResponseEnum.SUCCESS) return;
+
+        //TODO Make sure user is tenant to lease
+
+        //All checks passed, forward packet
+        logic.handleGetPayLinkPacket(req);
+    }
 
     private int isUserOwner(ClientRequest req)
     {

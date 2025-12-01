@@ -66,6 +66,7 @@ public class NetServer
         //payments
         httpServer.createContext("/lease/reqRent", new Endpoint(RequestRentPacket.class, (request) -> { filter.filterRequestRentPacket(request); }));
         httpServer.createContext("/lease/setupRent", new Endpoint(UpdateAmountDuePacket.class, (request) -> { filter.filterUpdAmountDuePacket(request); }));
+        httpServer.createContext("/lease/getPayLink", new Endpoint(GetPayLinkPacket.class, (request) -> { filter.filterGetPayLinkPacket(request); }));
 
         //navigation
         httpServer.createContext("/lease/getRole", new Endpoint(GetRolePacket.class, (request) -> { filter.filterGetRolePacket(request); }));

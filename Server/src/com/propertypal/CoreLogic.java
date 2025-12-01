@@ -69,7 +69,7 @@ public class CoreLogic
     //PaymentLogic
     public void handleRequestRent(ClientRequest req) { paymentLogic.handleRequestRent(req); }
     public void handleUpdAmountDue(ClientRequest req) { paymentLogic.handleUpdAmountDue(req); }
-    public void handlePayRent(ClientRequest req) { ; } //TODO: Create and connect to submodule
+    public void handleGetPayLinkPacket(ClientRequest req) { paymentLogic.handleGetPayLinkPacket(req); }
 
     //NavigationLogic
     public void handleGetRolePacket(ClientRequest req) { navLogic.handleGetRolePacket(req); }

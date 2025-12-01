@@ -71,7 +71,7 @@ public class SecurityFilter
     //PaymentFilters
     public void filterRequestRentPacket(ClientRequest req) { paymentFilter.filterRequestRentPacket(req); }
     public void filterUpdAmountDuePacket(ClientRequest req) { paymentFilter.filterUpdAmountDuePacket(req); }
-    public void filterPayRentPacket(ClientRequest req) { ; } //TODO: Create and connect to submodule
+    public void filterGetPayLinkPacket(ClientRequest req) { paymentFilter.filterGetPayLinkPacket(req); }
 
     //NavigationFilters
     public void filterGetRolePacket(ClientRequest req) { navFilter.filterGetRolePacket(req); }

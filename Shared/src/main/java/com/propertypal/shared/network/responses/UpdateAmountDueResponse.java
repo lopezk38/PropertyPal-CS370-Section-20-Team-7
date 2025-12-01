@@ -11,5 +11,6 @@ public class UpdateAmountDueResponse extends BaseResponse
         public static final int ERR_BAD_LEASE = 1;
         public static final int ERR_BAD_AMOUNT = 2;
         public static final int ERR_BAD_DUE_DAY = 4;
+        public static final int ERR_BAD_PAYPAL_LINK = 8;
     }
 }

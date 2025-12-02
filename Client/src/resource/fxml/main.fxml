@@ -74,7 +74,7 @@
                 </font>
             </Button>
             <Region prefHeight="200.0" prefWidth="200.0" />
-            <Button onAction="#onPmtMgrButtonClick" prefHeight="50.0" prefWidth="200.0" text="Payment Manager" textAlignment="CENTER" wrapText="true">
+            <Button fx:id="pmtButton" onAction="#onPmtButtonClick" prefHeight="50.0" prefWidth="200.0" text="Payment Manager" textAlignment="CENTER" wrapText="true">
                 <font>
                     <Font size="18.0" />
                 </font>

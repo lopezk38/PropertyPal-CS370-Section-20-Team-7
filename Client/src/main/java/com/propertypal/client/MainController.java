@@ -32,6 +32,9 @@ public class MainController
     @FXML
     private Label phoneXLabel;
 
+    @FXML
+    private Button pmtButton;
+
     private SessionManager manager;
 
     private SessionManager.Role role;
@@ -95,10 +98,16 @@ public class MainController
 
     // TEMPORARY Payment Manager button trigger
     @FXML
-    private void onPmtMgrButtonClick()
+    private void onPmtButtonClick()
     {
-        if (role == SessionManager.Role.TENANT) { SceneManager.switchTo("/fxml/makePayment.fxml"); }
-        else { ; } //TODO landlord rent setup page
+        if (role == SessionManager.Role.LANDLORD)
+        {
+            SceneManager.switchTo("/fxml/paymentRequest.fxml");
+        }
+        else
+        {
+            SceneManager.switchTo("/fxml/paymentMake.fxml");
+        }
     }
 
     //--------------------
@@ -116,6 +125,8 @@ public class MainController
         nameXLabel.setText(String.format("Name: %s %s", manager.getTTFname(), manager.getTTLname()));
         emailXLabel.setText(String.format("Email: %s", manager.getTTEmail()));
         phoneXLabel.setText(String.format("Phone: %s", manager.getTTPhone()));
+
+        pmtButton.setText("Request Payment");
     }
 
     private void tenantUI()
@@ -129,5 +140,7 @@ public class MainController
         nameXLabel.setText(String.format("Name: %s %s", manager.getLLFname(), manager.getLLLname()));
         emailXLabel.setText(String.format("Email: %s", manager.getLLEmail()));
         phoneXLabel.setText(String.format("Phone: %s", manager.getLLPhone()));
+
+        pmtButton.setText("Make Payment");
     }
 }

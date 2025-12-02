@@ -101,7 +101,7 @@ public class MainController
     @FXML
     private void onTktMgrButtonClick()
     {
-        SceneManager.switchTo("/fxml/LL_ticketManager.fxml");
+        SceneManager.switchTo("/fxml/ticketManager.fxml");
     }
 
     // TEMPORARY Payment Manager button trigger

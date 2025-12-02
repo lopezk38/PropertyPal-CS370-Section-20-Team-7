@@ -79,7 +79,7 @@ public class TT_MainController
     @FXML
     private void onTktMgrButtonClick()
     {
-        SceneManager.switchTo("/fxml/TT_ticketManager.fxml");
+        SceneManager.switchTo("/fxml/ticketManager.fxml");
     }
 
     // TEMPORARY Payment Manager button trigger

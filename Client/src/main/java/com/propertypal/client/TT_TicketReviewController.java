@@ -56,7 +56,7 @@ public class TT_TicketReviewController
     @FXML
     private void onBackButtonClick()
     {
-        SceneManager.switchTo("/fxml/TT_ticketManager.fxml");
+        SceneManager.switchTo("/fxml/ticketManager.fxml");
     }
 
     @FXML

@@ -8,7 +8,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.PreparedStatement;
 
-public class BaseLogic
+public abstract class BaseLogic
 {
     protected SecurityFilter filter = SecurityFilter.getInstance();
     protected DbWrapper db = DbWrapper.getInstance();

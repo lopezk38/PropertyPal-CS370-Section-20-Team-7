@@ -4,6 +4,7 @@ import com.propertypal.client.SelectedTicket;
 import com.propertypal.client.SceneManager;
 import com.propertypal.client.ClientLogic.TicketLogic;
 
+import com.propertypal.client.SessionManager;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -36,9 +37,14 @@ public class LL_TicketReviewController
 
     private ObservableList<String> currentTicket;
 
-    private TicketLogic logic = new TicketLogic();
+    private SessionManager manager;
 
     private long ticketID; //from table list
+
+    public LL_TicketReviewController()
+    {
+        manager = SessionManager.getInstance();
+    }
 
     @FXML
     private void initialize()
@@ -86,7 +92,7 @@ public class LL_TicketReviewController
                     {
                         try
                         {
-                            logic.closeTicket(ticketID); //server call
+                            manager.closeTicket(ticketID); //server call
                             currentTicket.set(2, "Closed");
                             statusLabel.setText("Status: Closed");
                             errorLabel.setText("Ticket closed successfully");

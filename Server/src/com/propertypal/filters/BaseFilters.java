@@ -6,7 +6,7 @@ import com.propertypal.CoreLogic;
 import com.propertypal.DbWrapper;
 import com.propertypal.shared.network.responses.*;
 
-public class BaseFilters
+public abstract class BaseFilters
 {
     protected SecurityFilter filter = SecurityFilter.getInstance();
     protected CoreLogic logic = CoreLogic.getInstance();

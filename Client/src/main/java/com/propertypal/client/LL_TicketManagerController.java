@@ -3,6 +3,7 @@ package main.java.com.propertypal.client;
 import com.propertypal.client.SelectedTicket;
 import com.propertypal.client.SceneManager;
 import com.propertypal.client.ClientLogic.TicketLogic;
+import com.propertypal.client.SessionManager;
 import com.propertypal.shared.network.enums.TicketEnums;
 
 import javafx.application.Platform;
@@ -37,7 +38,12 @@ public class LL_TicketManagerController
     @FXML
     private TableColumn<ObservableList<String>, String> statusCol;
 
-    private TicketLogic logic = new TicketLogic();
+    private SessionManager manager;
+
+    public LL_TicketManagerController()
+    {
+        manager = SessionManager.getInstance();
+    }
 
     //--------------------
     // UI Functions
@@ -119,15 +125,15 @@ public class LL_TicketManagerController
     {
         try
         {
-            long leaseID = 1; //temp until login provides real lease ID
+            long leaseID = manager.getLeaseID();
 
-            var ids = logic.getTicketIDList(leaseID);
+            var ids = manager.getTicketIDList(leaseID);
 
             ObservableList<ObservableList<String>> rows = FXCollections.observableArrayList();
 
             for (Long id : ids)
             {
-                var info = logic.getTicketInfo(id); //get details
+                var info = manager.getTicketInfo(id); //get details
                 ObservableList<String> row = FXCollections.observableArrayList();
 
                 row.add("Ticket " + id); //ticket #

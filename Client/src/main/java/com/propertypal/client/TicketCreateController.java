@@ -3,6 +3,7 @@ package main.java.com.propertypal.client;
 import com.propertypal.client.SceneManager;
 import com.propertypal.client.ClientLogic.TicketLogic;
 
+import com.propertypal.client.SessionManager;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -23,7 +24,12 @@ public class TicketCreateController
     @FXML
     private TextArea descArea;
 
-    private TicketLogic logic = new TicketLogic();
+    private SessionManager manager;
+
+    public TicketCreateController()
+    {
+        manager = SessionManager.getInstance();
+    }
 
     //--------------------
     // UI Functions
@@ -61,8 +67,8 @@ public class TicketCreateController
 
             try
             {
-                long leaseID = 1;   // TODO: temp until login provides real lease ID
-                logic.createticket(leaseID, description);
+                long leaseID = manager.getLeaseID();
+                manager.createTicket(leaseID, description);
 
                 errorLabel.setText("Your ticket has been successfully submitted");
                 errorLabel.setStyle("-fx-text-fill: green;");

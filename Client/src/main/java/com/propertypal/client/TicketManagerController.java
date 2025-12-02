@@ -38,7 +38,12 @@ public class TicketManagerController
     @FXML
     private TableColumn<ObservableList<String>, String> statusCol;
 
-    private TicketLogic logic = new TicketLogic();
+    private SessionManager manager;
+
+    public TicketManagerController()
+    {
+        manager = SessionManager.getInstance();
+    }
 
     //--------------------
     // UI Functions
@@ -149,9 +154,9 @@ public class TicketManagerController
     {
         try
         {
-            long leaseID = 1; //temp until login provides real ID
+            long leaseID = manager.getLeaseID();
 
-            var ids = logic.getTicketIDList(leaseID);
+            var ids = manager.getTicketIDList(leaseID);
 
             if (ids == null)
             {
@@ -164,7 +169,7 @@ public class TicketManagerController
 
             for (Long id : ids)
             {
-                var info = logic.getTicketInfo(id); //get details
+                var info = manager.getTicketInfo(id); //get details
                 ObservableList<String> row = FXCollections.observableArrayList();
 
                 row.add("Ticket " + id); //ticket #

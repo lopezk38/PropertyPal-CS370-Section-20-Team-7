@@ -10,15 +10,26 @@ import java.util.List; //for sending & receive lists (like ticket ID)
 
 public class TicketLogic
 {
-    APIHandler handler = null;
+    private static TicketLogic instance = null;
+    private APIHandler handler = null;
 
-    public TicketLogic()
+    private TicketLogic()
     {
         handler = APIHandler.getInstance(); //get shared APIHandler instance for sending network requests
     }
 
+    public static TicketLogic getInstance()
+    {
+        if (instance == null)
+        {
+            instance = new TicketLogic();
+        }
+
+        return instance;
+    }
+
     //create new ticket (called by TicketCreateController)
-    public CreateTicketResponse createticket(long leaseID, String description) throws IOException
+    public CreateTicketResponse createTicket(long leaseID, String description) throws IOException
     {
         CreateTicketPacket tktpkt = new CreateTicketPacket();
 

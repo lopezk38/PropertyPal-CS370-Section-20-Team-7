@@ -26,7 +26,12 @@ public class LoginController
     @FXML
     private PasswordField passwordField;
 
-    public AcctLogic logic = new AcctLogic();
+    public SessionManager manager;
+
+    public LoginController()
+    {
+        manager = SessionManager.getInstance();
+    }
 
     //--------------------
     // UI Functions
@@ -82,8 +87,8 @@ public class LoginController
 
         try
         {
-            // Get role from AcctLogic
-            SessionManager.Role role = logic.loginAndGetRole(email, password);
+            // Get role
+            SessionManager.Role role = manager.loginAndGetRole(email, password);
 
             // Set session
             SessionManager.getInstance().login(email, role);

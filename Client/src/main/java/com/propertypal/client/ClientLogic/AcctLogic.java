@@ -9,12 +9,23 @@ import java.io.IOException;
 
 public class AcctLogic
 {
-    APIHandler handler = null;
+    private static AcctLogic instance = null;
+    private APIHandler handler = null;
 
-    public AcctLogic() //TODO Change back to private after facade is made
+    private AcctLogic()
     {
+        instance = this;
         handler = APIHandler.getInstance();
+    }
 
+    public static AcctLogic getInstance()
+    {
+        if (instance == null)
+        {
+            instance = new AcctLogic();
+        }
+
+        return instance;
     }
 
     //this function tries to log in the in user
@@ -34,5 +45,25 @@ public class AcctLogic
         }
 
         return loginResp.IS_LANDLORD ? SessionManager.Role.LANDLORD : SessionManager.Role.TENANT;
+    }
+
+    public Long getLeaseID()
+    {
+        GetAcctLeasePacket packet = new GetAcctLeasePacket();
+
+        try
+        {
+            GetAcctLeaseResponse resp = handler.sendRequest("/account/getLease", packet, GetAcctLeaseResponse.class);
+            if (resp.STATUS == 0)
+            {
+                return resp.LEASE;
+            }
+        }
+        catch (IOException e)
+        {
+            return null;
+        }
+
+        return null;
     }
 }

@@ -75,6 +75,7 @@ public class SecurityFilter
 
     //NavigationFilters
     public void filterGetRolePacket(ClientRequest req) { navFilter.filterGetRolePacket(req); }
+    public void filterGetLeaseContactsPacket(ClientRequest req) { navFilter.filterGetLeaseContactsPacket(req); }
     public void filterTenantLandingPgInfoPacket(ClientRequest req) { ; } //TODO: Create and connect to submodule
     public void filterLandlordLandingPgInfoPacket(ClientRequest req) { ; } //TODO: Create and connect to submodule
     public void filterNotificationsPacket(ClientRequest req) { ; } //TODO: Create and connect to submodule

@@ -114,9 +114,10 @@ public class AccountLogic extends BaseLogic
                     isLandlord,
                     loginAuthToken,
                     loginTokenExpiration,
-                    loginTokenValidIP
+                    loginTokenValidIP,
+                    phone
                     )
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""");
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""");
 
             acctQ.setString(1, packet.firstName);
             acctQ.setString(2, packet.lastName);
@@ -133,6 +134,7 @@ public class AccountLogic extends BaseLogic
             acctQ.setString(13, token);
             acctQ.setString(14, LocalDateTime.now().plusHours(24).toString());
             acctQ.setString(15, req.getRemoteIP());
+            acctQ.setString(16, packet.phone);
         }
         catch (SQLException e)
         {

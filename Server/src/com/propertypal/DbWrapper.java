@@ -105,6 +105,7 @@ public class DbWrapper
                         loginTokenValidIP VARCHAR,
                         paypalMeLink VARCHAR,
                         isLandlord boolean,
+                        phone VARCHAR,
                         CONSTRAINT PK_USERS_ID PRIMARY KEY (userID),
                         CONSTRAINT UQ_USERS_EM UNIQUE (email),
                         CONSTRAINT UQ_USERS_TOK UNIQUE (loginAuthToken)
@@ -354,12 +355,12 @@ public class DbWrapper
                 """);
 
             //DEBUG
-            PreparedStatement rLL = con.prepareStatement("INSERT INTO Users (email, hashedPW, requirePWReset, isLandlord) VALUES ('land@lord.com', 'landpass', false, true)", Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement rLL = con.prepareStatement("INSERT INTO Users (email, hashedPW, requirePWReset, isLandlord, phone) VALUES ('land@lord.com', 'landpass', false, true, '123-456-7890')", Statement.RETURN_GENERATED_KEYS);
             rLL.execute();
             ResultSet rLLKey = rLL.getGeneratedKeys();
             rLLKey.next();
             long llID = rLLKey.getLong(1);
-            PreparedStatement rTT = con.prepareStatement("INSERT INTO Users (email, hashedPW, requirePWReset, isLandlord) VALUES ('ten@ant.com', 'tenpass', false, false)", Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement rTT = con.prepareStatement("INSERT INTO Users (email, hashedPW, requirePWReset, isLandlord, phone) VALUES ('ten@ant.com', 'tenpass', false, false, '098-765-4321')", Statement.RETURN_GENERATED_KEYS);
             rTT.execute();
             ResultSet rTTKey = rTT.getGeneratedKeys();
             rTTKey.next();

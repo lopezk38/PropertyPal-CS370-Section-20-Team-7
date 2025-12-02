@@ -73,6 +73,7 @@ public class CoreLogic
 
     //NavigationLogic
     public void handleGetRolePacket(ClientRequest req) { navLogic.handleGetRolePacket(req); }
+    public void handleGetLeaseContactsPacket(ClientRequest req) { navLogic.handleGetLeaseContactsPacket(req); }
     public void handleTenantLandingPgInfo(ClientRequest req) { ; } //TODO: Create and connect to submodule
     public void handleLandlordLandingPgInfo(ClientRequest req) { ; } //TODO: Create and connect to submodule
     public void handleNotifications(ClientRequest req) { ; } //TODO: Create and connect to submodule

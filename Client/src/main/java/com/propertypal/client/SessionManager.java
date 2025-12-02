@@ -1,6 +1,7 @@
 package com.propertypal.client;
 
 import com.propertypal.client.ClientLogic.AcctLogic;
+import com.propertypal.client.ClientLogic.PaymentLogic;
 import com.propertypal.client.ClientLogic.TicketLogic;
 import com.propertypal.shared.network.responses.*;
 
@@ -15,6 +16,7 @@ public class SessionManager
     //Subcontrollers
     private TicketLogic ticketLogic = null;
     private AcctLogic acctLogic = null;
+    private PaymentLogic payLogic = null;
 
     // User info
     private String username;
@@ -44,6 +46,7 @@ public class SessionManager
     {
         ticketLogic = TicketLogic.getInstance();
         acctLogic = AcctLogic.getInstance();
+        payLogic = PaymentLogic.getInstance();
     }
 
     // Get singleton instance
@@ -182,5 +185,8 @@ public class SessionManager
     //TODO
 
     //Payments
-    //TODO
+    public String getPayPalLink() throws IOException, IllegalArgumentException
+    {
+        return payLogic.getPayPalLink(leaseID);
+    }
 }

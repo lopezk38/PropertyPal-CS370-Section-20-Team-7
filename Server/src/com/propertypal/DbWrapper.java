@@ -1,5 +1,6 @@
 package com.propertypal;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -355,7 +356,7 @@ public class DbWrapper
                 """);
 
             //DEBUG
-            PreparedStatement rLL = con.prepareStatement("INSERT INTO Users (email, hashedPW, requirePWReset, isLandlord, phone, firstName, lastName) VALUES ('land@lord.com', 'landpass', false, true, '(123) 456-7890', 'Larry', 'Landlord')", Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement rLL = con.prepareStatement("INSERT INTO Users (email, hashedPW, requirePWReset, isLandlord, phone, firstName, lastName, paypalMeLink) VALUES ('land@lord.com', 'landpass', false, true, '(123) 456-7890', 'Larry', 'Landlord', 'PayPal.Me/123')", Statement.RETURN_GENERATED_KEYS); //Some random paypal account, whoever that is
             rLL.execute();
             ResultSet rLLKey = rLL.getGeneratedKeys();
             rLLKey.next();
@@ -377,11 +378,13 @@ public class DbWrapper
             ResultSet rPropKey = rProp.getGeneratedKeys();
             rPropKey.next();
             long ptID = rPropKey.getLong(1);
-            PreparedStatement rLease = con.prepareStatement("INSERT INTO Leases(associatedProperty, tenantID, active, dateMade) VALUES (?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement rLease = con.prepareStatement("INSERT INTO Leases(associatedProperty, tenantID, active, dateMade, rentDueDay, rentAmount) VALUES (?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
             rLease.setLong(1, ptID);
             rLease.setLong(2, ttID);
             rLease.setBoolean(3, true);
             rLease.setString(4, LocalDateTime.now().toString());
+            rLease.setInt(5, 1);
+            rLease.setBigDecimal(6, new BigDecimal("5.00"));
             rLease.execute();
             ResultSet rLeaseKey = rLease.getGeneratedKeys();
             rLeaseKey.next();

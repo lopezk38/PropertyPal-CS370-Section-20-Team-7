@@ -33,6 +33,8 @@ public class MainController
 
     private SessionManager manager;
 
+    private SessionManager.Role role;
+
     public MainController()
     {
         manager = SessionManager.getInstance();
@@ -47,7 +49,7 @@ public class MainController
     {
         Platform.runLater(() -> root.requestFocus());   // Prevents focus of elements when page loads
 
-        var role = manager.getRole();
+        role = manager.getRole();
 
         if (role == SessionManager.Role.LANDLORD)
         {
@@ -94,7 +96,8 @@ public class MainController
     @FXML
     private void onPmtMgrButtonClick()
     {
-        errorLabel.setText("REDIRECT: PAYMENT MANAGER PAGE");
+        if (role == SessionManager.Role.TENANT) { SceneManager.switchTo("/fxml/makePayment.fxml"); }
+        else { ; } //TODO landlord rent setup page
     }
 
     //--------------------

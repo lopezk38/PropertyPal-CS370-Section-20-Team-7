@@ -396,7 +396,7 @@ public class PaymentLogic extends BaseLogic
         }
 
         //Append payment amount to paylink
-        link = link.concat("/"  + rentAmount.toString());
+        link = ("https://www." + link + "/"  + rentAmount.toString());
 
         //Got all data, return it
         GetPayLinkResponse resp = new GetPayLinkResponse();

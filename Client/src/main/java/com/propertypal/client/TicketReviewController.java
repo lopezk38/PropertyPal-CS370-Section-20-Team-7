@@ -7,10 +7,7 @@ import com.propertypal.client.SessionManager;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 
 public class TicketReviewController
@@ -29,6 +26,9 @@ public class TicketReviewController
     private Label dateLabel;
     @FXML
     private TextArea descArea;
+
+    @FXML
+    private Button tktCloseButton;
 
     private SessionManager manager;
 
@@ -89,10 +89,15 @@ public class TicketReviewController
             return;
         }
 
+        // Role-based verbiage
+        boolean isLandlord = manager.getRole() == SessionManager.Role.LANDLORD;
+        String actionVerb = isLandlord ? "close" : "cancel";
+        String actionVerbPast = isLandlord ? "closed" : "cancelled";
+
         // Create confirmation dialog
         Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
-        confirmAlert.setTitle("Confirm Cancel Ticket");
-        confirmAlert.setHeaderText("Are you sure you want to cancel this ticket?");
+        confirmAlert.setTitle("Confirm " + actionVerb.substring(0,1).toUpperCase() + actionVerb.substring(1) + " Ticket");
+        confirmAlert.setHeaderText("Are you sure you want to " + actionVerb + " this ticket?");
         confirmAlert.setContentText("Ticket: " + currentTicket.get(0));
 
         // Wait for user response
@@ -105,22 +110,21 @@ public class TicketReviewController
                     manager.closeTicket(ticketID); //server call
                     currentTicket.set(2, "Closed");
                     statusLabel.setText("Status: Closed");
-                    errorLabel.setText("Ticket cancelled successfully");
+                    errorLabel.setText("Ticket " + actionVerbPast + " successfully");
                     errorLabel.setStyle("-fx-text-fill: green;");
                 }
                 catch (Exception error)
                 {
-                    errorLabel.setText("Failed to cancel ticket");
+                    errorLabel.setText("Failed to " + actionVerb + " ticket");
                     errorLabel.setStyle("-fx-text-fill: red;");
                 }
             }
 
             else // User cancelled
             {
-                errorLabel.setText("Ticket not closed");
+                errorLabel.setText("Ticket not " + actionVerbPast);
                 errorLabel.setStyle("-fx-text-fill: red;");
             }
-
         });
     }
 
@@ -130,12 +134,12 @@ public class TicketReviewController
 
     private void landlordUI()
     {
-
+        tktCloseButton.setText("Close Ticket");
     }
 
     private void tenantUI()
     {
-
+        tktCloseButton.setText("Cancel Ticket");
     }
 
     private void loadTicket()

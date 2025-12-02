@@ -126,8 +126,8 @@ public class TT_TicketReviewController
         }
 
         //extract ticket id from first cell
-        String first = currentTicket.get(0);
-        ticketID = Long.parseLong(first.split(" ")[1]);
+        String fourth = currentTicket.get(4);
+        ticketID = Long.parseLong(fourth);
 
         titleLabel.setText("Title: " + currentTicket.get(0));
         dateLabel.setText("Created: " + currentTicket.get(1));

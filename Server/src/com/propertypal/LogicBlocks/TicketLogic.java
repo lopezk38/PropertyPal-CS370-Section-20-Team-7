@@ -236,7 +236,7 @@ public class TicketLogic extends BaseLogic
                 ticketQ.setInt(1, ticketState);
                 ticketQ.setLong(2, ticketID);
 
-                ticketQ.executeQuery();
+                ticketQ.executeUpdate();
             }
             catch (SQLException e)
             {

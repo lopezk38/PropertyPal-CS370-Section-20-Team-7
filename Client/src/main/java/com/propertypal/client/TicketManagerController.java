@@ -73,7 +73,7 @@ public class TicketManagerController
     @FXML
     private void onBackButtonClick()
     {
-        SceneManager.switchTo("/fxml/TT_main.fxml");
+        SceneManager.switchTo("/fxml/TT_main.fxml"); //TODO is this a bug? should we be doing isLandlord()?
     }
 
     @FXML
@@ -152,10 +152,11 @@ public class TicketManagerController
                 var info = manager.getTicketInfo(id); //get details
                 ObservableList<String> row = FXCollections.observableArrayList();
 
-                row.add("Ticket " + id); //ticket #
+                row.add(info.TITLE); //ticket title
                 row.add(info.LAST_UPDATED.toString()); //date
                 row.add(getReadableState(info.STATE)); //state of ticket
                 row.add(info.DESCRIPTION); //store for review page
+                row.add(id.toString()); //Ticket ID
                 rows.add(row);
             }
 

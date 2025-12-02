@@ -68,7 +68,7 @@ public class TicketCreateController
             try
             {
                 long leaseID = manager.getLeaseID();
-                manager.createTicket(leaseID, description);
+                manager.createTicket(leaseID, title, description);
 
                 errorLabel.setText("Your ticket has been successfully submitted");
                 errorLabel.setStyle("-fx-text-fill: green;");

@@ -91,9 +91,9 @@ public class SessionManager
         return list;
     }
 
-    public CreateTicketResponse createTicket(long leaseID, String description) throws IOException
+    public CreateTicketResponse createTicket(long leaseID, String title, String description) throws IOException
     {
-        CreateTicketResponse resp = ticketLogic.createTicket(leaseID, description);
+        CreateTicketResponse resp = ticketLogic.createTicket(leaseID, title, description);
         return resp;
     }
 

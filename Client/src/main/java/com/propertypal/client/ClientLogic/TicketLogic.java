@@ -29,17 +29,18 @@ public class TicketLogic
     }
 
     //create new ticket (called by TicketCreateController)
-    public CreateTicketResponse createTicket(long leaseID, String description) throws IOException
+    public CreateTicketResponse createTicket(long leaseID, String title, String description) throws IOException
     {
         CreateTicketPacket tktpkt = new CreateTicketPacket();
 
         tktpkt.lease_id = leaseID; //tells server which lease the ticket belongs to
         tktpkt.ticket_type = TicketEnums.Type.MAINTENANCE; //set type of the ticket to maintenance
         tktpkt.ticket_state = TicketEnums.State.NEW; //new tickets start in NEW state
+        tktpkt.title = title;
         tktpkt.description = description; //description of ticket from user
         tktpkt.attachment_ids = List.of(); //no attachments
 
-        CreateTicketResponse resp = handler.sendRequest("/ticket/create", tktpkt, CreateTicketResponse.class);
+        CreateTicketResponse resp = handler.sendRequest("/ticket/new", tktpkt, CreateTicketResponse.class);
 
         if (resp.STATUS != 0) //if server rejects request
         {

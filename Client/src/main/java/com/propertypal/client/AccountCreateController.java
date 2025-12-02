@@ -180,7 +180,7 @@ public class AccountCreateController
 
         if (isLandlord)
         {
-            SceneManager.switchTo("/fxml/LL_main.fxml");
+            SceneManager.switchTo("/fxml/main.fxml");
         }
         else
         {

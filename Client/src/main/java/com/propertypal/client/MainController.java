@@ -1,12 +1,14 @@
 package main.java.com.propertypal.client;
 
 import com.propertypal.client.SceneManager;
+import com.propertypal.client.SessionManager;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 
-public class LL_MainController
+public class MainController
 {
     @FXML
     private VBox root;
@@ -18,19 +20,33 @@ public class LL_MainController
     private Label helloXLabel;
 
     @FXML
+    private Text snapshotLabel;
+    @FXML
     private Label nameXLabel;
-
     @FXML
     private Label emailXLabel;
-
     @FXML
     private Label phoneXLabel;
 
+    //--------------------
+    // UI Functions
+    //--------------------
 
     @FXML
     private void initialize()
     {
         Platform.runLater(() -> root.requestFocus());   // Prevents focus of elements when page loads
+
+        var role = SessionManager.getInstance().getRole();
+
+        if (role == SessionManager.Role.LANDLORD)
+        {
+            snapshotLabel.setText("Your Tenant's Snapshot");
+        }
+        else if (role == SessionManager.Role.TENANT)
+        {
+            snapshotLabel.setText("Your Landlord's Snapshot");
+        }
     }
 
     // DEMO button trigger START

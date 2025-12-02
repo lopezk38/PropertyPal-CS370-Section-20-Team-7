@@ -90,7 +90,7 @@ public class LL_TicketManagerController
     @FXML
     private void onBackButtonClick()
     {
-        SceneManager.switchTo("/fxml/LL_main.fxml");
+        SceneManager.switchTo("/fxml/main.fxml");
     }
 
     @FXML

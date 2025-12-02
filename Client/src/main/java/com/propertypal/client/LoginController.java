@@ -2,6 +2,7 @@ package main.java.com.propertypal.client;
 
 import com.propertypal.client.ClientLogic.AcctLogic;
 import com.propertypal.client.SceneManager;
+import com.propertypal.client.SessionManager;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -81,26 +82,18 @@ public class LoginController
 
         try
         {
-            //throws exception if login failed
-            Boolean userRole = logic.loginAndGetRole(email, password);
+            // Get role from AcctLogic
+            SessionManager.Role role = logic.loginAndGetRole(email, password);
 
-            if(userRole)
-            {
-                System.out.println("Switching to Landlord page");
-                SceneManager.switchTo("/fxml/LL_main.fxml");
-            }
-            else
-            {
-                System.out.println("Switching to Tenant page");
-                SceneManager.switchTo("/fxml/TT_main.fxml");
+            // Set session
+            SessionManager.getInstance().login(email, role);
 
-            }
+            SceneManager.switchTo("/fxml/main.fxml");
         }
         catch (IOException e)
         {
             System.out.println("ERROR in loginAndGetRole(String, String): " + e.getMessage());
-            // optional: show an error to the user
-            errorLabel.setText("Login failed. Please try again.");
+            errorLabel.setText("Login failed, please try again");
         }
     }
 }

@@ -1,7 +1,8 @@
 package com.propertypal.client.ClientLogic;
 
-import com.propertypal.shared.network.packets.*;
 import com.propertypal.client.APIHandler;
+import com.propertypal.client.SessionManager;
+import com.propertypal.shared.network.packets.*;
 import com.propertypal.shared.network.responses.*;
 
 import java.io.IOException;
@@ -16,15 +17,15 @@ public class AcctLogic
 
     }
 
-    //this function tries to login the in user
+    //this function tries to log in the in user
     //throws exception if fails, otherwise returns the users role
-    public Boolean loginAndGetRole(String email, String pass) throws IOException
+    public SessionManager.Role loginAndGetRole(String email, String pass) throws IOException
     {
-
         //get login token and success status
         LoginPacket loginPkt = new LoginPacket();
         loginPkt.email = email;
         loginPkt.password = pass;
+
         LoginResponse loginResp = handler.sendRequest("/auth/login", loginPkt, LoginResponse.class);
 
         if (loginResp.STATUS != 0)
@@ -32,7 +33,6 @@ public class AcctLogic
             throw new IOException("Login failed with error: " + Integer.toString(loginResp.STATUS));
         }
 
-        return loginResp.IS_LANDLORD;
-
+        return loginResp.IS_LANDLORD ? SessionManager.Role.LANDLORD : SessionManager.Role.TENANT;
     }
 }

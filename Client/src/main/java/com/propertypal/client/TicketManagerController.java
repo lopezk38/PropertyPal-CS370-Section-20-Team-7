@@ -14,6 +14,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 
 public class TicketManagerController
@@ -37,6 +38,8 @@ public class TicketManagerController
 
     @FXML
     private Button tktCreateButton;
+    @FXML
+    private Region tktCreateRegion;
 
     private SessionManager manager;
 
@@ -54,8 +57,7 @@ public class TicketManagerController
     {
         Platform.runLater(() -> root.requestFocus()); // Prevents focus of elements when page loads
 
-        var role = SessionManager.getInstance().getRole();
-        errorLabel.setStyle("Role: " + role);    // For debugging
+        var role = manager.getRole();
 
         if (role == SessionManager.Role.LANDLORD)
         {
@@ -73,7 +75,7 @@ public class TicketManagerController
     @FXML
     private void onBackButtonClick()
     {
-        SceneManager.switchTo("/fxml/TT_main.fxml"); //TODO is this a bug? should we be doing isLandlord()?
+        SceneManager.switchTo("/fxml/main.fxml");
     }
 
     @FXML
@@ -107,12 +109,18 @@ public class TicketManagerController
     {
         tktCreateButton.setVisible(false);
         tktCreateButton.setManaged(false);
+
+        tktCreateRegion.setVisible(false);
+        tktCreateRegion.setManaged(false);
     }
 
     private void tenantUI()
     {
         tktCreateButton.setVisible(true);
         tktCreateButton.setManaged(true);
+
+        tktCreateRegion.setVisible(true);
+        tktCreateRegion.setManaged(true);
     }
 
     private void setupTableColumns()
@@ -201,6 +209,6 @@ public class TicketManagerController
 
     private void updateTicketCount(int count)
     {
-        ticketCountLabel.setText("There is " + count + " open ticket" + (count == 1 ? "" : "s"));
+        ticketCountLabel.setText("There " + (count == 1 ? "is " : "are ") + count + " open ticket" + (count == 1 ? "" : "s"));
     }
 }

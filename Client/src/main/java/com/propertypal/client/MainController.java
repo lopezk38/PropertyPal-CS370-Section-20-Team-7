@@ -31,6 +31,13 @@ public class MainController
     @FXML
     private Label phoneXLabel;
 
+    public SessionManager manager;
+
+    public MainController()
+    {
+        manager = SessionManager.getInstance();
+    }
+
     //--------------------
     // UI Functions
     //--------------------
@@ -40,7 +47,7 @@ public class MainController
     {
         Platform.runLater(() -> root.requestFocus());   // Prevents focus of elements when page loads
 
-        var role = SessionManager.getInstance().getRole();
+        var role = manager.getRole();
 
         if (role == SessionManager.Role.LANDLORD)
         {

@@ -67,7 +67,7 @@ public class TicketManagerController
         }
 
         setupTableColumns();
-        //loadTickets();
+        loadTickets();
     }
 
     @FXML
@@ -174,6 +174,7 @@ public class TicketManagerController
     //convert ticket state int to readable words
     private String getReadableState(int state)
     {
+        /*
         return switch (state)
         {
             case TicketEnums.State.NEW -> "New";
@@ -181,6 +182,17 @@ public class TicketManagerController
             case TicketEnums.State.NEEDS_PREPAYMENT -> "Needs Prepayment";
             case TicketEnums.State.IN_PROGRESS -> "In Progress";
             case TicketEnums.State.NEEDS_PAYMENT -> "Needs Payment";
+            case TicketEnums.State.CLOSED -> "Closed";
+            default -> "Unknown";
+        };
+        */
+        return switch (state)
+        {
+            case TicketEnums.State.NEW -> "Open";
+            case TicketEnums.State.UNDER_REVIEW -> "Open";
+            case TicketEnums.State.NEEDS_PREPAYMENT -> "Open";
+            case TicketEnums.State.IN_PROGRESS -> "Open";
+            case TicketEnums.State.NEEDS_PAYMENT -> "Open";
             case TicketEnums.State.CLOSED -> "Closed";
             default -> "Unknown";
         };

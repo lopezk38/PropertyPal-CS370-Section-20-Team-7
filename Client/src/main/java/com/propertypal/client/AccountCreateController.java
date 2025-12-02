@@ -178,13 +178,14 @@ public class AccountCreateController
 
         showSuccessDialog();
 
+        // TODO Get role via SessionManager
         if (isLandlord)
         {
             SceneManager.switchTo("/fxml/main.fxml");
         }
         else
         {
-            SceneManager.switchTo("/fxml/TT_main.fxml");
+            SceneManager.switchTo("/fxml/main.fxml");
         }
     }
 

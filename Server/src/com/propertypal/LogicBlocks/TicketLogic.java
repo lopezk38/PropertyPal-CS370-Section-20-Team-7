@@ -80,7 +80,7 @@ public class TicketLogic extends BaseLogic
                         description,
                         dateCreated,
                         timeModified,
-                        status,
+                        state,
                         type
                     )
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?)""", Statement.RETURN_GENERATED_KEYS);

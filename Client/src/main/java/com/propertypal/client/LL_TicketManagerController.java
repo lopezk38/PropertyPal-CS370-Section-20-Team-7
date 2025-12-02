@@ -129,6 +129,13 @@ public class LL_TicketManagerController
 
             var ids = manager.getTicketIDList(leaseID);
 
+            if (ids == null)
+            {
+                //No tickets
+                updateTicketCount(0);
+                return;
+            }
+
             ObservableList<ObservableList<String>> rows = FXCollections.observableArrayList();
 
             for (Long id : ids)

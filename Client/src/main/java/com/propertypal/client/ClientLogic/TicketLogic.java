@@ -39,7 +39,7 @@ public class TicketLogic
         tktpkt.description = description; //description of ticket from user
         tktpkt.attachment_ids = List.of(); //no attachments
 
-        CreateTicketResponse resp = handler.sendRequest("/ticket/create", tktpkt, CreateTicketResponse.class);
+        CreateTicketResponse resp = handler.sendRequest("/ticket/new", tktpkt, CreateTicketResponse.class);
 
         if (resp.STATUS != 0) //if server rejects request
         {

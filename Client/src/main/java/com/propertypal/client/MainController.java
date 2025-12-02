@@ -2,6 +2,7 @@ package main.java.com.propertypal.client;
 
 import com.propertypal.client.SceneManager;
 import com.propertypal.client.SessionManager;
+import com.sun.tools.javac.Main;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -30,6 +31,13 @@ public class MainController
     private Label emailXLabel;
     @FXML
     private Label phoneXLabel;
+
+    private SessionManager manager;
+
+    public MainController()
+    {
+        manager = SessionManager.getInstance();
+    }
 
     //--------------------
     // UI Functions
@@ -101,7 +109,14 @@ public class MainController
     @FXML
     private void onTktMgrButtonClick()
     {
-        SceneManager.switchTo("/fxml/LL_ticketManager.fxml");
+        if (manager.isLandlord())
+        {
+            SceneManager.switchTo("/fxml/LL_ticketManager.fxml");
+        }
+        else
+        {
+            SceneManager.switchTo("/fxml/TT_ticketManager.fxml");
+        }
     }
 
     // TEMPORARY Payment Manager button trigger

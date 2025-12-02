@@ -1086,14 +1086,15 @@ public class AccountLogic extends BaseLogic
                 return;
             }
 
-            //If we got here, we got the lease successfully
-            GetAcctLeaseResponse resp = new GetAcctLeaseResponse();
-            resp.STATUS = BaseResponseEnum.SUCCESS;
-            resp.LEASE = leaseID;
-            req.setResponse(resp);
-            filter.sendResponse(req);
-
-            return;
         }
+
+        //If we got here, we got the lease successfully
+        GetAcctLeaseResponse resp = new GetAcctLeaseResponse();
+        resp.STATUS = BaseResponseEnum.SUCCESS;
+        resp.LEASE = leaseID;
+        req.setResponse(resp);
+        filter.sendResponse(req);
+
+        return;
     }
 }

@@ -94,7 +94,7 @@ public class MainController
     @FXML
     private void onPmtMgrButtonClick()
     {
-        errorLabel.setText("REDIRECT: PAYMENT MANAGER PAGE");
+        SceneManager.switchTo("/fxml/paymentManager.fxml");
     }
 
     //--------------------

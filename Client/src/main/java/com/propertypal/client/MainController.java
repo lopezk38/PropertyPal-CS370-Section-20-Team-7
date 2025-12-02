@@ -31,7 +31,7 @@ public class MainController
     @FXML
     private Label phoneXLabel;
 
-    public SessionManager manager;
+    private SessionManager manager;
 
     public MainController()
     {

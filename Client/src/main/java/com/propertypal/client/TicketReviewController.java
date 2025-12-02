@@ -1,10 +1,9 @@
 package main.java.com.propertypal.client;
 
-import com.propertypal.client.SelectedTicket;
 import com.propertypal.client.SceneManager;
-import com.propertypal.client.ClientLogic.TicketLogic;
-
+import com.propertypal.client.SelectedTicket;
 import com.propertypal.client.SessionManager;
+
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -14,41 +13,53 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.VBox;
 
-public class TT_TicketReviewController
+public class TicketReviewController
 {
 
     @FXML
     private VBox root;
-
     @FXML
     private Label errorLabel;
 
     @FXML
     private Label statusLabel;
-
     @FXML
     private Label titleLabel;
-
     @FXML
     private Label dateLabel;
-
     @FXML
     private TextArea descArea;
 
-    private ObservableList<String> currentTicket;
-
     private SessionManager manager;
-    private long ticketID; //parsed from row
 
-    public TT_TicketReviewController()
+    public TicketReviewController()
     {
         manager = SessionManager.getInstance();
     }
+
+    private long ticketID; //parsed from row
+
+    private ObservableList<String> currentTicket;
+
+    //--------------------
+    // UI Functions
+    //--------------------
 
     @FXML
     private void initialize()
     {
         Platform.runLater(() -> root.requestFocus());   // Prevents focus of elements when page loads
+
+        var role = manager.getRole();
+
+        if (role == SessionManager.Role.LANDLORD)
+        {
+            landlordUI();
+        }
+        else if (role == SessionManager.Role.TENANT)
+        {
+            tenantUI();
+        }
 
         loadTicket();
     }
@@ -113,7 +124,19 @@ public class TT_TicketReviewController
         });
     }
 
-    // Helper functions
+    //--------------------
+    // Helper Functions
+    //--------------------
+
+    private void landlordUI()
+    {
+
+    }
+
+    private void tenantUI()
+    {
+
+    }
 
     private void loadTicket()
     {

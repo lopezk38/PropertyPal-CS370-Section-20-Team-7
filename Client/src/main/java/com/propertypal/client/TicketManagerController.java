@@ -1,6 +1,5 @@
 package main.java.com.propertypal.client;
 
-import com.propertypal.client.ClientLogic.TicketLogic;
 import com.propertypal.client.SceneManager;
 import com.propertypal.client.SelectedTicket;
 import com.propertypal.client.SessionManager;
@@ -98,7 +97,7 @@ public class TicketManagerController
 
         SelectedTicket.set(selected);
 
-        SceneManager.switchTo("/fxml/TT_ticketReview.fxml");
+        SceneManager.switchTo("/fxml/ticketReview.fxml");
     }
 
     //--------------------

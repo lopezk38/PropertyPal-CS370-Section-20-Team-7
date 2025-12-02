@@ -65,20 +65,24 @@ public class AuthFilters extends BaseFilters
         if (LocalDateTime.now().isAfter(exprTime))
         {
             //Token has expired
+            System.out.println("WARNING: Rejected token due to expiration");
             req.setBaseErrResponse(BaseResponseEnum.ERR_BAD_TOKEN);
             filter.sendResponse(req);
 
             return BaseResponseEnum.ERR_BAD_TOKEN;
         }
 
+        /* DISABLED TEMPORARILY - NEED TO FIX BUG WHERE PORT IS ALSO WRONGLY CONSIDERED
         if (!req.getRemoteIP().equals(validIP))
         {
             //IP does not match IP which owns the token. Stolen token?
+            System.out.println("WARNING: Rejected token due to IP mismatch");
             req.setBaseErrResponse(BaseResponseEnum.ERR_BAD_TOKEN);
             filter.sendResponse(req);
 
             return BaseResponseEnum.ERR_BAD_TOKEN;
         }
+        */
 
         //All checks passed, allow packet to proceed
         return BaseResponseEnum.SUCCESS;

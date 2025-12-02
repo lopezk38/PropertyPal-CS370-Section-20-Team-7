@@ -57,7 +57,7 @@
     <Region prefHeight="250.0" prefWidth="1240.0" />
     <HBox alignment="TOP_CENTER" minHeight="-Infinity" prefHeight="50.0" prefWidth="200.0">
         <children>
-         <Button alignment="CENTER" onAction="#onTktCreateButtonClick" prefHeight="50.0" prefWidth="200.0" text="Create Ticket" textAlignment="CENTER" wrapText="true">
+         <Button fx:id="tktCreateButton" alignment="CENTER" onAction="#onTktCreateButtonClick" prefHeight="50.0" prefWidth="200.0" text="Create Ticket" textAlignment="CENTER" wrapText="true">
             <font>
                <Font size="18.0" />
             </font>

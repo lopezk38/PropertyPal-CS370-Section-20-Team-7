@@ -1,9 +1,8 @@
 package main.java.com.propertypal.client;
 
 import com.propertypal.client.SceneManager;
-import com.propertypal.client.ClientLogic.TicketLogic;
-
 import com.propertypal.client.SessionManager;
+
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -14,13 +13,11 @@ public class TicketCreateController
 
     @FXML
     private VBox root;
-
     @FXML
     private Label errorLabel;
 
     @FXML
     private TextField titleField;
-
     @FXML
     private TextArea descArea;
 
@@ -78,7 +75,7 @@ public class TicketCreateController
             }
             catch (Exception error)
             {
-                errorLabel.setText("Your ticket has failed to submit. Please try again");
+                errorLabel.setText("Your ticket has failed to submit, please try again");
                 errorLabel.setStyle("-fx-text-fill: red;");
             }
         }

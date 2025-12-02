@@ -26,7 +26,7 @@ public class LoginController
     @FXML
     private PasswordField passwordField;
 
-    public SessionManager manager;
+    private SessionManager manager;
 
     public LoginController()
     {

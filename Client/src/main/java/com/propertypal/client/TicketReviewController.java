@@ -1,54 +1,65 @@
 package main.java.com.propertypal.client;
 
-import com.propertypal.client.SelectedTicket;
 import com.propertypal.client.SceneManager;
-import com.propertypal.client.ClientLogic.TicketLogic;
-
+import com.propertypal.client.SelectedTicket;
 import com.propertypal.client.SessionManager;
+
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 
-public class TT_TicketReviewController
+public class TicketReviewController
 {
 
     @FXML
     private VBox root;
-
     @FXML
     private Label errorLabel;
 
     @FXML
     private Label statusLabel;
-
     @FXML
     private Label titleLabel;
-
     @FXML
     private Label dateLabel;
-
     @FXML
     private TextArea descArea;
 
-    private ObservableList<String> currentTicket;
+    @FXML
+    private Button tktCloseButton;
 
     private SessionManager manager;
-    private long ticketID; //parsed from row
 
-    public TT_TicketReviewController()
+    public TicketReviewController()
     {
         manager = SessionManager.getInstance();
     }
+
+    private long ticketID; //parsed from row
+
+    private ObservableList<String> currentTicket;
+
+    //--------------------
+    // UI Functions
+    //--------------------
 
     @FXML
     private void initialize()
     {
         Platform.runLater(() -> root.requestFocus());   // Prevents focus of elements when page loads
+
+        var role = manager.getRole();
+
+        if (role == SessionManager.Role.LANDLORD)
+        {
+            landlordUI();
+        }
+        else if (role == SessionManager.Role.TENANT)
+        {
+            tenantUI();
+        }
 
         loadTicket();
     }
@@ -78,10 +89,15 @@ public class TT_TicketReviewController
             return;
         }
 
+        // Role-based verbiage
+        boolean isLandlord = manager.getRole() == SessionManager.Role.LANDLORD;
+        String actionVerb = isLandlord ? "close" : "cancel";
+        String actionVerbPast = isLandlord ? "closed" : "cancelled";
+
         // Create confirmation dialog
         Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
-        confirmAlert.setTitle("Confirm Cancel Ticket");
-        confirmAlert.setHeaderText("Are you sure you want to cancel this ticket?");
+        confirmAlert.setTitle("Confirm " + actionVerb.substring(0,1).toUpperCase() + actionVerb.substring(1) + " Ticket");
+        confirmAlert.setHeaderText("Are you sure you want to " + actionVerb + " this ticket?");
         confirmAlert.setContentText("Ticket: " + currentTicket.get(0));
 
         // Wait for user response
@@ -94,26 +110,37 @@ public class TT_TicketReviewController
                     manager.closeTicket(ticketID); //server call
                     currentTicket.set(2, "Closed");
                     statusLabel.setText("Status: Closed");
-                    errorLabel.setText("Ticket cancelled successfully");
+                    errorLabel.setText("Ticket " + actionVerbPast + " successfully");
                     errorLabel.setStyle("-fx-text-fill: green;");
                 }
                 catch (Exception error)
                 {
-                    errorLabel.setText("Failed to cancel ticket");
+                    errorLabel.setText("Failed to " + actionVerb + " ticket");
                     errorLabel.setStyle("-fx-text-fill: red;");
                 }
             }
 
             else // User cancelled
             {
-                errorLabel.setText("Ticket not closed");
+                errorLabel.setText("Ticket not " + actionVerbPast);
                 errorLabel.setStyle("-fx-text-fill: red;");
             }
-
         });
     }
 
-    // Helper functions
+    //--------------------
+    // Helper Functions
+    //--------------------
+
+    private void landlordUI()
+    {
+        tktCloseButton.setText("Close Ticket");
+    }
+
+    private void tenantUI()
+    {
+        tktCloseButton.setText("Cancel Ticket");
+    }
 
     private void loadTicket()
     {

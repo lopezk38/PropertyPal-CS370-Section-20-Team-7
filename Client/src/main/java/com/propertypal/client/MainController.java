@@ -31,6 +31,13 @@ public class MainController
     @FXML
     private Label phoneXLabel;
 
+    private SessionManager manager;
+
+    public MainController()
+    {
+        manager = SessionManager.getInstance();
+    }
+
     //--------------------
     // UI Functions
     //--------------------
@@ -40,7 +47,7 @@ public class MainController
     {
         Platform.runLater(() -> root.requestFocus());   // Prevents focus of elements when page loads
 
-        var role = SessionManager.getInstance().getRole();
+        var role = manager.getRole();
 
         if (role == SessionManager.Role.LANDLORD)
         {
@@ -59,28 +66,7 @@ public class MainController
     {
         // TODO: Implement LL+TT linking UI here
 
-        // DEMO START
-
-        if (!demoActive)
-        {
-            helloXLabel.setText("Hello, Alan!");
-            nameXLabel.setText("Name: John Doe");
-            emailXLabel.setText("Email: johndoe@email.com");
-            phoneXLabel.setText("Phone: (555) 555-5555");
-
-            demoActive = true;
-        }
-
-        else
-        {
-            helloXLabel.setText("Hello, [F_NAME]!");
-            nameXLabel.setText("Name: [F_NAME L_NAME]");
-            emailXLabel.setText("Email: [EMAIL]");
-            phoneXLabel.setText("Phone: [PHONE]");
-
-            demoActive = false;
-        }
-        // DEMO END
+        errorLabel.setText("ACTION: LL+TT LINK WINDOW");
     }
 
     // Log Out button trigger
@@ -117,13 +103,27 @@ public class MainController
 
     private void landlordUI()
     {
-        snapshotLabel.setText("Your Tenant's Snapshot");
         linkButton.setVisible(true);
+
+        helloXLabel.setText("Hello, Larry!");
+
+        snapshotLabel.setText("Your Tenant's Snapshot");
+
+        nameXLabel.setText("Name: Tony Tenant");
+        emailXLabel.setText("Email: ten@ant.com");
+        phoneXLabel.setText("Phone: (555) 555-5555");
     }
 
     private void tenantUI()
     {
-        snapshotLabel.setText("Your Landlord's Snapshot");
         linkButton.setVisible(false);
+
+        helloXLabel.setText("Hello, Tony!");
+
+        snapshotLabel.setText("Your Landlord's Snapshot");
+
+        nameXLabel.setText("Name: Larry Landlord");
+        emailXLabel.setText("Email: land@lord.com");
+        phoneXLabel.setText("Phone: (555) 555-5555");
     }
 }

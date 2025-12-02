@@ -10,7 +10,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<VBox fx:id="root" alignment="TOP_CENTER" prefHeight="720.0" prefWidth="1280.0" spacing="20.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.java.com.propertypal.client.TT_TicketReviewController">
+<VBox fx:id="root" alignment="TOP_CENTER" prefHeight="720.0" prefWidth="1280.0" spacing="20.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.java.com.propertypal.client.TicketReviewController">
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
@@ -62,7 +62,7 @@
     <Region prefHeight="250.0" prefWidth="1240.0" />
     <HBox alignment="TOP_CENTER" minHeight="-Infinity" prefHeight="50.0" prefWidth="200.0">
         <children>
-            <Button alignment="CENTER" onAction="#onTktCloseButtonClick" prefHeight="50.0" prefWidth="200.0" text="Cancel Ticket" textAlignment="CENTER" wrapText="true">
+            <Button fx:id="tktCloseButton" alignment="CENTER" onAction="#onTktCloseButtonClick" prefHeight="50.0" prefWidth="200.0" text="Cancel Ticket" textAlignment="CENTER" wrapText="true">
                 <font>
                     <Font size="18.0" />
                 </font>

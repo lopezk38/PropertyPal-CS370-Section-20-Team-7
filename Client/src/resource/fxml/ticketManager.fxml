@@ -62,7 +62,7 @@
                <Font size="18.0" />
             </font>
          </Button>
-         <Region prefHeight="200.0" prefWidth="200.0" />
+         <Region fx:id="tktCreateRegion" prefHeight="200.0" prefWidth="200.0" />
             <Button alignment="CENTER" onAction="#onTktReviewButtonClick" prefHeight="50.0" prefWidth="200.0" text="Review Ticket" textAlignment="CENTER" wrapText="true">
                 <font>
                     <Font size="18.0" />

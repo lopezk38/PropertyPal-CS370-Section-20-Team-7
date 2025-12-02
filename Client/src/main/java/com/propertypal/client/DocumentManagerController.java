@@ -53,7 +53,6 @@ public class DocumentManagerController
     @FXML
     private void onBackButtonClick()
     {
-        // TODO: This needs to switch to correct page based on user role (session manager?)
         SceneManager.switchTo("/fxml/main.fxml");
     }
 

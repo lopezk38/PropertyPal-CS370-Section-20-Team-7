@@ -5,7 +5,6 @@ import com.propertypal.client.SessionManager;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 
@@ -18,9 +17,10 @@ public class PaymentRequestController
     private Label errorLabel;
 
     @FXML
-    private TextField titleField;
+    private TextField paypalField;
     @FXML
-    private TextArea descArea;
+    private TextField requestField;
+    // TODO dateField?
 
     private SessionManager manager;
 
@@ -42,21 +42,23 @@ public class PaymentRequestController
     @FXML
     private void onBackButtonClick()
     {
-        SceneManager.switchTo("/fxml/ticketManager.fxml");
+        SceneManager.switchTo("/fxml/main.fxml");
     }
 
     @FXML
-    private void onTktCreateButtonClick()
+    private void onPmtRequestButtonClick()
     {
         // Client-side validation
 
-        String title = titleField.getText().trim();
-        String description = descArea.getText().trim();
+        String paypalLink = paypalField.getText().trim();
+        String requestAmount = requestField.getText().trim();
+
+        // TODO Add more validation checks
 
         // Check empty fields
-        if (title.isEmpty() || description.isEmpty())
+        if (paypalLink.isEmpty() || requestAmount.isEmpty())
         {
-            errorLabel.setText("Both title and description are required");
+            errorLabel.setText("All fields are required");
             errorLabel.setStyle("-fx-text-fill: red;");
         }
         else
@@ -65,18 +67,18 @@ public class PaymentRequestController
 
             try
             {
-                long leaseID = manager.getLeaseID();
-                manager.createTicket(leaseID, title, description);
+                // TODO Add PaymentLogic
 
-                errorLabel.setText("Your ticket has been successfully submitted");
+//                // Ticket Create hint
+//                long leaseID = manager.getLeaseID();
+//                manager.createTicket(leaseID, title, description);
+
+                errorLabel.setText("Your payment request has been successfully submitted");
                 errorLabel.setStyle("-fx-text-fill: green;");
-
-                titleField.clear();
-                descArea.clear();
             }
             catch (Exception error)
             {
-                errorLabel.setText("Your ticket has failed to submit, please try again");
+                errorLabel.setText("Your payment request has failed to submit, please try again");
                 errorLabel.setStyle("-fx-text-fill: red;");
             }
         }

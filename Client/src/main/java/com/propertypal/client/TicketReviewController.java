@@ -32,14 +32,14 @@ public class TicketReviewController
 
     private SessionManager manager;
 
+    private long ticketID; //parsed from row
+
+    private ObservableList<String> currentTicket;
+
     public TicketReviewController()
     {
         manager = SessionManager.getInstance();
     }
-
-    private long ticketID; //parsed from row
-
-    private ObservableList<String> currentTicket;
 
     //--------------------
     // UI Functions

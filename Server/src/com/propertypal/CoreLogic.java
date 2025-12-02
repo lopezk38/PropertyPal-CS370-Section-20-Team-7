@@ -26,6 +26,7 @@ public class CoreLogic
         docLogic = new DocLogic();
         ticketLogic = new TicketLogic();
         paymentLogic = new PaymentLogic();
+        navLogic = new NavigationLogic();
     }
 
     public static CoreLogic getInstance()

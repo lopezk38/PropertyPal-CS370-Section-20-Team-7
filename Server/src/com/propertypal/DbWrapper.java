@@ -355,20 +355,20 @@ public class DbWrapper
                 """);
 
             //DEBUG
-            PreparedStatement rLL = con.prepareStatement("INSERT INTO Users (email, hashedPW, requirePWReset, isLandlord, phone) VALUES ('land@lord.com', 'landpass', false, true, '123-456-7890')", Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement rLL = con.prepareStatement("INSERT INTO Users (email, hashedPW, requirePWReset, isLandlord, phone, firstName, lastName) VALUES ('land@lord.com', 'landpass', false, true, '(123) 456-7890', 'Larry', 'Landlord')", Statement.RETURN_GENERATED_KEYS);
             rLL.execute();
             ResultSet rLLKey = rLL.getGeneratedKeys();
             rLLKey.next();
             long llID = rLLKey.getLong(1);
-            PreparedStatement rTT = con.prepareStatement("INSERT INTO Users (email, hashedPW, requirePWReset, isLandlord, phone) VALUES ('ten@ant.com', 'tenpass', false, false, '098-765-4321')", Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement rTT = con.prepareStatement("INSERT INTO Users (email, hashedPW, requirePWReset, isLandlord, phone, firstName, lastName) VALUES ('ten@ant.com', 'tenpass', false, false, '(098) 765-4321', 'Tony', 'Tenant')", Statement.RETURN_GENERATED_KEYS);
             rTT.execute();
             ResultSet rTTKey = rTT.getGeneratedKeys();
             rTTKey.next();
             long ttID = rTTKey.getLong(1);
             PreparedStatement rProp = con.prepareStatement("INSERT INTO Properties(owner, addr1, addr2, city, state, zipCode, country) VALUES (?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
             rProp.setLong(1, llID);
-            rProp.setString(2, "street");
-            rProp.setString(3, "suite 1");
+            rProp.setString(2, "1st Street");
+            rProp.setString(3, "Suite 1");
             rProp.setString(4, "San Diego");
             rProp.setString(5, "CA");
             rProp.setString(6, "12345");

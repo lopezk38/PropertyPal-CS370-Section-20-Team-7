@@ -66,4 +66,27 @@ public class AcctLogic
 
         return null;
     }
+
+    public GetLeaseContactsResponse getContacts(Long leaseID) throws IOException
+    {
+        GetLeaseContactsPacket packet = new GetLeaseContactsPacket();
+        packet.lease_id = leaseID;
+
+        GetLeaseContactsResponse resp = handler.sendRequest("/lease/getContacts", packet, GetLeaseContactsResponse.class);
+        if (resp.STATUS != 0)
+        {
+            throw new IOException("Got bad response from server for contact info");
+        }
+
+        if (resp.LL_FNAME == null) { resp.LL_FNAME = "ERROR"; }
+        if (resp.LL_LNAME == null) { resp.LL_LNAME = "ERROR"; }
+        if (resp.LL_EMAIL == null) { resp.LL_EMAIL = "ERROR"; }
+        if (resp.LL_PHONE == null) { resp.LL_PHONE = "ERROR"; }
+        if (resp.TT_FNAME == null) { resp.TT_FNAME = "ERROR"; }
+        if (resp.TT_LNAME == null) { resp.TT_LNAME = "ERROR"; }
+        if (resp.TT_EMAIL == null) { resp.TT_EMAIL = "ERROR"; }
+        if (resp.TT_PHONE == null) { resp.TT_PHONE = "ERROR"; }
+
+        return resp;
+    }
 }

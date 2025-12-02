@@ -20,6 +20,16 @@ public class SessionManager
     private String username;
     private Role role;
 
+    //Lease contact info
+    private String llFname;
+    private String llLname;
+    private String llEmail;
+    private String llPhone;
+    private String ttFname;
+    private String ttLname;
+    private String ttEmail;
+    private String ttPhone;
+
     //Session info
     Long leaseID;
 
@@ -83,6 +93,16 @@ public class SessionManager
         return role == Role.LANDLORD;
     }
 
+    //Contact info getters
+    public String getLLFname() { return llFname; }
+    public String getLLLname() { return llLname; }
+    public String getLLEmail() { return llEmail; }
+    public String getLLPhone() { return llPhone; }
+    public String getTTFname() { return ttFname; }
+    public String getTTLname() { return ttLname; }
+    public String getTTEmail() { return ttEmail; }
+    public String getTTPhone() { return ttPhone; }
+
     //Packet generators and handlers
     //Tickets
     public List<Long> getTicketIDList(long leaseID) throws IOException
@@ -115,6 +135,7 @@ public class SessionManager
         this.username = email;
         this.role = role;
         this.leaseID = acctLogic.getLeaseID();
+        getContacts();
         return role;
     }
 
@@ -134,6 +155,27 @@ public class SessionManager
         this.leaseID = acctLogic.getLeaseID();
 
         return null; //TODO replace this with real logic
+    }
+
+    public void getContacts()
+    {
+        try
+        {
+            GetLeaseContactsResponse resp = acctLogic.getContacts(leaseID);
+            llFname = resp.LL_FNAME;
+            llLname = resp.LL_LNAME;
+            llEmail = resp.LL_EMAIL;
+            llPhone = resp.LL_PHONE;
+            ttFname = resp.TT_FNAME;
+            ttLname = resp.TT_LNAME;
+            ttEmail = resp.TT_EMAIL;
+            ttPhone = resp.TT_PHONE;
+        }
+        catch (IOException e)
+        {
+            System.out.println("WARNING: Failed to retrieve contact info from server");
+        }
+        return;
     }
 
     //Documents

@@ -105,25 +105,25 @@ public class MainController
     {
         linkButton.setVisible(true);
 
-        helloXLabel.setText("Hello, Larry!");
+        helloXLabel.setText(String.format("Hello, %s!", manager.getLLFname()));
 
         snapshotLabel.setText("Your Tenant's Snapshot");
 
-        nameXLabel.setText("Name: Tony Tenant");
-        emailXLabel.setText("Email: ten@ant.com");
-        phoneXLabel.setText("Phone: (555) 555-5555");
+        nameXLabel.setText(String.format("Name: %s %s", manager.getTTFname(), manager.getTTLname()));
+        emailXLabel.setText(String.format("Email: %s", manager.getTTEmail()));
+        phoneXLabel.setText(String.format("Phone: %s", manager.getTTPhone()));
     }
 
     private void tenantUI()
     {
         linkButton.setVisible(false);
 
-        helloXLabel.setText("Hello, Tony!");
+        helloXLabel.setText(String.format("Hello, %s!", manager.getTTFname()));
 
         snapshotLabel.setText("Your Landlord's Snapshot");
 
-        nameXLabel.setText("Name: Larry Landlord");
-        emailXLabel.setText("Email: land@lord.com");
-        phoneXLabel.setText("Phone: (555) 555-5555");
+        nameXLabel.setText(String.format("Name: %s %s", manager.getLLFname(), manager.getLLLname()));
+        emailXLabel.setText(String.format("Email: %s", manager.getLLEmail()));
+        phoneXLabel.setText(String.format("Phone: %s", manager.getLLPhone()));
     }
 }

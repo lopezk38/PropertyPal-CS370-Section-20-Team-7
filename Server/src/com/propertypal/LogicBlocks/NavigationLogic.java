@@ -311,7 +311,7 @@ public class NavigationLogic extends BaseLogic
         }
 
         //Check if user is on the lease
-        if (userID != landlordID || userID != tenantID)
+        if (userID != landlordID && userID != tenantID)
         {
             GetLeaseContactsResponse resp = new GetLeaseContactsResponse();
             resp.STATUS = GetLeaseContactsResponse.GetLeaseContactsStatus.ERR_NOT_PARTICIPANT;

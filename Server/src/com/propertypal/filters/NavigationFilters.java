@@ -30,7 +30,7 @@ public class NavigationFilters extends BaseFilters
 
     public void filterGetLeaseContactsPacket(ClientRequest req)
     {
-        if (!(req.packet instanceof GetRolePacket))
+        if (!(req.packet instanceof GetLeaseContactsPacket))
         {
             //Endpoint registered to wrong handler
             System.out.println("ERROR: filterGetLeaseContactsPacket is registered to the wrong endpoint");

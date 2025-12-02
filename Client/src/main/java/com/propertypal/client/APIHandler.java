@@ -69,6 +69,7 @@ public class APIHandler
         HttpResponse postResp = http.execute(post);
         String rawResp = EntityUtils.toString(postResp.getEntity());
         System.out.println("Got response code " + postResp.getStatusLine().getStatusCode() + " with response " + rawResp);
+        //TODO check for code 200, throw if not
 
         //Deserialize
         T resp = BaseResponse.fromJson(rawResp, respType);

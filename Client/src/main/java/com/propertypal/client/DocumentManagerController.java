@@ -54,7 +54,7 @@ public class DocumentManagerController
     private void onBackButtonClick()
     {
         // TODO: This needs to switch to correct page based on user role (session manager?)
-        SceneManager.switchTo("/fxml/TT_main.fxml");
+        SceneManager.switchTo("/fxml/main.fxml");
     }
 
     @FXML

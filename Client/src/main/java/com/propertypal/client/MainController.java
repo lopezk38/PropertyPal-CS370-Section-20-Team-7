@@ -4,6 +4,7 @@ import com.propertypal.client.SceneManager;
 import com.propertypal.client.SessionManager;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
@@ -12,9 +13,11 @@ public class MainController
 {
     @FXML
     private VBox root;
-
     @FXML
     private Label errorLabel;
+
+    @FXML
+    private Button linkButton;
 
     @FXML
     private Label helloXLabel;
@@ -41,20 +44,23 @@ public class MainController
 
         if (role == SessionManager.Role.LANDLORD)
         {
-            snapshotLabel.setText("Your Tenant's Snapshot");
+            landlordUI();
         }
         else if (role == SessionManager.Role.TENANT)
         {
-            snapshotLabel.setText("Your Landlord's Snapshot");
+            tenantUI();
         }
     }
 
-    // DEMO button trigger START
-    private boolean demoActive = false;
+    boolean demoActive = false; // DELETE WITH DEMO
 
     @FXML
-    private void onDEMOButtonClick()
+    private void onLinkButtonClick()
     {
+        // TODO: Implement LL+TT linking UI here
+
+        // DEMO START
+
         if (!demoActive)
         {
             helloXLabel.setText("Hello, Alan!");
@@ -74,7 +80,7 @@ public class MainController
 
             demoActive = false;
         }
-        // DEMO button trigger END
+        // DEMO END
     }
 
     // Log Out button trigger
@@ -88,7 +94,7 @@ public class MainController
     @FXML
     private void onDocMgrButtonClick()
     {
-        errorLabel.setText("REDIRECT: DOCUMENT MANAGER PAGE");
+        SceneManager.switchTo("/fxml/documentManager.fxml");
     }
 
     // Ticket Manager button trigger
@@ -103,5 +109,21 @@ public class MainController
     private void onPmtMgrButtonClick()
     {
         errorLabel.setText("REDIRECT: PAYMENT MANAGER PAGE");
+    }
+
+    //--------------------
+    // Helper Functions
+    //--------------------
+
+    private void landlordUI()
+    {
+        snapshotLabel.setText("Your Tenant's Snapshot");
+        linkButton.setVisible(true);
+    }
+
+    private void tenantUI()
+    {
+        snapshotLabel.setText("Your Landlord's Snapshot");
+        linkButton.setVisible(false);
     }
 }

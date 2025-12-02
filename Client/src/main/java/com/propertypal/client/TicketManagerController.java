@@ -1,8 +1,9 @@
 package main.java.com.propertypal.client;
 
-import com.propertypal.client.SelectedTicket;
-import com.propertypal.client.SceneManager;
 import com.propertypal.client.ClientLogic.TicketLogic;
+import com.propertypal.client.SceneManager;
+import com.propertypal.client.SelectedTicket;
+import com.propertypal.client.SessionManager;
 import com.propertypal.shared.network.enums.TicketEnums;
 
 import javafx.application.Platform;
@@ -14,7 +15,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.VBox;
 
-public class TT_TicketManagerController
+public class TicketManagerController
 {
     @FXML
     private VBox root;
@@ -47,6 +48,17 @@ public class TT_TicketManagerController
     private void initialize()
     {
         Platform.runLater(() -> root.requestFocus()); // Prevents focus of elements when page loads
+
+        var role = SessionManager.getInstance().getRole();
+
+        if (role == SessionManager.Role.LANDLORD)
+        {
+            landlordUI();
+        }
+        else if (role == SessionManager.Role.TENANT)
+        {
+            tenantUI();
+        }
 
         setupTableColumns();
         loadTickets();
@@ -120,6 +132,18 @@ public class TT_TicketManagerController
     //--------------------
     // Helper Functions
     //--------------------
+
+    private void landlordUI()
+    {
+        snapshotLabel.setText("Your Tenant's Snapshot");
+        linkButton.setVisible(true);
+    }
+
+    private void tenantUI()
+    {
+        snapshotLabel.setText("Your Landlord's Snapshot");
+        linkButton.setVisible(false);
+    }
 
     private void loadTickets()
     {
@@ -204,6 +228,6 @@ public class TT_TicketManagerController
 
     private void updateTicketCount(int count)
     {
-        ticketCountLabel.setText("You have " + count + " open ticket" + (count == 1 ? "" : "s"));
+        ticketCountLabel.setText("There is " + count + " open ticket" + (count == 1 ? "" : "s"));
     }
 }

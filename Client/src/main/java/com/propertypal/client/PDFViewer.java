@@ -13,6 +13,11 @@ import java.io.File;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.PDFRenderer;
 
+// TODO:
+// - Open in smaller window
+// - Allow window resize to rescale the document
+// - Allow document zoom
+
 public class PDFViewer
 {
     public static void openPDF(String filepath) throws Exception

@@ -360,6 +360,10 @@ public class TicketLogic extends BaseLogic
                 }
             }
         }
+
+        //Build response and send
+        req.setBaseErrResponse(BaseResponseEnum.SUCCESS);
+        filter.sendResponse(req);
     }
 
     public void handleViewTicketPacket(ClientRequest req)

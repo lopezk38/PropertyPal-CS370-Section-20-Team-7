@@ -1,9 +1,9 @@
 package com.propertypal;
 
-import com.propertypal.ClientRequest;
 import com.sun.net.httpserver.*;
+
+import java.net.InetAddress;
 import java.net.URI;
-import java.net.InetSocketAddress;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -110,10 +110,7 @@ public class Endpoint<T extends BasePacket> implements HttpHandler
         System.out.println("Responded with: " + resp);
     }
 
-    public InetSocketAddress getRemoteIP()
-    {
-        return exchange.getRemoteAddress();
-    }
+    public InetAddress getRemoteIP() { return exchange.getRemoteAddress().getAddress(); }
 
     private final void rejectForErr(int errCode) throws IOException
     {

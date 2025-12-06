@@ -72,7 +72,6 @@ public class AuthFilters extends BaseFilters
             return BaseResponseEnum.ERR_BAD_TOKEN;
         }
 
-        /* DISABLED TEMPORARILY - NEED TO FIX BUG WHERE PORT IS ALSO WRONGLY CONSIDERED
         if (!req.getRemoteIP().equals(validIP))
         {
             //IP does not match IP which owns the token. Stolen token?
@@ -82,7 +81,6 @@ public class AuthFilters extends BaseFilters
 
             return BaseResponseEnum.ERR_BAD_TOKEN;
         }
-        */
 
         //All checks passed, allow packet to proceed
         return BaseResponseEnum.SUCCESS;

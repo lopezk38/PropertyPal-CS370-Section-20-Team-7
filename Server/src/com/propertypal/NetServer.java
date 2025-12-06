@@ -1,12 +1,8 @@
 package com.propertypal;
 
-import com.propertypal.SecurityFilter;
 import com.sun.net.httpserver.*;
 import java.net.InetSocketAddress;
-import java.net.URI;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 

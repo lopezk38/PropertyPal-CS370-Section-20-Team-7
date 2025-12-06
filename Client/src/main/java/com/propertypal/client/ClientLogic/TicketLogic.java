@@ -6,6 +6,7 @@ import com.propertypal.shared.network.packets.*;
 import com.propertypal.shared.network.responses.*;
 
 import java.io.IOException; //for throwing IOException
+import java.util.ArrayList;
 import java.util.List; //for sending & receive lists (like ticket ID)
 
 public class TicketLogic
@@ -51,7 +52,7 @@ public class TicketLogic
     }
 
     //get ticket list
-    public List<Long> getTicketIDList(long leaseID) throws IOException
+    public ArrayList<Long> getTicketIDList(long leaseID) throws IOException
     {
         GetTicketListPacket tktpkt = new GetTicketListPacket();
         tktpkt.lease_id = leaseID;

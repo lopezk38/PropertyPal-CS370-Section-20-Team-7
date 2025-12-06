@@ -10,6 +10,7 @@ public class ClientInit
 {
     public static void main(String[] args)
     {
+        /*
         //TEMPORARY APIHANDLER TESTBENCH
         APIHandler netClient = APIHandler.getInstance();
 
@@ -27,6 +28,7 @@ public class ClientInit
         }
         System.out.println("Login request completed");
         //END TESTBENCH
+        */
 
         Application.launch(ClientApp.class);
     }

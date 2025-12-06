@@ -2,6 +2,7 @@ package com.propertypal.shared.network.responses;
 
 import com.propertypal.shared.network.enums.BaseResponseEnum;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ViewTicketResponse extends BaseResponse
@@ -11,8 +12,8 @@ public class ViewTicketResponse extends BaseResponse
     public String TITLE;
     public String DESCRIPTION;
     public Integer PERMISSIONS; //Use PermissionsEnum to set
-    public List<Long> ATTACHMENT_IDS;
-    public List<Long> COMMENT_IDS;
+    public ArrayList<Long> ATTACHMENT_IDS;
+    public ArrayList<Long> COMMENT_IDS;
 
     public static class TicketStatus extends BaseResponseEnum
     {

@@ -4,10 +4,10 @@ public class DocTypeEnum
 {
     public static class Type
     {
-        public static int png = 1;
-        public static int jpeg = 2;
-        public static int pdf = 3;
-        public static int txt = 4;
+        public static final int png = 1;
+        public static final int jpeg = 2;
+        public static final int pdf = 3;
+        public static final int txt = 4;
 
         public static String toString(int n)
         {

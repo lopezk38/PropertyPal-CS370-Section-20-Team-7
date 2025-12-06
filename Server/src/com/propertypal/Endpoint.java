@@ -9,6 +9,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 
 import com.propertypal.shared.network.responses.*;
@@ -97,14 +99,16 @@ public class Endpoint<T extends BasePacket> implements HttpHandler
         //Respond
         try
         {
-            exchange.sendResponseHeaders(200, resp.length());
+            byte[] encResp = resp.getBytes(StandardCharsets.UTF_8);
+            exchange.sendResponseHeaders(200, encResp.length);
             OutputStream outData = exchange.getResponseBody();
-            outData.write(resp.getBytes());
+            outData.write(encResp);
             outData.close();
         }
         catch (IOException e)
         {
             //Nothing we can really do. Just drop the request (AKA do nothing)
+            System.out.println("ERROR: Failed to send due to error: " + e.toString());
         }
 
         System.out.println("Responded with: " + resp);

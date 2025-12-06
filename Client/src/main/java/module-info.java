@@ -6,6 +6,7 @@ module com.propertypal.client {
    	requires org.apache.httpcomponents.httpclient;
     requires com.propertypal.shared.network;
     requires jdk.compiler;
+    requires java.desktop;
 
     opens com.propertypal.client to javafx.fxml;
     exports com.propertypal.client;

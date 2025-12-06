@@ -1,11 +1,15 @@
 package com.propertypal.client;
 
 import com.propertypal.client.ClientLogic.AcctLogic;
+import com.propertypal.client.ClientLogic.DocLogic;
 import com.propertypal.client.ClientLogic.PaymentLogic;
 import com.propertypal.client.ClientLogic.TicketLogic;
 import com.propertypal.shared.network.responses.*;
 
+import javax.print.Doc;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 
 public class SessionManager
@@ -17,6 +21,7 @@ public class SessionManager
     private TicketLogic ticketLogic = null;
     private AcctLogic acctLogic = null;
     private PaymentLogic payLogic = null;
+    private DocLogic docLogic = null;
 
     // User info
     private String username;
@@ -47,6 +52,7 @@ public class SessionManager
         ticketLogic = TicketLogic.getInstance();
         acctLogic = AcctLogic.getInstance();
         payLogic = PaymentLogic.getInstance();
+        docLogic = DocLogic.getInstance();
     }
 
     // Get singleton instance
@@ -108,9 +114,9 @@ public class SessionManager
 
     //Packet generators and handlers
     //Tickets
-    public List<Long> getTicketIDList(long leaseID) throws IOException
+    public ArrayList<Long> getTicketIDList(long leaseID) throws IOException
     {
-        List<Long> list = ticketLogic.getTicketIDList(leaseID);
+        ArrayList<Long> list = ticketLogic.getTicketIDList(leaseID);
         return list;
     }
 
@@ -182,7 +188,26 @@ public class SessionManager
     }
 
     //Documents
-    //TODO
+    public UploadDocResponse uploadDocument(Path filePath, String name, String description, Boolean allowUnauth) throws IOException
+    {
+        return docLogic.uploadDocument(filePath, leaseID, name, description, allowUnauth);
+    }
+
+    public ArrayList<Long> getDocumentList() throws IOException
+    {
+        return docLogic.getDocumentList(leaseID);
+    }
+
+    public GetDocInfoResponse getDocumentInfo(Long docID) throws IOException
+    {
+        return docLogic.getDocumentInfo(docID);
+    }
+
+    public ViewDocResponse viewDocument(Long docID) throws IOException
+    {
+        return docLogic.viewDocument(docID);
+    }
+
 
     //Payments
     public String getPayPalLink() throws IOException, IllegalArgumentException

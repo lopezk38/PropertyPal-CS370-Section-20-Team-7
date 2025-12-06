@@ -840,7 +840,7 @@ public class AccountLogic extends BaseLogic
         GetInviteListPacket packet = (GetInviteListPacket) req.packet;
 
         //Values to retrieve
-        List<Long> invites = new ArrayList<Long>();
+        ArrayList<Long> invites = new ArrayList<Long>();
 
         //Get userID
         long userID = userIDFromToken(packet.token);

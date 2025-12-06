@@ -6,7 +6,9 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.util.EntityUtils;
+import org.apache.http.client.config.RequestConfig;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 import com.propertypal.shared.network.responses.*;
 import com.propertypal.shared.network.packets.*;
@@ -22,8 +24,15 @@ public class APIHandler
 
     private APIHandler()
     {
+        int timeout = 5000;
+        RequestConfig config = RequestConfig.custom()
+                .setConnectTimeout(timeout) //Timeout until a connection is established
+                .setConnectionRequestTimeout(timeout) //Timeout to get a connection from the pool
+                .setSocketTimeout(timeout) //Maximum interval between two data packets
+                .build();
+
         baseURI = "http://localhost:678";
-        http = HttpClientBuilder.create().build();
+        http = HttpClientBuilder.create().setDefaultRequestConfig(config).build();
     }
 
     private static void init()
@@ -66,8 +75,16 @@ public class APIHandler
         System.out.println("Sending request to endpoint " + endpoint + " with payload " + serialized);
 
         //Send request
-        HttpResponse postResp = http.execute(post);
-        String rawResp = EntityUtils.toString(postResp.getEntity());
+        HttpResponse postResp = null;
+        try
+        {
+            postResp = http.execute(post);
+        }
+        catch (Exception e)
+        {
+            System.out.println("Caught exception while sending request: " + e.toString());
+        }
+        String rawResp = EntityUtils.toString(postResp.getEntity(), StandardCharsets.UTF_8);
         System.out.println("Got response code " + postResp.getStatusLine().getStatusCode() + " with response " + rawResp);
         //TODO check for code 200, throw if not
 

@@ -214,19 +214,29 @@ public class DocumentManagerController
         {
             switch(mime)
             {
-                default:
                 case DocTypeEnum.Type.pdf:
                     PDFViewer.openPDF(docBlob);
                     break;
 
                 case DocTypeEnum.Type.png:
+                    errorLabel.setText("PNG document type is currently not supported");
+                    errorLabel.setStyle("-fx-text-fill: red;");
                     break; //TODO
 
                 case DocTypeEnum.Type.jpeg:
+                    errorLabel.setText("JPEG document type is currently not supported");
+                    errorLabel.setStyle("-fx-text-fill: red;");
                     break; //TODO
 
                 case DocTypeEnum.Type.txt:
+                    errorLabel.setText("Text document type is currently not supported");
+                    errorLabel.setStyle("-fx-text-fill: red;");
                     break; //TODO
+
+                default:
+                    errorLabel.setText("Unknown document type, cannot open");
+                    errorLabel.setStyle("-fx-text-fill: red;");
+                    break;
             }
         }
         catch (Exception e)

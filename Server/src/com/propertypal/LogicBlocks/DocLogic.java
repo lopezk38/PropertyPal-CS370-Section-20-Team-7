@@ -162,7 +162,7 @@ public class DocLogic extends BaseLogic
         try
         {
             viewdocQ = db.compileQuery("""
-            SELECT owner
+            SELECT owner,
                    docType,
                    dateCreated,
                    allowUnauthView,

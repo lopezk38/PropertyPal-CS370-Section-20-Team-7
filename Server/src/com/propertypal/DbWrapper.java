@@ -359,6 +359,10 @@ public class DbWrapper
                 ALTER Table RentRequests ADD CONSTRAINT FK_RR_LEASE FOREIGN KEY (leaseID) REFERENCES Leases (leaseID);
                 """);
 
+            con.createStatement().execute("""
+                CHECKPOINT SYNC;
+                """);
+
             //DEBUG
             PreparedStatement rLL = con.prepareStatement("INSERT INTO Users (email, hashedPW, requirePWReset, isLandlord, phone, firstName, lastName, paypalMeLink) VALUES ('land@lord.com', 'landpass', false, true, '(123) 456-7890', 'Larry', 'Landlord', 'PayPal.Me/123')", Statement.RETURN_GENERATED_KEYS); //Some random paypal account, whoever that is
             rLL.execute();
@@ -407,7 +411,7 @@ public class DbWrapper
         }
         catch (SQLException e)
         {
-            System.out.println("WARNING: Unable to close DB during validation");
+            System.out.println("WARNING: Unable to close DB during initialization");
         }
     }
 
@@ -450,11 +454,15 @@ public class DbWrapper
                     loginAuthToken,
                     loginTokenExpiration,
                     loginTokenValidIP,
-                    paypalAPIToken
+                    paypalMeLink,
+                    isLandlord,
+                    phone
+                    FROM Users
                     LIMIT 1""");
         }
         catch (SQLException e)
         {
+            System.out.println("DB failed validation, will clear and rebuild. Validation failed due to: " + e.toString());
             return false;
         }
 
@@ -467,6 +475,7 @@ public class DbWrapper
             System.out.println("WARNING: Unable to close DB during validation");
         }
 
+        System.out.println("DB file passed validation");
         return true;
     }
 

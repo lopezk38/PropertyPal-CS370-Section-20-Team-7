@@ -437,27 +437,201 @@ public class DbWrapper
             //Users table
             con.createStatement().execute("""
                     SELECT
-                    userID,
-                    firstName,
-                    lastName,
-                    email,
-                    billingAddress1,
-                    billingAddress2,
-                    billingCity,
-                    billingState,
-                    billingZIP,
-                    billingCountry,
-                    taxID,
-                    registerDate,
-                    hashedPW,
-                    requirePWReset,
-                    loginAuthToken,
-                    loginTokenExpiration,
-                    loginTokenValidIP,
-                    paypalMeLink,
-                    isLandlord,
-                    phone
+                        userID,
+                        firstName,
+                        lastName,
+                        email,
+                        billingAddress1,
+                        billingAddress2,
+                        billingCity,
+                        billingState,
+                        billingZIP,
+                        billingCountry,
+                        taxID,
+                        registerDate,
+                        hashedPW,
+                        requirePWReset,
+                        loginAuthToken,
+                        loginTokenExpiration,
+                        loginTokenValidIP,
+                        paypalMeLink,
+                        isLandlord,
+                        phone
                     FROM Users
+                    LIMIT 1""");
+
+            //Properties table
+            con.createStatement().execute("""
+                    SELECT
+                        propertyID,
+                        activeLease,
+                        owner,
+                        addr1,
+                        addr2,
+                        city,
+                        state,
+                        zipCode,
+                        country
+                    FROM Properties
+                    LIMIT 1""");
+
+            //Invites table
+            con.createStatement().execute("""
+                    SELECT
+                        inviteID,
+                        landlordID,
+                        tenantID,
+                        propertyID,
+                        dateMade
+                    FROM Invites
+                    LIMIT 1""");
+
+            //Leases table
+            con.createStatement().execute("""
+                    SELECT
+                        leaseID,
+                        associatedProperty,
+                        tenantID,
+                        active,
+                        dateMade,
+                        rentDueDay,
+                        rentAmount,
+                        rentLastUpdated
+                    FROM Leases
+                    LIMIT 1""");
+
+            //DocumentPermissions table
+            con.createStatement().execute("""
+                    SELECT
+                        userID,
+                        docID,
+                        view,
+                        editName,
+                        editContents,
+                        delete,
+                        addComment,
+                        canESign
+                    FROM DocumentPermissions
+                    LIMIT 1""");
+
+            //LeasePermissions table
+            con.createStatement().execute("""
+                    SELECT
+                        userID,
+                        leaseID,
+                        editName,
+                        editAddress,
+                        viewPaymentsPage,
+                        genericTicketPerms,
+                        maintTicketPerms,
+                        taxTicketPerms,
+                        rentTicketPerms,
+                        viewTaxFinData,
+                        addLeaseContract,
+                        proposeLeaseChange,
+                        viewLeaseContract,
+                        addGenericDoc,
+                        viewGenericDoc
+                    FROM LeasePermissions
+                    LIMIT 1""");
+
+            //Tickets table
+            con.createStatement().execute("""
+                    SELECT
+                        ticketID,
+                        owner,
+                        parentLease,
+                        title,
+                        description,
+                        dateCreated,
+                        timeModified,
+                        state,
+                        type
+                    FROM Tickets
+                    LIMIT 1""");
+
+            //Comments table
+            con.createStatement().execute("""
+                    SELECT
+                        commentID,
+                        owner,
+                        replyTo,
+                        dateCreated,
+                        timeModified,
+                        content,
+                        isParentDoc,
+                        parentID
+                    FROM Comments
+                    LIMIT 1""");
+
+            //Documents table
+            con.createStatement().execute("""
+                    SELECT
+                        docID,
+                        owner,
+                        parentLease,
+                        docType,
+                        dateCreated,
+                        dateModified,
+                        allowUnauthView,
+                        name,
+                        description,
+                        data blob,
+                        fileSize
+                    FROM Documents
+                    LIMIT 1""");
+
+            //ESignRequests table
+            con.createStatement().execute("""
+                    SELECT
+                        parentDoc,
+                        userID
+                    FROM ESignRequests
+                    LIMIT 1""");
+
+            //ESignatures table
+            con.createStatement().execute("""
+                    SELECT
+                        parentDoc,
+                        signer,
+                        token
+                    FROM ESignatures
+                    LIMIT 1""");
+
+            //TicketAttachmentsMap table
+            con.createStatement().execute("""
+                    SELECT
+                        docID,
+                        ticketID
+                    FROM TicketAttachmentsMap
+                    LIMIT 1""");
+
+            //TicketCommentsMap table
+            con.createStatement().execute("""
+                    SELECT
+                        ticketID,
+                        commentID
+                    FROM TicketCommentsMap
+                    LIMIT 1""");
+
+            //CommentAttachmentsMap table
+            con.createStatement().execute("""
+                    SELECT
+                        docID,
+                        commentID
+                    FROM CommentAttachmentsMap
+                    LIMIT 1""");
+
+            //RentRequests table
+            con.createStatement().execute("""
+                    SELECT
+                        requestID,
+                        leaseID,
+                        dateMade,
+                        dueDate,
+                        amount,
+                        paid
+                    FROM RentRequests
                     LIMIT 1""");
         }
         catch (SQLException e)

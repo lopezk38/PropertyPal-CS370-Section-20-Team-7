@@ -65,20 +65,21 @@ public class PaymentRequestController
         {
             // Client-side validation passed
 
+            int dueDay = 1;
+
             try
             {
                 // TODO Add PaymentLogic
 
-//                // Ticket Create hint
-//                long leaseID = manager.getLeaseID();
-//                manager.createTicket(leaseID, title, description);
+               long leaseID = manager.getLeaseID();
+                manager.updateAmountDue(leaseID, paypalLink, requestAmount, dueDay);
 
                 errorLabel.setText("Your payment request has been successfully submitted");
                 errorLabel.setStyle("-fx-text-fill: green;");
             }
             catch (Exception error)
             {
-                errorLabel.setText("Your payment request has failed to submit, please try again");
+                errorLabel.setText("Failed: " + error.getMessage());
                 errorLabel.setStyle("-fx-text-fill: red;");
             }
         }

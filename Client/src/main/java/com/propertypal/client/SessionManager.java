@@ -214,4 +214,10 @@ public class SessionManager
     {
         return payLogic.getPayPalLink(leaseID);
     }
+
+    public UpdateAmountDueResponse updateAmountDue(long leaseID, String paypalLink, String amount, int dueDay) throws IOException
+    {
+        UpdateAmountDueResponse resp = payLogic.updateAmountDue(leaseID, paypalLink, amount, dueDay);
+        return resp;
+    }
 }

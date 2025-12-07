@@ -57,9 +57,7 @@ public class PaymentMakeController
         {
             payPalLink = manager.getPayPalLink();
             errorLabel.setText("");
-            //payPalLink = "https://www.google.com";
 
-            //webview = new WebView();
             webview.getEngine().load(payPalLink);
         }
         catch (IOException | IllegalArgumentException e)

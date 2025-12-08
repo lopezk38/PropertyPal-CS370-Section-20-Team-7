@@ -118,7 +118,7 @@ public class AccountLogic extends BaseLogic
                     loginTokenValidIP,
                     phone
                     )
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""");
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""");
 
             acctQ.setString(1, packet.firstName);
             acctQ.setString(2, packet.lastName);
@@ -136,6 +136,8 @@ public class AccountLogic extends BaseLogic
             acctQ.setString(14, LocalDateTime.now().plusHours(24).toString());
             acctQ.setString(15, req.getRemoteIP());
             acctQ.setString(16, packet.phone);
+
+            acctQ.executeUpdate();
         }
         catch (SQLException e)
         {
@@ -143,26 +145,13 @@ public class AccountLogic extends BaseLogic
 
             req.setUnknownErrResponse();
             filter.sendResponse(req);
+
             return;
         }
-
-        //Execute the query
-        ResultSet acctR = null;
-        try
+        finally
         {
-            acctR = acctQ.executeQuery();
-        }
-        catch (SQLException e)
-        {
-            System.out.println("ERROR: SQLException during handleCreateTenantAccount account query: " + e.toString());
-
-            req.setUnknownErrResponse();
-            filter.sendResponse(req);
             db.closeConnection(acctQ);
-            return;
         }
-
-        db.closeConnection(acctQ);
 
         //Succeeded, send OK
         CreateAcctResponse resp = new CreateAcctResponse();
@@ -274,7 +263,7 @@ public class AccountLogic extends BaseLogic
                     taxID,
                     phone
                     )
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""");
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""");
 
             acctQ.setString(1, packet.firstName);
             acctQ.setString(2, packet.lastName);
@@ -293,6 +282,8 @@ public class AccountLogic extends BaseLogic
             acctQ.setString(15, req.getRemoteIP());
             acctQ.setString(16, packet.tax_id);
             acctQ.setString(17, packet.phone);
+
+            acctQ.executeUpdate();
         }
         catch (SQLException e)
         {
@@ -300,21 +291,7 @@ public class AccountLogic extends BaseLogic
 
             req.setUnknownErrResponse();
             filter.sendResponse(req);
-            return;
-        }
 
-        //Execute the query
-        ResultSet acctR = null;
-        try
-        {
-            acctR = acctQ.executeQuery();
-        }
-        catch (SQLException e)
-        {
-            System.out.println("ERROR: SQLException during handleCreateLandlordAccount account query: " + e.toString());
-
-            req.setUnknownErrResponse();
-            filter.sendResponse(req);
             return;
         }
         finally

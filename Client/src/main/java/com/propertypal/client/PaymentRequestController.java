@@ -2,6 +2,7 @@ package main.java.com.propertypal.client;
 
 import com.propertypal.client.SceneManager;
 import com.propertypal.client.SessionManager;
+
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;

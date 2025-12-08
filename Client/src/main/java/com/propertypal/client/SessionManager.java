@@ -148,22 +148,31 @@ public class SessionManager
         return role;
     }
 
-    public CreateAcctResponse createTenantAccount() throws IOException //TODO add params
+    public CreateAcctResponse createAccount(
+            String email,
+            String password,
+            String firstName,
+            String lastName,
+            String phone,
+            boolean isLandlord,
+            String street,
+            String city,
+            String state,
+            String zip
+    ) throws IOException
     {
-        //TODO do request
+        CreateAcctResponse resp = acctLogic.createAccount(
+                email, password, firstName, lastName, phone,
+                isLandlord, street, city, state, zip
+        );
 
+        // Update session on success
+        this.username = email;
+        this.role = isLandlord ? Role.LANDLORD : Role.TENANT;
         this.leaseID = acctLogic.getLeaseID();
+        getContacts();
 
-        return null; //TODO replace this with real logic
-    }
-
-    public CreateAcctResponse CreateLandlordAccount() throws IOException //TODO add params
-    {
-        //TODO do request
-
-        this.leaseID = acctLogic.getLeaseID();
-
-        return null; //TODO replace this with real logic
+        return resp;
     }
 
     public void getContacts()

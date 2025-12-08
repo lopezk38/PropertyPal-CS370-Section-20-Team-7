@@ -21,9 +21,9 @@ public class DbWrapper
 
     private HashMap<PreparedStatement, Connection> openConnections = new HashMap<PreparedStatement, Connection>();
 
-    private final String dbCredsPath = "./data/creds.cfg";
+    private final String dbCredsPath = "./serverData/creds.cfg";
 
-    private final String dbUrl = "jdbc:h2:./data/db;CIPHER=AES";
+    private final String dbUrl = "jdbc:h2:./serverData/db;CIPHER=AES";
     private final String defDbUName = "propertypalAdmin";
 
     private String dbUName = null;
@@ -77,7 +77,7 @@ public class DbWrapper
             }
 
             //Check if DB file exists
-            Path dbFile = Path.of("./data/db.mv.db");
+            Path dbFile = Path.of("./serverData/db.mv.db");
             if (!Files.exists(dbFile))
             {
                 //No db file. This must be the first run of this program

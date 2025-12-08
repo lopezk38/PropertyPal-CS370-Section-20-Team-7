@@ -9,6 +9,8 @@ import org.apache.http.util.EntityUtils;
 import org.apache.http.client.config.RequestConfig;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.nio.file.Files;
 
 import com.propertypal.shared.network.responses.*;
 import com.propertypal.shared.network.packets.*;
@@ -20,7 +22,10 @@ public class APIHandler
 
     private HttpClient http = null;
     private String activeToken = null;
+    private final String defBaseURI = "http://localhost:678";
     private String baseURI = null;
+
+    private String configFilePath = "./clientData/config.cfg";
 
     private APIHandler()
     {
@@ -31,8 +36,55 @@ public class APIHandler
                 .setSocketTimeout(timeout) //Maximum interval between two data packets
                 .build();
 
-        baseURI = "http://localhost:678";
+        loadURI();
         http = HttpClientBuilder.create().setDefaultRequestConfig(config).build();
+    }
+
+    private void loadURI()
+    {
+        //Load config file
+        try
+        {
+            Path configPath = Path.of(configFilePath);
+            String[] credTokens = Files.readString(configPath).split("\n");
+            if (credTokens.length == 1 && !credTokens[0].isBlank())
+            {
+                baseURI = credTokens[0];
+            }
+            else
+            {
+                //Malformed credential file. Overwrite
+                throw new IOException();
+            }
+        }
+        catch (IOException e)
+        {
+            //Config file did not exist
+            //Make config folder if it didn't exist already
+            try
+            {
+                Files.createDirectories(Path.of(configFilePath).getParent());
+            }
+            catch (IOException e2)
+            {
+                System.out.printf("ERROR: Config directory could not be generated. Ensure your drive is not full and the directory has write permissions%n");
+                System.exit(-1);
+            }
+
+            //Generate file
+            try
+            {
+                Path configPath = Path.of(configFilePath);
+                Files.writeString(configPath, defBaseURI);
+                baseURI = defBaseURI;
+            }
+            catch (IOException e3)
+            {
+                //Failed to gen config file, abort
+                System.out.printf("ERROR: Config file could not be generated at %s. Ensure your drive is not full and the directory has write permissions%n", configFilePath);
+                System.exit(-1);
+            }
+        }
     }
 
     private static void init()

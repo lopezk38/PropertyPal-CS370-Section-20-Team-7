@@ -47,6 +47,14 @@ public class AcctLogic
         return loginResp.IS_LANDLORD ? SessionManager.Role.LANDLORD : SessionManager.Role.TENANT;
     }
 
+    public boolean isLeaseReady()
+    {
+        //Attempt to get leaseID
+        Long result = getLeaseID();
+
+        return result != null;
+    }
+
     public Long getLeaseID()
     {
         GetAcctLeasePacket packet = new GetAcctLeasePacket();

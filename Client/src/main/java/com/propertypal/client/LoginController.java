@@ -5,9 +5,7 @@ import com.propertypal.client.SessionManager;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.control.PasswordField;
+import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 
 import java.io.IOException;
@@ -90,7 +88,24 @@ public class LoginController
             SessionManager.Role role = manager.loginAndGetRole(email, password);
 
             // Set session
-            SessionManager.getInstance().login(email, role);
+            manager.login(email, role);
+
+            //Check if account is not ready
+            if (!manager.isLeaseReady())
+            {
+                //Handle differently for LL or TT
+                if (role == SessionManager.Role.LANDLORD)
+                {
+                    //Landlord. Force them to do an invite
+                    ; //TODO INVITE LOGIC HERE
+                }
+                else
+                {
+                    //Tenant. Don't let them login yet.
+                    showTenAcctNotReady();
+                    return;
+                }
+            }
 
             SceneManager.switchTo("/fxml/main.fxml");
         }
@@ -99,5 +114,16 @@ public class LoginController
             System.out.println("ERROR in loginAndGetRole(String, String): " + e.getMessage());
             errorLabel.setText("Login failed, please try again");
         }
+    }
+
+    private void showTenAcctNotReady()
+    {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Account not ready yet");
+        alert.setHeaderText("Waiting for invite");
+
+        alert.setContentText("You must wait for a Landlord to invite you to a lease before continuing.");
+
+        alert.showAndWait();
     }
 }

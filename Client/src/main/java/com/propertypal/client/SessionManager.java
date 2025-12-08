@@ -148,6 +148,11 @@ public class SessionManager
         return role;
     }
 
+    public boolean isLeaseReady()
+    {
+        return acctLogic.isLeaseReady();
+    }
+
     public CreateAcctResponse createAccount(
             String email,
             String password,

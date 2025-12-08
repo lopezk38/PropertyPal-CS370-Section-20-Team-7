@@ -203,6 +203,16 @@ public class AccountCreateController
             );
 
             showSuccessDialog();
+
+            //Check if lease exists
+            Long leaseID = manager.getLeaseID();
+            if (leaseID == null)
+            {
+                showTenAcctNotReady();
+                SceneManager.switchTo("/fxml/login.fxml");
+                return;
+            }
+
             SceneManager.switchTo("/fxml/main.fxml");
         } catch (IOException e)
         {
@@ -224,6 +234,17 @@ public class AccountCreateController
         {
             alert.setContentText("Your account has been created successfully!");
         }
+
+        alert.showAndWait();
+    }
+
+    private void showTenAcctNotReady()
+    {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Account not ready yet");
+        alert.setHeaderText("Waiting for invite");
+
+        alert.setContentText("You must wait for a Landlord to invite you to a lease before continuing.");
 
         alert.showAndWait();
     }

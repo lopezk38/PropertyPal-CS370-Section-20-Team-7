@@ -8,8 +8,12 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.PreparedStatement;
 import java.util.HashMap;
-
 import java.time.LocalDateTime;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
+import java.security.SecureRandom;
+import java.io.IOException;
 
 public class DbWrapper
 {
@@ -17,9 +21,13 @@ public class DbWrapper
 
     private HashMap<PreparedStatement, Connection> openConnections = new HashMap<PreparedStatement, Connection>();
 
-    private final String dbUrl = "jdbc:h2:./data/db";
-    private final String dbUName = "propertypalAdmin";
-    private final String dbPw = "";
+    private final String dbCredsPath = "./data/creds.cfg";
+
+    private final String dbUrl = "jdbc:h2:./data/db;CIPHER=AES";
+    private final String defDbUName = "propertypalAdmin";
+
+    private String dbUName = null;
+    private String dbPw = null;
 
     public static DbWrapper getInstance()
     {
@@ -37,6 +45,67 @@ public class DbWrapper
 
         instance = this;
 
+        //Load config file
+        try
+        {
+            Path creds = Path.of(dbCredsPath);
+            String[] credTokens = Files.readString(creds).split("\n");
+            if (credTokens.length == 2 && !credTokens[0].isBlank() && !credTokens[1].isBlank())
+            {
+                dbUName = credTokens[0];
+                dbPw = credTokens[1];
+            }
+            else
+            {
+                //Malformed credential file
+                System.out.printf("ERROR: Credential file (%s) is malformed or corrupted. If it was manually edited, please ensure that the first line has the username and the second line has the DB encryption password, a single space, and the DB account password. There should only be two lines in the whole file.%n", dbCredsPath);
+                System.exit(-1);
+            }
+        }
+        catch (IOException e)
+        {
+            //Credential file did not exist
+            //Check if DB file exists
+            Path dbFile = Path.of("./data/db.mv.db");
+            if (!Files.exists(dbFile))
+            {
+                //No db file. This must be the first run of this program
+                //Generate credentials
+                dbUName = defDbUName;
+                dbPw = genPW();
+                try
+                {
+                    Path credFile = Path.of(dbCredsPath);
+                    Files.writeString(credFile, dbUName + "\n");
+                    Files.writeString(credFile, dbPw, StandardOpenOption.APPEND);
+                }
+                catch (IOException e2)
+                {
+                    //Failed to gen creds file, abort
+                    System.out.printf("ERROR: Credential file could not be generated at %s. Ensure your drive is not full and the directory has write permissions%n", dbCredsPath);
+                    System.exit(-1);
+                }
+            }
+            else
+            {
+                //A db already exists. Can't load without its password
+                System.out.printf("ERROR: Credential file (%s) is missing. Add it and ensure that the first line has the username and the second line has the DB encryption password, a single space, and the DB account password. There should only be two lines in the whole file.%n", dbCredsPath);
+                System.exit(-1);
+            }
+        }
+
+        //Make sure creds are good
+        try
+        {
+            Connection con = DriverManager.getConnection(dbUrl, dbUName, dbPw);
+            con.close();
+        }
+        catch (SQLException e)
+        {
+            System.out.printf("ERROR: Incorrect credentials for database. Enter the correct credentials into %s and retry%n", dbCredsPath);
+            System.exit(-1);
+        }
+
         //Make sure DB is there/gen DB if not
         if (!validateTableFormat())
         {
@@ -44,6 +113,26 @@ public class DbWrapper
             //TODO Add function to backup DB
             dbInit();
         }
+    }
+
+    private String genPW()
+    {
+        SecureRandom rand = new SecureRandom();
+        StringBuilder strBuild = new StringBuilder();
+        String charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890";
+        int len = 24;
+
+        for (int i = 0; i < len; ++i)
+        {
+            strBuild.append(charset.charAt(rand.nextInt(charset.length()))); //Get random char from charset, append to builder
+        }
+        strBuild.append(" ");
+        for (int i = 0; i < len; ++i)
+        {
+            strBuild.append(charset.charAt(rand.nextInt(charset.length()))); //Get random char from charset, append to builder
+        }
+
+        return strBuild.toString();
     }
 
     private void dbInit() throws RuntimeException
@@ -636,7 +725,8 @@ public class DbWrapper
         }
         catch (SQLException e)
         {
-            System.out.println("DB failed validation, will clear and rebuild. Validation failed due to: " + e.toString());
+            System.out.println("DB failed validation, will clear and rebuild");
+            System.out.println("If this is the first time the server has been run, this is normal as the DB has not been built yet");
             return false;
         }
 

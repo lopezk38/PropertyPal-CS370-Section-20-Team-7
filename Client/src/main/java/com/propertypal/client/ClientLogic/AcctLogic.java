@@ -47,6 +47,22 @@ public class AcctLogic
         return loginResp.IS_LANDLORD ? SessionManager.Role.LANDLORD : SessionManager.Role.TENANT;
     }
 
+    public void logout()
+    {
+        try
+        {
+            LogoutPacket packet = new LogoutPacket();
+            handler.sendRequest("/auth/logout", packet, LogoutResponse.class);
+        }
+        catch (Exception e)
+        {
+            ; //Do nothing, we don't really need to.
+        }
+
+        //Clear the cached login auth token
+        handler.clearToken();
+    }
+
     public boolean isLeaseReady()
     {
         //Attempt to get leaseID

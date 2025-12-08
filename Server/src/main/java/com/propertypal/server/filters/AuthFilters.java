@@ -109,6 +109,17 @@ public class AuthFilters extends BaseFilters
 
     public void filterLogoutPacket(ClientRequest req)
     {
+        if (!(req.packet instanceof LogoutPacket))
+        {
+            //Endpoint registered to wrong handler
+            System.out.println("ERROR: filterLogoutPacket is registered to the wrong endpoint");
+            BaseResponse resp = new BaseResponse();
+            resp.STATUS = BaseResponseEnum.ERR_UNKNOWN;
+            req.setResponse(resp);
+            filter.sendResponse(req);
+            return;
+        }
+
         int loggedInCheckResult = enforceLoggedIn(req);
         if (loggedInCheckResult != BaseResponseEnum.SUCCESS) { return; }
 

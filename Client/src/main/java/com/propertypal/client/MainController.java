@@ -79,6 +79,7 @@ public class MainController
     @FXML
     private void onLogOutButtonClick()
     {
+        manager.logout();
         SceneManager.switchTo("/fxml/login.fxml");
     }
 

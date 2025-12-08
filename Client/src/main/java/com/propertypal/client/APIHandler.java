@@ -101,6 +101,11 @@ public class APIHandler
         return instance;
     }
 
+    public void clearToken()
+    {
+        activeToken = null;
+    }
+
     public <T extends BaseResponse> T sendRequest(String endpoint, BasePacket packet, Class<T> respType) throws IllegalArgumentException, IOException
     {
         if (endpoint == null || endpoint.length() < 1) { throw new IllegalArgumentException("Invalid endpoint given"); }

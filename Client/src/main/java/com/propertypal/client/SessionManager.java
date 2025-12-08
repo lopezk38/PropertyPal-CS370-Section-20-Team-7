@@ -77,6 +77,8 @@ public class SessionManager
     {
         this.username = null;
         this.role = null;
+
+        acctLogic.logout();
     }
 
     // Getters

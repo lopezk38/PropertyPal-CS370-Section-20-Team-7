@@ -1,10 +1,11 @@
-package com.propertypal.filters;
+package com.propertypal.server.filters;
 
-import com.propertypal.ClientRequest;
+import com.propertypal.server.ClientRequest;
+import com.propertypal.server.SecurityFilter;
+
 import com.propertypal.shared.network.packets.*;
 import com.propertypal.shared.network.responses.*;
 import com.propertypal.shared.network.enums.*;
-import com.propertypal.SecurityFilter;
 
 public class TicketFilters extends BaseFilters
 {

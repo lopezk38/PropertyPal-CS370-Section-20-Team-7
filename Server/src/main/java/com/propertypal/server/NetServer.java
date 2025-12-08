@@ -1,4 +1,4 @@
-package com.propertypal;
+package com.propertypal.server;
 
 import com.sun.net.httpserver.*;
 import java.net.InetSocketAddress;

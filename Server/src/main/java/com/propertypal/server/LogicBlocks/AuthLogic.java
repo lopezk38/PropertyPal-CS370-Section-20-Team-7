@@ -1,8 +1,9 @@
-package com.propertypal.LogicBlocks;
+package com.propertypal.server.LogicBlocks;
 
-import com.propertypal.ClientRequest;
-import com.propertypal.SecurityFilter;
-import com.propertypal.DbWrapper;
+import com.propertypal.server.ClientRequest;
+import com.propertypal.server.SecurityFilter;
+import com.propertypal.server.DbWrapper;
+
 import com.propertypal.shared.network.responses.*;
 import com.propertypal.shared.network.packets.*;
 import com.propertypal.shared.network.enums.*;
@@ -10,7 +11,6 @@ import com.propertypal.shared.network.enums.*;
 import java.sql.SQLException;
 import java.sql.ResultSet;
 import java.sql.PreparedStatement;
-//import org.springframework.security.crypto.bcrypt.BCrypt;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 import java.time.LocalDateTime;

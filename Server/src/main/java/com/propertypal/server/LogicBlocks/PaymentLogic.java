@@ -1,6 +1,7 @@
-package com.propertypal.LogicBlocks;
+package com.propertypal.server.LogicBlocks;
 
-import com.propertypal.ClientRequest;
+import com.propertypal.server.ClientRequest;
+
 import com.propertypal.shared.network.packets.*;
 import com.propertypal.shared.network.responses.*;
 import com.propertypal.shared.network.enums.*;

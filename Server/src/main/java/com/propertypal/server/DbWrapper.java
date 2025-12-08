@@ -1,4 +1,4 @@
-package com.propertypal;
+package com.propertypal.server;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -65,6 +65,17 @@ public class DbWrapper
         catch (IOException e)
         {
             //Credential file did not exist
+            //Make data folder if it didn't exist already
+            try
+            {
+                Files.createDirectories(Path.of(dbCredsPath).getParent());
+            }
+            catch (IOException e2)
+            {
+                System.out.printf("ERROR: Data directory could not be generated. Ensure your drive is not full and the directory has write permissions%n");
+                System.exit(-1);
+            }
+
             //Check if DB file exists
             Path dbFile = Path.of("./data/db.mv.db");
             if (!Files.exists(dbFile))
@@ -79,7 +90,7 @@ public class DbWrapper
                     Files.writeString(credFile, dbUName + "\n");
                     Files.writeString(credFile, dbPw, StandardOpenOption.APPEND);
                 }
-                catch (IOException e2)
+                catch (IOException e3)
                 {
                     //Failed to gen creds file, abort
                     System.out.printf("ERROR: Credential file could not be generated at %s. Ensure your drive is not full and the directory has write permissions%n", dbCredsPath);

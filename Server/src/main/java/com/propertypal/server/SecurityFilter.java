@@ -1,6 +1,7 @@
-package com.propertypal;
+package com.propertypal.server;
 
-import com.propertypal.filters.*;
+import com.propertypal.server.filters.*;
+
 import com.propertypal.shared.network.responses.*;
 import com.propertypal.shared.network.packets.*;
 

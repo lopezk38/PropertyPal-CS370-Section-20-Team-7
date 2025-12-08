@@ -1,54 +1,23 @@
-package com.propertypal.filters;
+package com.propertypal.server.filters;
 
-import com.propertypal.ClientRequest;
-import com.propertypal.CoreLogic;
-import com.propertypal.DbWrapper;
-import com.propertypal.SecurityFilter;
-import com.propertypal.LogicBlocks.AccountLogic;
+import com.propertypal.server.ClientRequest;
+import com.propertypal.server.CoreLogic;
+import com.propertypal.server.DbWrapper;
+import com.propertypal.server.SecurityFilter;
+import com.propertypal.server.LogicBlocks.AccountLogic;
+
 import com.propertypal.shared.network.responses.*;
 import com.propertypal.shared.network.packets.*;
 import com.propertypal.shared.network.enums.*;
 
-public class AccountFilters extends BaseFilters
+public class DocFilters extends BaseFilters
 {
-    public void filterCreateTenantAcctPacket(ClientRequest req)
+    public void filterUploadDocPacket(ClientRequest req)
     {
-        if (!(req.packet instanceof CreateAcctPacket))
+        if (!(req.packet instanceof UploadDocPacket))
         {
             //Endpoint registered to wrong handler
-            System.out.println("ERROR: filterCreateTenantAcctPacket is registered to the wrong endpoint");
-            BaseResponse resp = new BaseResponse();
-            resp.STATUS = BaseResponseEnum.ERR_UNKNOWN;
-            req.setResponse(resp);
-            filter.sendResponse(req);
-            return;
-        }
-
-        logic.handleCreateTenantAcct(req);
-    }
-
-    public void filterCreateLandlordAcctPacket(ClientRequest req)
-    {
-        if (!(req.packet instanceof CreateAcctPacket))
-        {
-            //Endpoint registered to wrong handler
-            System.out.println("ERROR: filterCreateLandlordAcctPacket is registered to the wrong endpoint");
-            BaseResponse resp = new BaseResponse();
-            resp.STATUS = BaseResponseEnum.ERR_UNKNOWN;
-            req.setResponse(resp);
-            filter.sendResponse(req);
-            return;
-        }
-
-        logic.handleCreateLandlordAcct(req);
-    }
-
-    public void filterCreateInvitePacket(ClientRequest req)
-    {
-        if (!(req.packet instanceof CreateInvitePacket))
-        {
-            //Endpoint registered to wrong handler
-            System.out.println("ERROR: filterCreateInvitePacket is registered to the wrong endpoint");
+            System.out.println("ERROR: filterUploadDocPacket is registered to the wrong endpoint");
             BaseResponse resp = new BaseResponse();
             resp.STATUS = BaseResponseEnum.ERR_UNKNOWN;
             req.setResponse(resp);
@@ -60,15 +29,15 @@ public class AccountFilters extends BaseFilters
         int authSuccess = filter.enforceLoggedIn(req);
         if (authSuccess != BaseResponseEnum.SUCCESS) return;
 
-        logic.handleCreateInvite(req);
+        logic.handleUploadDoc(req);
     }
 
-    public void filterAcceptInvitePacket(ClientRequest req)
+    public void filterDeleteDocPacket(ClientRequest req)
     {
-        if (!(req.packet instanceof AcceptInvitePacket))
+        if (!(req.packet instanceof DeleteDocPacket))
         {
             //Endpoint registered to wrong handler
-            System.out.println("ERROR: filterAcceptInvitePacket is registered to the wrong endpoint");
+            System.out.println("ERROR: filterDeleteDocPacket is registered to the wrong endpoint");
             BaseResponse resp = new BaseResponse();
             resp.STATUS = BaseResponseEnum.ERR_UNKNOWN;
             req.setResponse(resp);
@@ -80,15 +49,15 @@ public class AccountFilters extends BaseFilters
         int authSuccess = filter.enforceLoggedIn(req);
         if (authSuccess != BaseResponseEnum.SUCCESS) return;
 
-        logic.handleAcceptInvite(req);
+        logic.handleDeleteDoc(req);
     }
 
-    public void filterGetInviteListPacket(ClientRequest req)
+    public void filterViewDocPacket(ClientRequest req)
     {
-        if (!(req.packet instanceof GetInviteListPacket))
+        if (!(req.packet instanceof ViewDocPacket))
         {
             //Endpoint registered to wrong handler
-            System.out.println("ERROR: filterGetInviteListPacket is registered to the wrong endpoint");
+            System.out.println("ERROR: filterViewDocPacket is registered to the wrong endpoint");
             BaseResponse resp = new BaseResponse();
             resp.STATUS = BaseResponseEnum.ERR_UNKNOWN;
             req.setResponse(resp);
@@ -100,15 +69,14 @@ public class AccountFilters extends BaseFilters
         int authSuccess = filter.enforceLoggedIn(req);
         if (authSuccess != BaseResponseEnum.SUCCESS) return;
 
-        logic.handleGetInviteList(req);
+        logic.handleViewDoc(req);
     }
-
-    public void filterGetAcctLeasePacket(ClientRequest req)
+    public void filterGetDocInfoPacket(ClientRequest req)
     {
-        if (!(req.packet instanceof GetAcctLeasePacket))
+        if (!(req.packet instanceof GetDocInfoPacket))
         {
             //Endpoint registered to wrong handler
-            System.out.println("ERROR: filterGetAcctLeasePacket is registered to the wrong endpoint");
+            System.out.println("ERROR: filterGetDocInfoPacket is registered to the wrong endpoint");
             BaseResponse resp = new BaseResponse();
             resp.STATUS = BaseResponseEnum.ERR_UNKNOWN;
             req.setResponse(resp);
@@ -120,6 +88,27 @@ public class AccountFilters extends BaseFilters
         int authSuccess = filter.enforceLoggedIn(req);
         if (authSuccess != BaseResponseEnum.SUCCESS) return;
 
-        logic.handleGetAcctLeasePacket(req);
+        logic.handleGetDocInfo(req);
     }
+
+    public void filterGetDocListPacket(ClientRequest req)
+    {
+        if (!(req.packet instanceof GetDocListPacket))
+        {
+            //Endpoint registered to wrong handler
+            System.out.println("ERROR: filterGetDocListPacket is registered to the wrong endpoint");
+            BaseResponse resp = new BaseResponse();
+            resp.STATUS = BaseResponseEnum.ERR_UNKNOWN;
+            req.setResponse(resp);
+            filter.sendResponse(req);
+            return;
+        }
+
+        //Validate user is logged in
+        int authSuccess = filter.enforceLoggedIn(req);
+        if (authSuccess != BaseResponseEnum.SUCCESS) return;
+
+        logic.handleGetDocList(req);
+    }
+
 }

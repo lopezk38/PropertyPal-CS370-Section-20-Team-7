@@ -1,8 +1,8 @@
-package com.propertypal;
+package com.propertypal.server;
 
-import com.propertypal.LogicBlocks.*;
+import com.propertypal.server.LogicBlocks.*;
 
-import javax.print.Doc;
+//import javax.print.Doc;
 
 public class CoreLogic
 {

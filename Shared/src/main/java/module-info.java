@@ -7,4 +7,5 @@ module com.propertypal.shared.network {
 	exports com.propertypal.shared.network.packets;
 	exports com.propertypal.shared.network.responses;
     exports com.propertypal.shared.network.helpers;
+    exports com.propertypal.shared.network.GsonAdapters;
 }

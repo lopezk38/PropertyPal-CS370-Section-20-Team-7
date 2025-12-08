@@ -9,5 +9,6 @@ module com.propertypal.client {
     requires java.desktop;
 
     opens com.propertypal.client to javafx.fxml;
+    opens main.java.com.propertypal.client to javafx.fxml;
     exports com.propertypal.client;
 }

@@ -55,7 +55,7 @@ jar {
 */
 
 jlink {
-    options = ['--strip-debug', '--no-header-files', '--no-man-pages']
+    //options = ['--strip-debug', '--no-header-files', '--no-man-pages']
     launcher {
         name = 'PropertyPal-Client'
     }

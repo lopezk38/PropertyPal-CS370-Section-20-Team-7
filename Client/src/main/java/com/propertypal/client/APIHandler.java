@@ -83,7 +83,14 @@ public class APIHandler
         catch (Exception e)
         {
             System.out.println("Caught exception while sending request: " + e.toString());
+            throw new IOException("Failed to connect to server: " + e.getMessage(), e);
         }
+
+        if (postResp == null)
+        {
+            throw new IOException("No response received from server (null HttpResponse)");
+        }
+
         String rawResp = EntityUtils.toString(postResp.getEntity(), StandardCharsets.UTF_8);
         System.out.println("Got response code " + postResp.getStatusLine().getStatusCode() + " with response " + rawResp);
         //TODO check for code 200, throw if not

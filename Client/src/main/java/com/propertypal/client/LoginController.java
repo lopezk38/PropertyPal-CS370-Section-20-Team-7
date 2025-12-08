@@ -97,7 +97,7 @@ public class LoginController
         catch (IOException e)
         {
             System.out.println("ERROR in loginAndGetRole(String, String): " + e.getMessage());
-            errorLabel.setText("Login failed, please try again");
+            errorLabel.setText("Unable to reach server. Please try again.");
         }
     }
 }

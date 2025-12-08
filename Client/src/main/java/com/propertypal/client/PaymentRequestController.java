@@ -53,8 +53,6 @@ public class PaymentRequestController
         String paypalLink = paypalField.getText().trim();
         String requestAmount = requestField.getText().trim();
 
-        // TODO Add more validation checks
-
         // Check empty fields
         if (paypalLink.isEmpty() || requestAmount.isEmpty())
         {

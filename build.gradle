@@ -24,29 +24,62 @@ task copyClientEXEs(type: Copy)
 
 task copyServerJARs(type: Copy)
 {
-    from 'Server/build/libs/server-all.jar'
+    // old
+//    from 'Server/build/libs/server-all.jar'
+//    into 'executables/universal'
+//
+//    def sRunBat = file('executables/universal/runServer.bat')
+//    sRunBat.text = "java -jar server-all.jar"
+//    def sRunSh = file('executables/universal/runServer.sh')
+//    sRunSh.text = "java -jar server-all.jar"
+
+    // new
+    from('Server/build/libs') {
+        include 'server-*-all.jar'
+        rename { 'server-all.jar' }   // optional
+    }
     into 'executables/universal'
 
-    def sRunBat = file('executables/universal/runServer.bat')
-    sRunBat.text = "java -jar server-all.jar"
-    def sRunSh = file('executables/universal/runServer.sh')
-    sRunSh.text = "java -jar server-all.jar"
+    doLast {
+        def dir = file('executables/universal')
+        dir.mkdirs()
+
+        file("${dir}/runServer.bat").text = "java -jar server-all.jar"
+        file("${dir}/runServer.sh").text = "java -jar server-all.jar"
+    }
 }
 
 task copyClientJARs(type: Copy)
 {
-    from 'Client/build/libs/client-all.jar'
+    // old
+//    from 'Client/build/libs/client-all.jar'
+//    into 'executables/universal'
+//
+//    def cRunBat = file('executables/universal/runClient.bat')
+//    cRunBat.text = "START javaw -jar client-all.jar"
+//    def cRunSh = file('executables/universal/runClient.sh')
+//    cRunSh.text = "javaw -jar client-all.jar &"
+
+    // new
+    from('Client/build/libs') {
+        include 'client-*-all.jar'
+        rename { 'client-all.jar' }   // optional
+    }
     into 'executables/universal'
 
-    def cRunBat = file('executables/universal/runClient.bat')
-    cRunBat.text = "START javaw -jar client-all.jar"
-    def cRunSh = file('executables/universal/runClient.sh')
-    cRunSh.text = "javaw -jar client-all.jar &"
+    doLast {
+        def dir = file('executables/universal')
+        dir.mkdirs()
+
+        file("${dir}/runClient.bat").text = "START javaw -jar client-all.jar"
+        file("${dir}/runClient.sh").text = "javaw -jar client-all.jar &"
+    }
 }
 
 tasks.register('buildAll') {
     //Build artifacts
     dependsOn gradle.includedBuild('shared').task(':build')
+
     dependsOn gradle.includedBuild('server').task(':build')
     dependsOn gradle.includedBuild('server').task(':jlink')
     dependsOn gradle.includedBuild('server').task(':jpackageImage')

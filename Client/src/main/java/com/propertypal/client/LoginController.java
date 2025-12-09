@@ -2,6 +2,7 @@ package main.java.com.propertypal.client;
 
 import com.propertypal.client.SceneManager;
 import com.propertypal.client.SessionManager;
+import com.propertypal.client.SendInviteDialog;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -97,7 +98,12 @@ public class LoginController
                 if (role == SessionManager.Role.LANDLORD)
                 {
                     //Landlord. Force them to do an invite
-                    ; //TODO INVITE LOGIC HERE
+                    SendInviteDialog invDialog = new SendInviteDialog();
+                    if (!invDialog.join()) //Show dialog and return if we got a lease or not
+                    {
+                        //Invite failed/no lease
+                        return;
+                    }
                 }
                 else
                 {

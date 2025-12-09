@@ -1,6 +1,7 @@
 package main.java.com.propertypal.client;
 
 import com.propertypal.client.SceneManager;
+import com.propertypal.client.SendInviteDialog;
 import com.propertypal.client.SessionManager;
 
 import javafx.application.Platform;
@@ -208,9 +209,33 @@ public class AccountCreateController
             Long leaseID = manager.getLeaseID();
             if (leaseID == null)
             {
-                showTenAcctNotReady();
-                SceneManager.switchTo("/fxml/login.fxml");
-                return;
+                if (isLandlord)
+                {
+                    //Landlord. Force them to do an invite
+                    SendInviteDialog invDialog = new SendInviteDialog();
+                    if (!invDialog.join()) //Show dialog and return if we got a lease or not
+                    {
+                        //User gave up/hit cancel
+                        SceneManager.switchTo("/fxml/login.fxml");
+                        return;
+                    }
+
+
+
+                    //Check one more time if invite was accepted
+                    if (!manager.isLeaseReady())
+                    {
+                        //Still not accepted
+                        SceneManager.switchTo("/fxml/login.fxml");
+                        return;
+                    }
+                }
+                else
+                {
+                    showTenAcctNotReady();
+                    SceneManager.switchTo("/fxml/login.fxml");
+                    return;
+                }
             }
 
             SceneManager.switchTo("/fxml/main.fxml");

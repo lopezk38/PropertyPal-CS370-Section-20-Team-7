@@ -10,6 +10,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 
 public class LoginController
@@ -101,14 +102,45 @@ public class LoginController
                     SendInviteDialog invDialog = new SendInviteDialog();
                     if (!invDialog.join()) //Show dialog and return if we got a lease or not
                     {
-                        //Invite failed/no lease
+                        //Invite failed/no lease/not accepted yet
+                        return;
+                    }
+
+                    //Check one more time if invite was accepted
+                    if (!manager.isLeaseReady())
+                    {
+                        //Still not accepted
                         return;
                     }
                 }
                 else
                 {
-                    //Tenant. Don't let them login yet.
-                    showTenAcctNotReady();
+                    //Tenant. Don't let them login until they accept an invite
+                    ArrayList<Long> invites = null;
+
+                    try
+                    {
+                        invites = manager.getInvites();
+                    }
+                    catch (IOException e)
+                    {
+                        //Couldn't talk to server, assume no invites
+                        System.out.println("ERROR: While attempting to get invites, threw " + e.toString());
+                        showTenAcctNotReady();
+                        return;
+                    }
+
+                    if (invites == null || invites.isEmpty())
+                    {
+                        //No invites in yet
+                        showTenAcctNotReady();
+                        return;
+                    }
+
+                    //We have invites
+                    //TODO SHOW INVITE ACCEPT SCREEN
+                    errorLabel.setText("TODO accept invite prompt");
+
                     return;
                 }
             }

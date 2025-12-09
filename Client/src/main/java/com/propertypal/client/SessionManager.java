@@ -203,6 +203,25 @@ public class SessionManager
         return;
     }
 
+    public GetAcctPropertyResponse GetAcctPropertyID() throws IOException
+    {
+        return acctLogic.GetAcctPropertyID();
+    }
+
+    public CreateInviteResponse inviteTenant(String invitee) throws IOException, IllegalArgumentException
+    {
+        GetAcctPropertyResponse resp = GetAcctPropertyID();
+        if (resp.STATUS != 0) { throw new IOException("Got error response from server for property request"); }
+        if (resp.PROP_ID == null || resp.PROP_ID < 1) { throw new IOException("Got invalid property from server"); }
+
+        return acctLogic.inviteTenant(resp.PROP_ID, invitee);
+    }
+
+    public ArrayList<Long> getInvites() throws IOException
+    {
+        return acctLogic.getInvites();
+    }
+
     //Documents
     public UploadDocResponse uploadDocument(Path filePath, String name, String description, Boolean allowUnauth) throws IOException
     {

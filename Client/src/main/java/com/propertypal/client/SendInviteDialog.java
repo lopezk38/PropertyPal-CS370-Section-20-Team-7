@@ -1,5 +1,7 @@
 package com.propertypal.client;
 
+import com.propertypal.shared.network.responses.CreateInviteResponse;
+
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
@@ -18,6 +20,8 @@ import javafx.geometry.VPos;
 import javafx.scene.paint.Color;
 
 import javafx.stage.Stage;
+
+import java.io.IOException;
 
 public class SendInviteDialog extends TextInputDialog
 {
@@ -62,6 +66,12 @@ public class SendInviteDialog extends TextInputDialog
     public boolean join()
     {
         showAndWait();
+
+        if (succeeded)
+        {
+            showSuccessDialog();
+        }
+
         return succeeded;
     }
 
@@ -97,7 +107,57 @@ public class SendInviteDialog extends TextInputDialog
             return;
         }
 
-        System.out.println("debug send invite");
+        //Have server perform the invite
+        try
+        {
+            CreateInviteResponse resp = manager.inviteTenant(tenEmail);
+            if (resp.STATUS != 0)
+            {
+                switch (resp.STATUS)
+                {
+                    case CreateInviteResponse.InviteStatus.ERR_BAD_TARGET_USER:
+                        errorLabel.setText("That email was invalid");
+                        break;
+
+                    case CreateInviteResponse.InviteStatus.ERR_BAD_PROPERTY:
+                        errorLabel.setText("Your account is corrupted");
+                        break;
+
+                    case CreateInviteResponse.InviteStatus.ERR_TARGET_CANNOT_BE_LANDLORD:
+                        errorLabel.setText("You cannot invite another landlord");
+                        break;
+
+                    case CreateInviteResponse.InviteStatus.ERR_TARGET_ALREADY_IN_LEASE:
+                        errorLabel.setText("That user is taken, try another");
+                        break;
+
+                    case CreateInviteResponse.InviteStatus.ERR_INVITE_ALREADY_EXISTS:
+                        showExistingInviteDialog();
+                        return;
+
+                    default:
+                        errorLabel.setText("Error code " + resp.STATUS + " while sending request");
+                        break;
+                }
+
+                event.consume(); //Don't close the dialog
+                return;
+            }
+        }
+        catch (IOException e)
+        {
+            errorLabel.setText("Error while sending request");
+
+            event.consume(); //Don't close the dialog
+            return;
+        }
+        catch (IllegalArgumentException e)
+        {
+            errorLabel.setText("That email was invalid");
+
+            event.consume(); //Don't close the dialog
+            return;
+        }
 
         succeeded = true;
     }
@@ -105,5 +165,23 @@ public class SendInviteDialog extends TextInputDialog
     void onCancel(Event event)
     {
         succeeded = false;
+    }
+
+    private void showSuccessDialog()
+    {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Invite created");
+        alert.setHeaderText("Success! Wait for them to accept your invite");
+
+        alert.showAndWait();
+    }
+
+    private void showExistingInviteDialog()
+    {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Invite failed");
+        alert.setHeaderText("You have a pending invite and cannot create another");
+
+        alert.showAndWait();
     }
 }

@@ -53,6 +53,7 @@ public class SecurityFilter
     public void filterAcceptInvitePacket(ClientRequest req) { acctFilter.filterAcceptInvitePacket(req); }
     public void filterGetInviteListPacket(ClientRequest req) { acctFilter.filterGetInviteListPacket(req); }
     public void filterGetAcctLeasePacket(ClientRequest req) { acctFilter.filterGetAcctLeasePacket(req); }
+    public void filterGetAcctPropertyPacket(ClientRequest req) { acctFilter.filterGetAcctPropertyPacket(req); }
 
     //DocFilters
     public void filterUploadDocPacket(ClientRequest req) { docFilter.filterUploadDocPacket(req); }

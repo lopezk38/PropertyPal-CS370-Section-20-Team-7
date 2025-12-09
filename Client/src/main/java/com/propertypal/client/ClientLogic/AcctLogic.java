@@ -6,6 +6,8 @@ import com.propertypal.shared.network.packets.*;
 import com.propertypal.shared.network.responses.*;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 
 public class AcctLogic
 {
@@ -68,7 +70,9 @@ public class AcctLogic
         //Attempt to get leaseID
         Long result = getLeaseID();
 
-        return result != null;
+        if (result == null) { return false; }
+
+        return result > 0;
     }
 
     public Long getLeaseID()
@@ -180,5 +184,52 @@ public class AcctLogic
         }
 
         return resp;
+    }
+
+    public CreateInviteResponse inviteTenant(Long propertyID, String invitee) throws IOException, IllegalArgumentException
+    {
+        if (propertyID == null || propertyID < 1)
+        {
+            throw new IllegalArgumentException("Invalid property ID");
+        }
+
+        if (invitee == null || invitee.isBlank())
+        {
+            throw new IllegalArgumentException("Invalid invitee");
+        }
+
+        CreateInvitePacket packet = new CreateInvitePacket();
+        packet.propertyId = propertyID;
+        packet.target_username = invitee;
+
+        CreateInviteResponse resp = handler.sendRequest("/lease/genInvite", packet, CreateInviteResponse.class);
+
+        if (resp == null) { throw new IOException("Server provided empty response"); }
+
+        return resp;
+    }
+
+    public GetAcctPropertyResponse GetAcctPropertyID() throws IOException
+    {
+        GetAcctPropertyPacket packet = new GetAcctPropertyPacket();
+
+        GetAcctPropertyResponse resp = handler.sendRequest("/account/getProperty", packet, GetAcctPropertyResponse.class);
+
+        if (resp == null) { throw new IOException("Server provided empty response"); }
+
+        return resp;
+    }
+
+    public ArrayList<Long> getInvites() throws IOException
+    {
+        GetInviteListPacket packet = new GetInviteListPacket();
+
+        GetInviteListResponse resp = handler.sendRequest("/lease/getInvites", packet, GetInviteListResponse.class);
+
+        if (resp == null) { throw new IOException("Server provided empty response"); }
+
+        ArrayList<Long> invList = resp.INVITES;
+
+        return invList;
     }
 }

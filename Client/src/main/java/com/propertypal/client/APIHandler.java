@@ -172,10 +172,6 @@ public class APIHandler
             {
                 activeToken = recievedToken;
             }
-            else
-            {
-                System.out.println("WARNING: Got invalid token from server. Ignoring...");
-            }
         }
 
         return resp;

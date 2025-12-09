@@ -50,6 +50,7 @@ public class CoreLogic
     public void handleAcceptInvite(ClientRequest req) { acctLogic.handleAcceptInvite(req); }
     public void handleGetInviteList(ClientRequest req) { acctLogic.handleGetInviteList(req); }
     public void handleGetAcctLeasePacket(ClientRequest req) { acctLogic.handleGetAcctLeasePacket(req); }
+    public void handleGetAcctPropertyPacket(ClientRequest req) { acctLogic.handleGetAcctPropertyPacket(req); }
 
     //DocLogic
     public void handleViewDoc(ClientRequest req) { docLogic.handleViewDoc(req); }

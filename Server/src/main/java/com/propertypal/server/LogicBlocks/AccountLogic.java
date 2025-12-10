@@ -1308,4 +1308,125 @@ public class AccountLogic extends BaseLogic
 
         return;
     }
+
+    public void handleGetInviteInfo(ClientRequest req)
+    {
+        GetInviteInfoPacket packet = (GetInviteInfoPacket) req.packet;
+        Long inviteID = packet.invite_id;
+
+        if (inviteID == null || inviteID < 1)
+        {
+            //Bad invite
+            req.setBaseErrResponse(GetInviteInfoResponse.GetInviteInfoStatus.ERR_BAD_INVITE);
+            req.sendResponse();
+
+            return;
+        }
+
+        //Query for landlord ID from invite
+        PreparedStatement invQ = null;
+        Long landlordID = null;
+        try
+        {
+            invQ = db.compileQuery("""
+            SELECT landlordID
+            FROM Invites
+            WHERE inviteID = ?
+            """);
+            invQ.setLong(1, inviteID);
+
+            ResultSet invR = invQ.executeQuery();
+
+            if (invR.next())
+            {
+                //Got an invite
+                landlordID = invR.getLong("landlordID");
+            }
+            else
+            {
+                //Invite not found
+                req.setBaseErrResponse(GetInviteInfoResponse.GetInviteInfoStatus.ERR_BAD_INVITE);
+                filter.sendResponse(req);
+
+                return;
+            }
+        }
+        catch (SQLException e)
+        {
+            System.out.println("ERROR: SQLException during handleGetInviteInfo invite query: " + e.toString());
+
+            req.setUnknownErrResponse();
+            filter.sendResponse(req);
+            return;
+        }
+        finally
+        {
+            db.closeConnection(invQ);
+        }
+
+        if (landlordID == null || landlordID < 1)
+        {
+            //Landlord ID is bad
+            System.out.println("ERROR: Invite had bad landlord!");
+
+            req.setUnknownErrResponse();
+            filter.sendResponse(req);
+            return;
+        }
+
+        //Query for landlord info
+        PreparedStatement llQ = null;
+        String llFname = null;
+        String llLname = null;
+        String llEmail = null;
+        try
+        {
+            llQ = db.compileQuery("""
+            SELECT firstName, lastName, email
+            FROM Users
+            WHERE userID = ?
+            """);
+            llQ.setLong(1, landlordID);
+
+            ResultSet llR = llQ.executeQuery();
+
+            if (llR.next())
+            {
+                //Got a user
+                llFname = llR.getString("firstName");
+                llLname = llR.getString("lastName");
+                llEmail = llR.getString("email");
+            }
+            else
+            {
+                //User not found somehow
+                req.setUnknownErrResponse();
+                filter.sendResponse(req);
+
+                return;
+            }
+        }
+        catch (SQLException e)
+        {
+            System.out.println("ERROR: SQLException during handleGetInviteInfo landlord query: " + e.toString());
+
+            req.setUnknownErrResponse();
+            filter.sendResponse(req);
+            return;
+        }
+        finally
+        {
+            db.closeConnection(llQ);
+        }
+
+        //Return data
+        GetInviteInfoResponse resp = new GetInviteInfoResponse();
+        resp.STATUS = BaseResponseEnum.SUCCESS;
+        resp.FNAME = llFname;
+        resp.LNAME = llLname;
+        resp.EMAIL = llEmail;
+
+        req.setResponse(resp);
+        req.sendResponse();
+    }
 }

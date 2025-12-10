@@ -4,6 +4,7 @@ import com.propertypal.client.SceneManager;
 import com.propertypal.client.SessionManager;
 import com.propertypal.client.SendInviteDialog;
 import com.propertypal.shared.network.responses.AcceptInviteResponse;
+import com.propertypal.shared.network.responses.GetInviteInfoResponse;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -12,6 +13,7 @@ import javafx.scene.layout.VBox;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Optional;
 
 
 public class LoginController
@@ -139,11 +141,28 @@ public class LoginController
                     }
 
                     //We have invites
-                    boolean accept = false;
-                    //TODO SHOW INVITE ACCEPT SCREEN
+                    Long inviteID = invites.getFirst();
 
-                    AcceptInviteResponse resp = manager.acceptInvite(invites.get(0), accept);
-                    System.out.println("DEBUG" + resp.toJson());
+                    //Get inviter info
+                    GetInviteInfoResponse infoResp = null;
+                    try
+                    {
+                        infoResp = manager.getInviteInfo(inviteID);
+                    }
+                    catch (IllegalArgumentException e)
+                    {
+                        errorLabel.setText("Failed to process invite");
+                        return;
+                    }
+                    catch (IOException e)
+                    {
+                        errorLabel.setText("Failed to receive invite data");
+                        return;
+                    }
+
+                    boolean accept = showInvAcceptDialog(infoResp.FNAME, infoResp.LNAME, infoResp.EMAIL);
+
+                    AcceptInviteResponse resp = manager.acceptInvite(inviteID, accept);
 
                     if (resp.STATUS == 0)
                     {
@@ -180,5 +199,27 @@ public class LoginController
         alert.setContentText("You must wait for a Landlord to invite you to a lease before continuing.");
 
         alert.showAndWait();
+    }
+
+    private boolean showInvAcceptDialog(String fName, String lName, String email)
+    {
+        //Setup window
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Accept invite?");
+        alert.setHeaderText(String.format("You have an invite from %s %s", fName, lName));
+
+        alert.setContentText("Would you like to accept this invite?");
+
+        DialogPane pane = alert.getDialogPane();
+        Button submitButton = (Button) pane.lookupButton(ButtonType.OK);
+        Button cancelButton = (Button) pane.lookupButton(ButtonType.CANCEL);
+
+        submitButton.setText("Accept");
+        cancelButton.setText("Reject");
+
+        //Wait for result
+        Optional<ButtonType> result = alert.showAndWait();
+
+        return result.isPresent() && result.get() == ButtonType.OK;
     }
 }

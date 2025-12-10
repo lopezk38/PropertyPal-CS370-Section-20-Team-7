@@ -233,6 +233,11 @@ public class SessionManager
         return acctLogic.acceptInvite(invID, accept);
     }
 
+    public GetInviteInfoResponse getInviteInfo(Long invID) throws IOException, IllegalArgumentException
+    {
+        return acctLogic.getInviteInfo(invID);
+    }
+
     //Documents
     public UploadDocResponse uploadDocument(Path filePath, String name, String description, Boolean allowUnauth) throws IOException
     {

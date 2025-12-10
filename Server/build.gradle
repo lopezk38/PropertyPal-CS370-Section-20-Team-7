@@ -1,37 +1,58 @@
 plugins {
     id 'java'
+    id 'application'
+    id 'org.beryx.jlink' version '3.1.3'
+    id 'com.gradleup.shadow' version '9.3.0'
 }
 
 group 'com.propertypal'
-version '0.1-SNAPSHOT'
 
 repositories {
     mavenCentral()
 }
-sourceSets {
-    main {
-        java {
-            srcDirs = ['src']
-        }
-    }
-}
+
 dependencies {
     implementation 'com.propertypal:shared:+'
-    implementation 'com.google.code.gson:gson:+'
-    implementation 'com.h2database:h2:+'
+    implementation 'com.google.code.gson:gson:2.13.2'
+    implementation 'com.h2database:h2:2.4.240'
     testImplementation platform('org.junit:junit-bom:5.10.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
     implementation 'org.springframework.security:spring-security-crypto:6.2.1'
 }
 
+application {
+    mainClass = 'com.propertypal.server.Launcher'
+    mainModule = 'com.propertypal.server'
+}
+
+/*
 jar {
     manifest {
-        attributes 'Main-Class': 'com.propertypal.Launcher'
+        attributes 'Main-Class': 'com.propertypal.server.Launcher'
     }
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
     from {
         configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
     }
+}
+*/
+
+jlink {
+    //options = ['--strip-debug', '--no-header-files', '--no-man-pages']
+    launcher {
+        name = 'PropertyPal-Server'
+    }
+    forceMerge 'gson'
+
+    jpackage {
+        imageOptions = ['--win-console']
+    }
+}
+
+shadowJar {
+    archiveBaseName.set('server')
+    exclude 'module-info.class'
+    mergeServiceFiles()
 }
 
 test {

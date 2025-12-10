@@ -1,12 +1,8 @@
-package com.propertypal;
+package com.propertypal.server;
 
-import com.propertypal.SecurityFilter;
 import com.sun.net.httpserver.*;
 import java.net.InetSocketAddress;
-import java.net.URI;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -43,6 +39,7 @@ public class NetServer
         httpServer.createContext("/auth/newAcct/tenant", new Endpoint(CreateAcctPacket.class, (request) -> { filter.filterCreateTenantAcctPacket(request); }));
         httpServer.createContext("/auth/newAcct/landlord", new Endpoint(CreateAcctPacket.class, (request) -> { filter.filterCreateLandlordAcctPacket(request); }));
         httpServer.createContext("/account/getLease", new Endpoint(GetAcctLeasePacket.class, (request) -> { filter.filterGetAcctLeasePacket(request); }));
+        httpServer.createContext("/account/getProperty", new Endpoint(GetAcctPropertyPacket.class, (request) -> { filter.filterGetAcctPropertyPacket(request); }));
 
         //invites
         httpServer.createContext("/lease/genInvite", new Endpoint(CreateInvitePacket.class, (request) -> { filter.filterCreateInvitePacket(request); }));
@@ -72,8 +69,8 @@ public class NetServer
         httpServer.createContext("/lease/getRole", new Endpoint(GetRolePacket.class, (request) -> { filter.filterGetRolePacket(request); }));
         httpServer.createContext("/lease/getContacts", new Endpoint(GetLeaseContactsPacket.class, (request) -> { filter.filterGetLeaseContactsPacket(request); }));
 
-        //httpServer.setExecutor(executor); //Multithreaded. Use for prod
-        httpServer.setExecutor(null); //Singlethreaded. Use for easier debug
+        httpServer.setExecutor(executor); //Multithreaded. Use for prod
+        //httpServer.setExecutor(null); //Singlethreaded. Use for easier debug
 
         httpServer.start();
     }

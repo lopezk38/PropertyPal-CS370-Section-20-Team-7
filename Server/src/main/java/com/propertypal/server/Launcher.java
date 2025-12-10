@@ -1,4 +1,4 @@
-package com.propertypal;
+package com.propertypal.server;
 
 import java.io.IOException;
 

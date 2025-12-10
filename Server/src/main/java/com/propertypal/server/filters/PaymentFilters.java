@@ -1,6 +1,7 @@
-package com.propertypal.filters;
+package com.propertypal.server.filters;
 
-import com.propertypal.ClientRequest;
+import com.propertypal.server.ClientRequest;
+
 import com.propertypal.shared.network.responses.*;
 import com.propertypal.shared.network.packets.*;
 import com.propertypal.shared.network.enums.*;
@@ -118,8 +119,7 @@ public class PaymentFilters extends BaseFilters
 
                 return BaseResponseEnum.ERR_BAD_TOKEN;
             }
-        }
-        catch (SQLException e)
+        } catch (SQLException e)
         {
             System.out.println("ERROR: SQLException during filterRequestRentPacket user query: " + e.toString());
 
@@ -127,8 +127,7 @@ public class PaymentFilters extends BaseFilters
             filter.sendResponse(req);
 
             return BaseResponseEnum.ERR_UNKNOWN;
-        }
-        finally
+        } finally
         {
             db.closeConnection(userQ);
         }
@@ -152,7 +151,30 @@ public class PaymentFilters extends BaseFilters
         }
 
         //Retrieve property lease is under
-        Long leaseID = ((RequestRentPacket) req.packet).lease_id;
+        Long leaseID = null;
+        if (req.packet.getClass() == RequestRentPacket.class)
+        {
+            leaseID = ((RequestRentPacket) req.packet).lease_id;
+            if (leaseID == null || leaseID < 1)
+            {
+                req.setBaseErrResponse(RequestRentResponse.RequestRentStatus.ERR_BAD_LEASE);
+                filter.sendResponse(req);
+
+                return BaseResponseEnum.ERR_PERMISSION_DENIED;
+            }
+        }
+        else if (req.packet.getClass() == UpdateAmountDuePacket.class)
+        {
+            leaseID = ((UpdateAmountDuePacket) req.packet).lease_id;
+            if (leaseID == null || leaseID < 1)
+            {
+                req.setBaseErrResponse(UpdateAmountDueResponse.UpdateAmountDueStatus.ERR_BAD_LEASE);
+                filter.sendResponse(req);
+
+                return BaseResponseEnum.ERR_PERMISSION_DENIED;
+            }
+        }
+
         PreparedStatement leaseQ = null;
         Long propID = null;
         try

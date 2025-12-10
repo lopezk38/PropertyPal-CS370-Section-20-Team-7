@@ -1,9 +1,10 @@
-package com.propertypal.filters;
+package com.propertypal.server.filters;
 
-import com.propertypal.ClientRequest;
-import com.propertypal.SecurityFilter;
-import com.propertypal.CoreLogic;
-import com.propertypal.DbWrapper;
+import com.propertypal.server.ClientRequest;
+import com.propertypal.server.SecurityFilter;
+import com.propertypal.server.CoreLogic;
+import com.propertypal.server.DbWrapper;
+
 import com.propertypal.shared.network.responses.*;
 
 public abstract class BaseFilters

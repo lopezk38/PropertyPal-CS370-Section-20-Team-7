@@ -1,12 +1,15 @@
 package main.java.com.propertypal.client;
 
 import com.propertypal.client.SceneManager;
+import com.propertypal.client.SendInviteDialog;
+import com.propertypal.client.SessionManager;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 
+import java.io.IOException;
 import java.util.Arrays;
 
 public class AccountCreateController
@@ -41,7 +44,14 @@ public class AccountCreateController
     @FXML
     private TextField zipField;
 
+    private SessionManager manager;
+
     private boolean isLandlord;
+
+    public AccountCreateController()
+    {
+        manager = SessionManager.getInstance();
+    }
 
     //--------------------
     // UI Functions
@@ -111,6 +121,8 @@ public class AccountCreateController
         String pass = passwordField.getText().trim();
         String confirm = confPasswordField.getText().trim();
 
+        String street = null, city = null, state = null, zip = null;
+
         isLandlord = landlordCheckbox.isSelected();
 
         // Check empty fields
@@ -152,10 +164,10 @@ public class AccountCreateController
         // Checks for landlord
         if (isLandlord)
         {
-            String street = streetField.getText().trim();
-            String city = cityField.getText().trim();
-            String state = stateCombo.getValue();
-            String zip = zipField.getText().trim();
+            street = streetField.getText().trim();
+            city = cityField.getText().trim();
+            state = stateCombo.getValue();
+            zip = zipField.getText().trim();
 
             // Check empty address fields
             if (street.isEmpty() || city.isEmpty() || state == null || zip.isEmpty())
@@ -176,16 +188,61 @@ public class AccountCreateController
 
         // TODO Backend logic here (including password hashing)
 
-        showSuccessDialog();
+        try
+        {
+            manager.createAccount(
+                    email,
+                    pass,
+                    first,
+                    last,
+                    phone,
+                    isLandlord,
+                    street,
+                    city,
+                    state,
+                    zip
+            );
 
-        // TODO Get role via SessionManager
-        if (isLandlord)
-        {
+            showSuccessDialog();
+
+            //Check if lease exists
+            Long leaseID = manager.getLeaseID();
+            if (leaseID == null)
+            {
+                if (isLandlord)
+                {
+                    //Landlord. Force them to do an invite
+                    SendInviteDialog invDialog = new SendInviteDialog();
+                    if (!invDialog.join()) //Show dialog and return if we got a lease or not
+                    {
+                        //User gave up/hit cancel
+                        SceneManager.switchTo("/fxml/login.fxml");
+                        return;
+                    }
+
+
+
+                    //Check one more time if invite was accepted
+                    if (!manager.isLeaseReady())
+                    {
+                        //Still not accepted
+                        SceneManager.switchTo("/fxml/login.fxml");
+                        return;
+                    }
+                }
+                else
+                {
+                    showTenAcctNotReady();
+                    SceneManager.switchTo("/fxml/login.fxml");
+                    return;
+                }
+            }
+
             SceneManager.switchTo("/fxml/main.fxml");
-        }
-        else
+        } catch (IOException e)
         {
-            SceneManager.switchTo("/fxml/main.fxml");
+            // You could also map server STATUS codes to user-friendly messages
+            errorLabel.setText("Server error: " + e.getMessage());
         }
     }
 
@@ -198,11 +255,21 @@ public class AccountCreateController
         if (isLandlord)
         {
             alert.setContentText("Your landlord account has been created successfully!");
-        }
-        else
+        } else
         {
             alert.setContentText("Your account has been created successfully!");
         }
+
+        alert.showAndWait();
+    }
+
+    private void showTenAcctNotReady()
+    {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Account not ready yet");
+        alert.setHeaderText("Waiting for invite");
+
+        alert.setContentText("You must wait for a Landlord to invite you to a lease before continuing.");
 
         alert.showAndWait();
     }

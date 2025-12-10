@@ -9,6 +9,7 @@ import javafx.stage.Stage;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.PDFRenderer;
@@ -27,6 +28,18 @@ public class PDFViewer
             throw new Exception("File not found: " + filepath);
 
         PDDocument document = PDDocument.load(file);
+        render(document);
+    }
+
+    public static void openPDF(byte[] blob) throws Exception
+    {
+
+        PDDocument document = PDDocument.load(blob);
+        render(document);
+    }
+
+    private static void render(PDDocument document)
+    {
         PDFRenderer renderer = new PDFRenderer(document);
 
         VBox pagesBox = new VBox(20);
@@ -34,16 +47,30 @@ public class PDFViewer
 
         for (int i = 0; i < document.getNumberOfPages(); i++)
         {
-            BufferedImage awtImage = renderer.renderImageWithDPI(i, 130);
-            javafx.scene.image.Image fxImage = SwingFXUtils.toFXImage(awtImage, null);
-            ImageView imageView = new ImageView(fxImage);
-            imageView.setPreserveRatio(true);
-            imageView.setFitWidth(800);
+            try
+            {
+                BufferedImage awtImage = renderer.renderImageWithDPI(i, 130);
+                javafx.scene.image.Image fxImage = SwingFXUtils.toFXImage(awtImage, null);
+                ImageView imageView = new ImageView(fxImage);
+                imageView.setPreserveRatio(true);
+                imageView.setFitWidth(800);
 
-            pagesBox.getChildren().add(imageView);
+                pagesBox.getChildren().add(imageView);
+            }
+            catch (IOException e)
+            {
+                System.out.println("WARNING: Failed to render page of PDF");
+            }
         }
 
-        document.close();
+        try
+        {
+            document.close();
+        }
+        catch (IOException e)
+        {
+            System.out.println("WARNING: Failed to close document");
+        }
 
         ScrollPane scroll = new ScrollPane(pagesBox);
         scroll.setFitToWidth(true);

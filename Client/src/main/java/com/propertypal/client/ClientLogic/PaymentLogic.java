@@ -44,4 +44,25 @@ public class PaymentLogic
 
         return resp.PAYLINK;
     }
+
+    public UpdateAmountDueResponse updateAmountDue(long leaseID, String paypalLink, String amount, int dueDay)
+            throws IOException
+    {
+        UpdateAmountDuePacket pkt = new UpdateAmountDuePacket();
+
+        pkt.lease_id = leaseID;
+        pkt.amount = amount;        // String
+        pkt.dueDay = dueDay;        // Hardcoded to 1
+        pkt.paypalLink = paypalLink;
+
+        UpdateAmountDueResponse resp =
+                handler.sendRequest("/lease/setupRent", pkt, UpdateAmountDueResponse.class);
+
+        if (resp.STATUS != 0)
+        {
+            throw new IOException("UpdateAmountDue failed. STATUS = " + resp.STATUS);
+        }
+
+        return resp;
+    }
 }

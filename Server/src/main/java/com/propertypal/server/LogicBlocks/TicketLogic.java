@@ -1,6 +1,7 @@
-package com.propertypal.LogicBlocks;
+package com.propertypal.server.LogicBlocks;
 
-import com.propertypal.ClientRequest;
+import com.propertypal.server.ClientRequest;
+
 import com.propertypal.shared.network.responses.*;
 import com.propertypal.shared.network.packets.*;
 import com.propertypal.shared.network.enums.*;
@@ -381,8 +382,8 @@ public class TicketLogic extends BaseLogic
         Integer taxTicketPerms = null;
         Integer rentTicketPerms = null;
         Long parentLease = null;
-        List<Long> attachments = new ArrayList<Long>();
-        List<Long> comments = new ArrayList<Long>();
+        ArrayList<Long> attachments = new ArrayList<Long>();
+        ArrayList<Long> comments = new ArrayList<Long>();
 
         //Get userID
         long userID = userIDFromToken(packet.token);
@@ -652,7 +653,7 @@ public class TicketLogic extends BaseLogic
         long parentLease = packet.lease_id;
 
         //Values to retrieve
-        List<Long> tickets = new ArrayList<Long>();
+        ArrayList<Long> tickets = new ArrayList<Long>();
 
         //Get userID
         long userID = userIDFromToken(packet.token);

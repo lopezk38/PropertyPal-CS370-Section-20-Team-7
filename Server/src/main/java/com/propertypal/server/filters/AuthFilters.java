@@ -1,6 +1,7 @@
-package com.propertypal.filters;
+package com.propertypal.server.filters;
 
-import com.propertypal.ClientRequest;
+import com.propertypal.server.ClientRequest;
+
 import com.propertypal.shared.network.responses.*;
 import com.propertypal.shared.network.packets.*;
 import com.propertypal.shared.network.enums.*;
@@ -72,7 +73,6 @@ public class AuthFilters extends BaseFilters
             return BaseResponseEnum.ERR_BAD_TOKEN;
         }
 
-        /* DISABLED TEMPORARILY - NEED TO FIX BUG WHERE PORT IS ALSO WRONGLY CONSIDERED
         if (!req.getRemoteIP().equals(validIP))
         {
             //IP does not match IP which owns the token. Stolen token?
@@ -82,7 +82,6 @@ public class AuthFilters extends BaseFilters
 
             return BaseResponseEnum.ERR_BAD_TOKEN;
         }
-        */
 
         //All checks passed, allow packet to proceed
         return BaseResponseEnum.SUCCESS;
@@ -110,6 +109,17 @@ public class AuthFilters extends BaseFilters
 
     public void filterLogoutPacket(ClientRequest req)
     {
+        if (!(req.packet instanceof LogoutPacket))
+        {
+            //Endpoint registered to wrong handler
+            System.out.println("ERROR: filterLogoutPacket is registered to the wrong endpoint");
+            BaseResponse resp = new BaseResponse();
+            resp.STATUS = BaseResponseEnum.ERR_UNKNOWN;
+            req.setResponse(resp);
+            filter.sendResponse(req);
+            return;
+        }
+
         int loggedInCheckResult = enforceLoggedIn(req);
         if (loggedInCheckResult != BaseResponseEnum.SUCCESS) { return; }
 

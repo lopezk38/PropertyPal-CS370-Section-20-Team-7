@@ -1,7 +1,7 @@
-package com.propertypal.LogicBlocks;
+package com.propertypal.server.LogicBlocks;
 
-import com.propertypal.DbWrapper;
-import com.propertypal.SecurityFilter;
+import com.propertypal.server.DbWrapper;
+import com.propertypal.server.SecurityFilter;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

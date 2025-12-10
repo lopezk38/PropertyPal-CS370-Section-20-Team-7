@@ -6,7 +6,11 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.util.EntityUtils;
+import org.apache.http.client.config.RequestConfig;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.nio.file.Files;
 
 import com.propertypal.shared.network.responses.*;
 import com.propertypal.shared.network.packets.*;
@@ -18,12 +22,69 @@ public class APIHandler
 
     private HttpClient http = null;
     private String activeToken = null;
+    private final String defBaseURI = "http://localhost:678";
     private String baseURI = null;
+
+    private String configFilePath = "./clientData/config.cfg";
 
     private APIHandler()
     {
-        baseURI = "http://localhost:678";
-        http = HttpClientBuilder.create().build();
+        int timeout = 5000;
+        RequestConfig config = RequestConfig.custom()
+                .setConnectTimeout(timeout) //Timeout until a connection is established
+                .setConnectionRequestTimeout(timeout) //Timeout to get a connection from the pool
+                .setSocketTimeout(timeout) //Maximum interval between two data packets
+                .build();
+
+        loadURI();
+        http = HttpClientBuilder.create().setDefaultRequestConfig(config).build();
+    }
+
+    private void loadURI()
+    {
+        //Load config file
+        try
+        {
+            Path configPath = Path.of(configFilePath);
+            String[] credTokens = Files.readString(configPath).split("\n");
+            if (credTokens.length == 1 && !credTokens[0].isBlank())
+            {
+                baseURI = credTokens[0];
+            }
+            else
+            {
+                //Malformed credential file. Overwrite
+                throw new IOException();
+            }
+        }
+        catch (IOException e)
+        {
+            //Config file did not exist
+            //Make config folder if it didn't exist already
+            try
+            {
+                Files.createDirectories(Path.of(configFilePath).getParent());
+            }
+            catch (IOException e2)
+            {
+                System.out.printf("ERROR: Config directory could not be generated. Ensure your drive is not full and the directory has write permissions%n");
+                System.exit(-1);
+            }
+
+            //Generate file
+            try
+            {
+                Path configPath = Path.of(configFilePath);
+                Files.writeString(configPath, defBaseURI);
+                baseURI = defBaseURI;
+            }
+            catch (IOException e3)
+            {
+                //Failed to gen config file, abort
+                System.out.printf("ERROR: Config file could not be generated at %s. Ensure your drive is not full and the directory has write permissions%n", configFilePath);
+                System.exit(-1);
+            }
+        }
     }
 
     private static void init()
@@ -38,6 +99,11 @@ public class APIHandler
         if (instance == null) { init(); }
 
         return instance;
+    }
+
+    public void clearToken()
+    {
+        activeToken = null;
     }
 
     public <T extends BaseResponse> T sendRequest(String endpoint, BasePacket packet, Class<T> respType) throws IllegalArgumentException, IOException
@@ -66,8 +132,23 @@ public class APIHandler
         System.out.println("Sending request to endpoint " + endpoint + " with payload " + serialized);
 
         //Send request
-        HttpResponse postResp = http.execute(post);
-        String rawResp = EntityUtils.toString(postResp.getEntity());
+        HttpResponse postResp = null;
+        try
+        {
+            postResp = http.execute(post);
+        }
+        catch (Exception e)
+        {
+            System.out.println("Caught exception while sending request: " + e.toString());
+            throw new IOException("Failed to connect to server: " + e.getMessage(), e);
+        }
+
+        if (postResp == null)
+        {
+            throw new IOException("No response received from server (null HttpResponse)");
+        }
+
+        String rawResp = EntityUtils.toString(postResp.getEntity(), StandardCharsets.UTF_8);
         System.out.println("Got response code " + postResp.getStatusLine().getStatusCode() + " with response " + rawResp);
         //TODO check for code 200, throw if not
 
@@ -90,10 +171,6 @@ public class APIHandler
             if (recievedToken != null && recievedToken.length() > 0)
             {
                 activeToken = recievedToken;
-            }
-            else
-            {
-                System.out.println("WARNING: Got invalid token from server. Ignoring...");
             }
         }
 

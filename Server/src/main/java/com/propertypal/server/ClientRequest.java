@@ -1,4 +1,4 @@
-package com.propertypal;
+package com.propertypal.server;
 
 import java.time.LocalDateTime;
 import java.io.IOException;

@@ -10,35 +10,97 @@ task copySharedArtifacts(type: Copy)
     into 'testing/server'
 }
 
+task copyServerEXEs(type: Copy)
+{
+    from 'Server/build/jpackage/'
+    into 'executables/exe'
+}
+
+task copyClientEXEs(type: Copy)
+{
+    from 'Client/build/jpackage/'
+    into 'executables/exe'
+}
+
+task copyServerJARs(type: Copy)
+{
+    // old
+//    from 'Server/build/libs/server-all.jar'
+//    into 'executables/universal'
+//
+//    def sRunBat = file('executables/universal/runServer.bat')
+//    sRunBat.text = "java -jar server-all.jar"
+//    def sRunSh = file('executables/universal/runServer.sh')
+//    sRunSh.text = "java -jar server-all.jar"
+
+    // new
+    from('Server/build/libs') {
+        include 'server-all.jar'
+    }
+    into 'executables/universal'
+
+    doLast {
+        def dir = file('executables/universal')
+        dir.mkdirs()
+
+        file("${dir}/runServer.bat").text = "java -jar server-all.jar"
+        file("${dir}/runServer.sh").text = "java -jar server-all.jar"
+    }
+}
+
+task copyClientJARs(type: Copy)
+{
+    from('Client/build/libs') {
+        include 'client-all.jar'
+    }
+    into 'executables/universal'
+
+    doLast {
+        def dir = file('executables/universal')
+        dir.mkdirs()
+
+        file("${dir}/runClient.bat").text = "START javaw -jar client-all.jar"
+        file("${dir}/runClient.sh").text = "javaw -jar client-all.jar &"
+    }
+}
+
 tasks.register('buildAll') {
     //Build artifacts
     dependsOn gradle.includedBuild('shared').task(':build')
-    dependsOn gradle.includedBuild('server').task(':build')
-    dependsOn gradle.includedBuild('client').task(':build')
 
-    //Copy artifacts to testing folder for execution
-    //dependsOn 'copyServerArtifacts'
-    //dependsOn 'copySharedArtifacts'
+    dependsOn gradle.includedBuild('server').task(':build')
+    dependsOn gradle.includedBuild('server').task(':jlink')
+    dependsOn gradle.includedBuild('server').task(':jpackageImage')
+    dependsOn gradle.includedBuild('server').task(':shadowJar')
+    dependsOn copyServerEXEs
+    dependsOn copyServerJARs
+
+    dependsOn gradle.includedBuild('client').task(':build')
+    dependsOn gradle.includedBuild('client').task(':jlink')
+    dependsOn gradle.includedBuild('client').task(':jpackageImage')
+    dependsOn gradle.includedBuild('client').task(':shadowJar')
+    dependsOn copyClientEXEs
+    dependsOn copyClientJARs
 }
 
 tasks.register('runServer', JavaExec) {
-    FileTree jars = fileTree('/Server/build/libs/') { include '*.jar' }
+    FileTree jars = fileTree('/Server/build/libs/') { include '*-all.jar' }
     classpath = jars
 }
 
 tasks.register('debugServer', JavaExec) {
-    FileTree jars = fileTree('/Server/build/libs/') { include '*.jar' }
+    FileTree jars = fileTree('/Server/build/libs/') { include '*-all.jar' }
     classpath = jars
     debug = true
 }
 
 tasks.register('runClient', JavaExec) {
-    FileTree jars = fileTree('/Client/build/libs/') { include '*.jar' }
+    FileTree jars = fileTree('/Client/build/libs/') { include '*-all.jar' }
     classpath = jars
 }
 
 tasks.register('debugClient', JavaExec) {
-    FileTree jars = fileTree('/Client/build/libs/') { include '*.jar' }
+    FileTree jars = fileTree('/Client/build/libs/') { include '*-all.jar' }
     classpath = jars
     debug = true
 }

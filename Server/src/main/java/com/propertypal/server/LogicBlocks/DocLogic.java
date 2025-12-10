@@ -1,8 +1,9 @@
-package com.propertypal.LogicBlocks;
+package com.propertypal.server.LogicBlocks;
 
-import com.propertypal.ClientRequest;
-import com.propertypal.DbWrapper;
-import com.propertypal.SecurityFilter;
+import com.propertypal.server.ClientRequest;
+import com.propertypal.server.DbWrapper;
+import com.propertypal.server.SecurityFilter;
+
 import com.propertypal.shared.network.packets.*;
 import com.propertypal.shared.network.responses.*;
 import com.propertypal.shared.network.enums.*;
@@ -20,6 +21,7 @@ public class DocLogic extends BaseLogic
     public void handleUploadDoc(ClientRequest req)
     {
         UploadDocPacket packet = (UploadDocPacket) req.packet;
+        Long leaseID = packet.lease_id;
         String mimeType = packet.mime_type;
         Long fileSize = packet.file_size;
         String docData = packet.doc_data;
@@ -78,21 +80,25 @@ public class DocLogic extends BaseLogic
                     INSERT INTO Documents (
                         docType,
                         dateCreated,
+                        dateModified,
                         allowUnauthView,
                         name,
-                        description
+                        description,
                         data,
                         fileSize,
+                        parentLease
                     )
-                    VALUES (?, ?, ?, ?, ?, ?, ?)""", Statement.RETURN_GENERATED_KEYS);
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""", Statement.RETURN_GENERATED_KEYS);
 
             updocQ.setInt(1, mimeTypeInt); //docType
             updocQ.setTimestamp(2, createTime); //dateCreated
-            updocQ.setBoolean(3, UnauthViewAllow); //allowUnauthView
-            updocQ.setString(4, docName); //name
-            updocQ.setString(5, docDesc); //description
-            updocQ.setBytes(6, fileContent); //data
-            updocQ.setLong(7, fileSize); //fileSize
+            updocQ.setTimestamp(3, createTime); //dateModified
+            updocQ.setBoolean(4, UnauthViewAllow); //allowUnauthView
+            updocQ.setString(5, docName); //name
+            updocQ.setString(6, docDesc); //description
+            updocQ.setBytes(7, compressed); //data
+            updocQ.setLong(8, fileSize); //fileSize
+            updocQ.setLong(9, leaseID);
             updocQ.executeUpdate();
 
             //Get the newly made primary key
@@ -148,8 +154,7 @@ public class DocLogic extends BaseLogic
         byte[] doc_data = null;
         Long file_size = null;
 
-        //initialize gzip and encode raw data for response
-        byte[] gzipped = null;
+        //initialize encoded raw data for response
         String encodedData = null;
 
         PreparedStatement viewdocQ = null;
@@ -158,7 +163,7 @@ public class DocLogic extends BaseLogic
         try
         {
             viewdocQ = db.compileQuery("""
-            SELECT owner
+            SELECT owner,
                    docType,
                    dateCreated,
                    allowUnauthView,
@@ -190,14 +195,13 @@ public class DocLogic extends BaseLogic
             doc_data = res.getBytes("data");
             file_size = res.getLong("fileSize");
 
-            //gzip and encode raw data for response
-            gzipped = CompressionUtil.gzip(doc_data);
-            encodedData = Base64.getEncoder().encodeToString(gzipped);
+            //encode data for response
+            encodedData = Base64.getEncoder().encodeToString(doc_data);
 
         }
-        catch(SQLException | IOException e)
+        catch(SQLException e)
         {
-            System.out.println("ERROR: SQLException during  ViewDoc: " + e.toString());
+            System.out.println("ERROR: SQLException during ViewDoc: " + e.toString());
 
             req.setUnknownErrResponse();
             filter.sendResponse(req);
@@ -293,6 +297,7 @@ public class DocLogic extends BaseLogic
         int fileType = 0;
         String docName = null;
         String docDesc = null;
+        LocalDateTime docDateMod = null;
 
         PreparedStatement infoQ = null;
         ResultSet res = null;
@@ -302,7 +307,8 @@ public class DocLogic extends BaseLogic
             infoQ = db.compileQuery("""
             SELECT docType,
                    name,
-                   description
+                   description,
+                   dateModified
             FROM Documents
             WHERE docID = ?
             """);
@@ -321,6 +327,7 @@ public class DocLogic extends BaseLogic
             fileType = res.getInt("docType");
             docName = res.getString("name");
             docDesc = res.getString("description");
+            docDateMod = res.getTimestamp("dateModified").toLocalDateTime();
 
         }
         catch(SQLException e)
@@ -341,6 +348,7 @@ public class DocLogic extends BaseLogic
         resp.MIME_TYPE = fileType;
         resp.NAME = docName;
         resp.DESCRIPTION = docDesc;
+        resp.MOD_DATE = docDateMod;
         req.setResponse(resp);
         filter.sendResponse(req);
     }
@@ -359,7 +367,7 @@ public class DocLogic extends BaseLogic
         }
 
         //values to retrieve
-        List<Long> docs = new ArrayList<Long>();
+        ArrayList<Long> docs = new ArrayList<Long>();
 
         PreparedStatement listQ = null;
 
@@ -368,7 +376,7 @@ public class DocLogic extends BaseLogic
             listQ = db.compileQuery("""
                SELECT docID
                FROM Documents
-               WHERE = ?
+               WHERE parentLease = ?
                """);
             listQ.setLong(1, lease_id);
         }

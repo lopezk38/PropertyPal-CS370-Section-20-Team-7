@@ -2,6 +2,7 @@ package main.java.com.propertypal.client;
 
 import com.propertypal.client.SceneManager;
 import com.propertypal.client.SessionManager;
+
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -53,34 +54,44 @@ public class PaymentRequestController
         String paypalLink = paypalField.getText().trim();
         String requestAmount = requestField.getText().trim();
 
-        // TODO Add more validation checks
-
         // Check empty fields
         if (paypalLink.isEmpty() || requestAmount.isEmpty())
         {
             errorLabel.setText("All fields are required");
             errorLabel.setStyle("-fx-text-fill: red;");
+            return;
         }
-        else
+
+        // Check amount field format
+        if (!requestAmount.matches("^\\d+(\\.\\d{1,2})?$"))
         {
-            // Client-side validation passed
+            errorLabel.setText("Amount must be a valid number with up to 2 decimal places");
+            errorLabel.setStyle("-fx-text-fill: red;");
+            return;
+        }
 
-            try
-            {
-                // TODO Add PaymentLogic
+        // Auto-format PayPal link
+        String paypalString = paypalLink.toLowerCase().replace(" ", "");
+        if (!paypalString.startsWith("paypal.me/"))
+        {
+            paypalString = "paypal.me/" + paypalString;
+        }
 
-//                // Ticket Create hint
-//                long leaseID = manager.getLeaseID();
-//                manager.createTicket(leaseID, title, description);
+        // Client-side validation passed
 
-                errorLabel.setText("Your payment request has been successfully submitted");
-                errorLabel.setStyle("-fx-text-fill: green;");
-            }
-            catch (Exception error)
-            {
-                errorLabel.setText("Your payment request has failed to submit, please try again");
-                errorLabel.setStyle("-fx-text-fill: red;");
-            }
+        int dueDay = 1;
+
+        try
+        {
+            long leaseID = manager.getLeaseID();
+            manager.updateAmountDue(leaseID, paypalLink, requestAmount, dueDay);
+
+            errorLabel.setText("Your payment request has been successfully submitted");
+            errorLabel.setStyle("-fx-text-fill: green;");
+        } catch (Exception error)
+        {
+            errorLabel.setText("Failed: " + error.getMessage());
+            errorLabel.setStyle("-fx-text-fill: red;");
         }
     }
 }

@@ -1,11 +1,15 @@
 package com.propertypal.client;
 
 import com.propertypal.client.ClientLogic.AcctLogic;
+import com.propertypal.client.ClientLogic.DocLogic;
 import com.propertypal.client.ClientLogic.PaymentLogic;
 import com.propertypal.client.ClientLogic.TicketLogic;
 import com.propertypal.shared.network.responses.*;
 
+import javax.print.Doc;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 
 public class SessionManager
@@ -17,6 +21,7 @@ public class SessionManager
     private TicketLogic ticketLogic = null;
     private AcctLogic acctLogic = null;
     private PaymentLogic payLogic = null;
+    private DocLogic docLogic = null;
 
     // User info
     private String username;
@@ -47,6 +52,7 @@ public class SessionManager
         ticketLogic = TicketLogic.getInstance();
         acctLogic = AcctLogic.getInstance();
         payLogic = PaymentLogic.getInstance();
+        docLogic = DocLogic.getInstance();
     }
 
     // Get singleton instance
@@ -71,6 +77,8 @@ public class SessionManager
     {
         this.username = null;
         this.role = null;
+
+        acctLogic.logout();
     }
 
     // Getters
@@ -108,9 +116,9 @@ public class SessionManager
 
     //Packet generators and handlers
     //Tickets
-    public List<Long> getTicketIDList(long leaseID) throws IOException
+    public ArrayList<Long> getTicketIDList(long leaseID) throws IOException
     {
-        List<Long> list = ticketLogic.getTicketIDList(leaseID);
+        ArrayList<Long> list = ticketLogic.getTicketIDList(leaseID);
         return list;
     }
 
@@ -142,22 +150,36 @@ public class SessionManager
         return role;
     }
 
-    public CreateAcctResponse createTenantAccount() throws IOException //TODO add params
+    public boolean isLeaseReady()
     {
-        //TODO do request
-
-        this.leaseID = acctLogic.getLeaseID();
-
-        return null; //TODO replace this with real logic
+        return acctLogic.isLeaseReady();
     }
 
-    public CreateAcctResponse CreateLandlordAccount() throws IOException //TODO add params
+    public CreateAcctResponse createAccount(
+            String email,
+            String password,
+            String firstName,
+            String lastName,
+            String phone,
+            boolean isLandlord,
+            String street,
+            String city,
+            String state,
+            String zip
+    ) throws IOException
     {
-        //TODO do request
+        CreateAcctResponse resp = acctLogic.createAccount(
+                email, password, firstName, lastName, phone,
+                isLandlord, street, city, state, zip
+        );
 
+        // Update session on success
+        this.username = email;
+        this.role = isLandlord ? Role.LANDLORD : Role.TENANT;
         this.leaseID = acctLogic.getLeaseID();
+        getContacts();
 
-        return null; //TODO replace this with real logic
+        return resp;
     }
 
     public void getContacts()
@@ -181,12 +203,56 @@ public class SessionManager
         return;
     }
 
+    public GetAcctPropertyResponse GetAcctPropertyID() throws IOException
+    {
+        return acctLogic.GetAcctPropertyID();
+    }
+
+    public CreateInviteResponse inviteTenant(String invitee) throws IOException, IllegalArgumentException
+    {
+        GetAcctPropertyResponse resp = GetAcctPropertyID();
+        if (resp.STATUS != 0) { throw new IOException("Got error response from server for property request"); }
+        if (resp.PROP_ID == null || resp.PROP_ID < 1) { throw new IOException("Got invalid property from server"); }
+
+        return acctLogic.inviteTenant(resp.PROP_ID, invitee);
+    }
+
+    public ArrayList<Long> getInvites() throws IOException
+    {
+        return acctLogic.getInvites();
+    }
+
     //Documents
-    //TODO
+    public UploadDocResponse uploadDocument(Path filePath, String name, String description, Boolean allowUnauth) throws IOException
+    {
+        return docLogic.uploadDocument(filePath, leaseID, name, description, allowUnauth);
+    }
+
+    public ArrayList<Long> getDocumentList() throws IOException
+    {
+        return docLogic.getDocumentList(leaseID);
+    }
+
+    public GetDocInfoResponse getDocumentInfo(Long docID) throws IOException
+    {
+        return docLogic.getDocumentInfo(docID);
+    }
+
+    public ViewDocResponse viewDocument(Long docID) throws IOException
+    {
+        return docLogic.viewDocument(docID);
+    }
+
 
     //Payments
     public String getPayPalLink() throws IOException, IllegalArgumentException
     {
         return payLogic.getPayPalLink(leaseID);
+    }
+
+    public UpdateAmountDueResponse updateAmountDue(long leaseID, String paypalLink, String amount, int dueDay) throws IOException
+    {
+        UpdateAmountDueResponse resp = payLogic.updateAmountDue(leaseID, paypalLink, amount, dueDay);
+        return resp;
     }
 }

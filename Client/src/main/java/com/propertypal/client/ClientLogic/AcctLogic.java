@@ -6,6 +6,8 @@ import com.propertypal.shared.network.packets.*;
 import com.propertypal.shared.network.responses.*;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 
 public class AcctLogic
 {
@@ -47,6 +49,32 @@ public class AcctLogic
         return loginResp.IS_LANDLORD ? SessionManager.Role.LANDLORD : SessionManager.Role.TENANT;
     }
 
+    public void logout()
+    {
+        try
+        {
+            LogoutPacket packet = new LogoutPacket();
+            handler.sendRequest("/auth/logout", packet, LogoutResponse.class);
+        }
+        catch (Exception e)
+        {
+            ; //Do nothing, we don't really need to.
+        }
+
+        //Clear the cached login auth token
+        handler.clearToken();
+    }
+
+    public boolean isLeaseReady()
+    {
+        //Attempt to get leaseID
+        Long result = getLeaseID();
+
+        if (result == null) { return false; }
+
+        return result > 0;
+    }
+
     public Long getLeaseID()
     {
         GetAcctLeasePacket packet = new GetAcctLeasePacket();
@@ -58,8 +86,7 @@ public class AcctLogic
             {
                 return resp.LEASE;
             }
-        }
-        catch (IOException e)
+        } catch (IOException e)
         {
             return null;
         }
@@ -78,15 +105,131 @@ public class AcctLogic
             throw new IOException("Got bad response from server for contact info");
         }
 
-        if (resp.LL_FNAME == null) { resp.LL_FNAME = "ERROR"; }
-        if (resp.LL_LNAME == null) { resp.LL_LNAME = "ERROR"; }
-        if (resp.LL_EMAIL == null) { resp.LL_EMAIL = "ERROR"; }
-        if (resp.LL_PHONE == null) { resp.LL_PHONE = "ERROR"; }
-        if (resp.TT_FNAME == null) { resp.TT_FNAME = "ERROR"; }
-        if (resp.TT_LNAME == null) { resp.TT_LNAME = "ERROR"; }
-        if (resp.TT_EMAIL == null) { resp.TT_EMAIL = "ERROR"; }
-        if (resp.TT_PHONE == null) { resp.TT_PHONE = "ERROR"; }
+        if (resp.LL_FNAME == null)
+        {
+            resp.LL_FNAME = "ERROR";
+        }
+        if (resp.LL_LNAME == null)
+        {
+            resp.LL_LNAME = "ERROR";
+        }
+        if (resp.LL_EMAIL == null)
+        {
+            resp.LL_EMAIL = "ERROR";
+        }
+        if (resp.LL_PHONE == null)
+        {
+            resp.LL_PHONE = "ERROR";
+        }
+        if (resp.TT_FNAME == null)
+        {
+            resp.TT_FNAME = "ERROR";
+        }
+        if (resp.TT_LNAME == null)
+        {
+            resp.TT_LNAME = "ERROR";
+        }
+        if (resp.TT_EMAIL == null)
+        {
+            resp.TT_EMAIL = "ERROR";
+        }
+        if (resp.TT_PHONE == null)
+        {
+            resp.TT_PHONE = "ERROR";
+        }
 
         return resp;
+    }
+
+    public CreateAcctResponse createAccount(
+            String email,
+            String password,
+            String firstName,
+            String lastName,
+            String phone,
+            boolean isLandlord,
+            String street,
+            String city,
+            String state,
+            String zip
+    ) throws IOException
+    {
+        CreateAcctPacket pkt = new CreateAcctPacket();
+
+        // Required fields
+        pkt.email = email;
+        pkt.password = password;
+        pkt.firstName = firstName;
+        pkt.lastName = lastName;
+        pkt.phone = phone;
+
+        // Landlord fields
+        if (isLandlord)
+        {
+            pkt.propAddr1 = street;
+            pkt.propCity = city;
+            pkt.propState = state;
+            pkt.propZip = zip;
+            pkt.propCountry = "US"; // Hardcoded
+        }
+
+        // Decide endpoint based on account type
+        String endpoint = isLandlord ? "/auth/newAcct/landlord" : "/auth/newAcct/tenant";
+
+        CreateAcctResponse resp = handler.sendRequest(endpoint, pkt, CreateAcctResponse.class);
+
+        if (resp.STATUS != 0)
+        {
+            throw new IOException("CreateAcct failed. STATUS = " + resp.STATUS);
+        }
+
+        return resp;
+    }
+
+    public CreateInviteResponse inviteTenant(Long propertyID, String invitee) throws IOException, IllegalArgumentException
+    {
+        if (propertyID == null || propertyID < 1)
+        {
+            throw new IllegalArgumentException("Invalid property ID");
+        }
+
+        if (invitee == null || invitee.isBlank())
+        {
+            throw new IllegalArgumentException("Invalid invitee");
+        }
+
+        CreateInvitePacket packet = new CreateInvitePacket();
+        packet.propertyId = propertyID;
+        packet.target_username = invitee;
+
+        CreateInviteResponse resp = handler.sendRequest("/lease/genInvite", packet, CreateInviteResponse.class);
+
+        if (resp == null) { throw new IOException("Server provided empty response"); }
+
+        return resp;
+    }
+
+    public GetAcctPropertyResponse GetAcctPropertyID() throws IOException
+    {
+        GetAcctPropertyPacket packet = new GetAcctPropertyPacket();
+
+        GetAcctPropertyResponse resp = handler.sendRequest("/account/getProperty", packet, GetAcctPropertyResponse.class);
+
+        if (resp == null) { throw new IOException("Server provided empty response"); }
+
+        return resp;
+    }
+
+    public ArrayList<Long> getInvites() throws IOException
+    {
+        GetInviteListPacket packet = new GetInviteListPacket();
+
+        GetInviteListResponse resp = handler.sendRequest("/lease/getInvites", packet, GetInviteListResponse.class);
+
+        if (resp == null) { throw new IOException("Server provided empty response"); }
+
+        ArrayList<Long> invList = resp.INVITES;
+
+        return invList;
     }
 }

@@ -1,6 +1,7 @@
-package com.propertypal.LogicBlocks;
+package com.propertypal.server.LogicBlocks;
 
-import com.propertypal.ClientRequest;
+import com.propertypal.server.ClientRequest;
+
 import com.propertypal.shared.network.responses.*;
 import com.propertypal.shared.network.packets.*;
 import com.propertypal.shared.network.enums.*;
@@ -117,7 +118,7 @@ public class AccountLogic extends BaseLogic
                     loginTokenValidIP,
                     phone
                     )
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""");
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""");
 
             acctQ.setString(1, packet.firstName);
             acctQ.setString(2, packet.lastName);
@@ -135,6 +136,8 @@ public class AccountLogic extends BaseLogic
             acctQ.setString(14, LocalDateTime.now().plusHours(24).toString());
             acctQ.setString(15, req.getRemoteIP());
             acctQ.setString(16, packet.phone);
+
+            acctQ.executeUpdate();
         }
         catch (SQLException e)
         {
@@ -142,26 +145,13 @@ public class AccountLogic extends BaseLogic
 
             req.setUnknownErrResponse();
             filter.sendResponse(req);
+
             return;
         }
-
-        //Execute the query
-        ResultSet acctR = null;
-        try
+        finally
         {
-            acctR = acctQ.executeQuery();
-        }
-        catch (SQLException e)
-        {
-            System.out.println("ERROR: SQLException during handleCreateTenantAccount account query: " + e.toString());
-
-            req.setUnknownErrResponse();
-            filter.sendResponse(req);
             db.closeConnection(acctQ);
-            return;
         }
-
-        db.closeConnection(acctQ);
 
         //Succeeded, send OK
         CreateAcctResponse resp = new CreateAcctResponse();
@@ -251,6 +241,7 @@ public class AccountLogic extends BaseLogic
         //Build query to store user account info
         PreparedStatement acctQ = null;
         String token = UUID.randomUUID().toString();
+        Long userID = null;
         try
         {
             acctQ = db.compileQuery("""
@@ -273,7 +264,7 @@ public class AccountLogic extends BaseLogic
                     taxID,
                     phone
                     )
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""");
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""", Statement.RETURN_GENERATED_KEYS);
 
             acctQ.setString(1, packet.firstName);
             acctQ.setString(2, packet.lastName);
@@ -292,33 +283,39 @@ public class AccountLogic extends BaseLogic
             acctQ.setString(15, req.getRemoteIP());
             acctQ.setString(16, packet.tax_id);
             acctQ.setString(17, packet.phone);
+
+            acctQ.executeUpdate();
+
+            //Get the newly made primary key
+            ResultSet res = acctQ.getGeneratedKeys();
+            if (res.next())
+            {
+                userID = res.getLong(1);
+            }
+            else throw new SQLException("Failed to generate user primary key");
         }
         catch (SQLException e)
         {
-            System.out.println("ERROR: SQLException during handleCreateTenantAccount account query compilation: " + e.toString());
+            System.out.println("ERROR: SQLException during handleCreateLandlordAccount account query compilation: " + e.toString());
 
             req.setUnknownErrResponse();
             filter.sendResponse(req);
-            return;
-        }
 
-        //Execute the query
-        ResultSet acctR = null;
-        try
-        {
-            acctR = acctQ.executeQuery();
-        }
-        catch (SQLException e)
-        {
-            System.out.println("ERROR: SQLException during handleCreateLandlordAccount account query: " + e.toString());
-
-            req.setUnknownErrResponse();
-            filter.sendResponse(req);
             return;
         }
         finally
         {
             db.closeConnection(acctQ);
+        }
+
+        if (userID == null || userID < 1)
+        {
+            System.out.println("ERROR: handleCreateLandlordAccount SQL generated invalid user primary key");
+
+            req.setUnknownErrResponse();
+            filter.sendResponse(req);
+
+            return;
         }
 
         //Store their property info
@@ -332,9 +329,10 @@ public class AccountLogic extends BaseLogic
                     city,
                     state,
                     zipCode,
-                    country
+                    country,
+                    owner
                     )
-                    VALUES (?, ?, ?, ?, ?, ?)""");
+                    VALUES (?, ?, ?, ?, ?, ?, ?)""");
 
             propQ.setString(1, packet.propAddr1);
             propQ.setString(2, packet.propAddr2);
@@ -342,6 +340,7 @@ public class AccountLogic extends BaseLogic
             propQ.setString(4, packet.propState);
             propQ.setString(5, packet.propZip);
             propQ.setString(6, packet.propCountry);
+            propQ.setLong(7, userID);
 
             propQ.executeUpdate();
         }
@@ -370,14 +369,50 @@ public class AccountLogic extends BaseLogic
     {
         CreateInvitePacket packet = (CreateInvitePacket) req.packet;
         Long propertyId = packet.propertyId;
-        Long target = packet.targetUser;
+        String targetUName = packet.target_username;
 
-        //Get userID
+        Long target = null;
+
+        //Get requester's userID
         long landlordID = userIDFromToken(packet.token);
         if (landlordID == -1)
         {
             req.setBaseErrResponse(BaseResponseEnum.ERR_BAD_TOKEN);
             filter.sendResponse(req);
+        }
+
+        //Check if landlord already has an invite out
+        PreparedStatement exInvQ = null;
+        try
+        {
+            exInvQ = db.compileQuery("""
+                    SELECT inviteID
+                    FROM Invites
+                    WHERE landlordID = ?
+                    """);
+
+            exInvQ.setLong(1, landlordID);
+
+            ResultSet exInvR = exInvQ.executeQuery();
+
+            if (exInvR.next())
+            {
+                //Invite already exists
+                req.setBaseErrResponse(CreateInviteResponse.InviteStatus.ERR_INVITE_ALREADY_EXISTS);
+                filter.sendResponse(req);
+            }
+        }
+        catch (SQLException e)
+        {
+            System.out.println("ERROR: SQLException during handleCreateInvite existing invite query: " + e.toString());
+
+            req.setUnknownErrResponse();
+            filter.sendResponse(req);
+            return;
+        }
+        finally
+        {
+            db.closeConnection(exInvQ);
         }
 
         //Check if propertyID is valid and they own it
@@ -433,6 +468,93 @@ public class AccountLogic extends BaseLogic
             //Requesting user is not the owner, reject
             req.setBaseErrResponse(BaseResponseEnum.ERR_PERMISSION_DENIED);
             filter.sendResponse(req);
+        }
+
+        //Get targets ID and status
+        PreparedStatement tenQ = null;
+        Boolean isTargetLandlord = null;
+        try
+        {
+            tenQ = db.compileQuery("""
+                    SELECT userID, isLandlord
+                    FROM Users
+                    WHERE email = ?
+                    """);
+
+            tenQ.setString(1, targetUName);
+
+            ResultSet tenR = tenQ.executeQuery();
+
+            if (tenR.next())
+            {
+                target = tenR.getLong("userID");
+                isTargetLandlord = tenR.getBoolean("isLandlord");
+            }
+            else
+            {
+                //PropID didn't exist in DB
+                System.out.println("WARNING: Tenants userID was invalid in handleCreateInvite");
+                req.setBaseErrResponse(CreateInviteResponse.InviteStatus.ERR_BAD_TARGET_USER);
+                filter.sendResponse(req);
+
+                return;
+            }
+        }
+        catch (SQLException e)
+        {
+            System.out.println("ERROR: SQLException during handleCreateInvite tenant query: " + e.toString());
+
+            req.setUnknownErrResponse();
+            filter.sendResponse(req);
+            return;
+        }
+        finally
+        {
+            db.closeConnection(tenQ);
+        }
+
+        //Tenant cannot be another landlord
+        if (isTargetLandlord)
+        {
+            req.setBaseErrResponse(CreateInviteResponse.InviteStatus.ERR_TARGET_CANNOT_BE_LANDLORD);
+            filter.sendResponse(req);
+            return;
+        }
+
+        //Check if tenant is already in a lease
+        PreparedStatement leaseQ = null;
+        try
+        {
+            leaseQ = db.compileQuery("""
+                    SELECT leaseID
+                    FROM Leases
+                    WHERE tenantID = ?
+                    """);
+
+            leaseQ.setLong(1, target);
+
+            ResultSet leaseR = leaseQ.executeQuery();
+
+            if (leaseR.next())
+            {
+                //Found lease the tenant is already in, reject invite
+                req.setBaseErrResponse(CreateInviteResponse.InviteStatus.ERR_TARGET_ALREADY_IN_LEASE);
+                filter.sendResponse(req);
+
+                return;
+            }
+        }
+        catch (SQLException e)
+        {
+            System.out.println("ERROR: SQLException during handleCreateInvite lease query: " + e.toString());
+
+            req.setUnknownErrResponse();
+            filter.sendResponse(req);
+            return;
+        }
+        finally
+        {
+            db.closeConnection(leaseQ);
         }
 
         //Insert invite into DB
@@ -840,7 +962,7 @@ public class AccountLogic extends BaseLogic
         GetInviteListPacket packet = (GetInviteListPacket) req.packet;
 
         //Values to retrieve
-        List<Long> invites = new ArrayList<Long>();
+        ArrayList<Long> invites = new ArrayList<Long>();
 
         //Get userID
         long userID = userIDFromToken(packet.token);
@@ -1016,6 +1138,17 @@ public class AccountLogic extends BaseLogic
 
                     return;
                 }
+
+                if (leaseID < 1)
+                {
+                    //Property doesn't have a lease right now
+                    GetAcctLeaseResponse resp = new GetAcctLeaseResponse();
+                    resp.STATUS = GetAcctLeaseResponse.GetAcctLeaseStatus.ERR_NO_LEASE;
+                    req.setResponse(resp);
+                    filter.sendResponse(req);
+
+                    return;
+                }
             }
             catch (SQLException e)
             {
@@ -1087,6 +1220,12 @@ public class AccountLogic extends BaseLogic
 
                 return;
             }
+        }
+
+        //Does user really have a lease
+        if (leaseID < 1)
+        {
+            leaseID = null;
 
         }
 
@@ -1096,6 +1235,76 @@ public class AccountLogic extends BaseLogic
         resp.LEASE = leaseID;
         req.setResponse(resp);
         filter.sendResponse(req);
+
+        return;
+    }
+
+    public void handleGetAcctPropertyPacket(ClientRequest req)
+    {
+        GetAcctPropertyPacket packet = (GetAcctPropertyPacket) req.packet;
+        long userID = userIDFromToken(packet.token);
+
+        //Data to return
+        Long propID = null;
+
+        if (userID < 1)
+        {
+            //Bad ID somehow
+            req.setBaseErrResponse(BaseResponseEnum.ERR_BAD_TOKEN);
+            req.sendResponse();
+
+            return;
+        }
+
+        //Query properties table for property with matching owner
+        PreparedStatement propQ = null;
+        try
+        {
+            propQ = db.compileQuery("""
+                SELECT propertyID
+                FROM Properties
+                WHERE owner = ?
+                """);
+
+            propQ.setLong(1, userID);
+
+            ResultSet propR = propQ.executeQuery();
+
+            if (propR.next())
+            {
+                propID = propR.getLong("propertyID");
+            }
+            else
+            {
+                //Property owned by them didn't exist in DB
+                GetAcctPropertyResponse resp = new GetAcctPropertyResponse();
+                resp.STATUS = GetAcctPropertyResponse.GetAcctPropertyStatus.ERR_ACCT_NOT_SETUP;
+                req.setResponse(resp);
+                req.sendResponse();
+
+                return;
+            }
+        }
+        catch (SQLException e)
+        {
+            System.out.println("ERROR: SQLException during handleGetPropertyPacket property query: " + e.toString());
+
+            req.setUnknownErrResponse();
+            filter.sendResponse(req);
+
+            return;
+        }
+        finally
+        {
+            db.closeConnection(propQ);
+        }
+
+        //All good, reply
+        GetAcctPropertyResponse resp = new GetAcctPropertyResponse();
+        resp.STATUS = BaseResponseEnum.SUCCESS;
+        resp.PROP_ID = propID;
+        req.setResponse(resp);
+        req.sendResponse();
 
         return;
     }

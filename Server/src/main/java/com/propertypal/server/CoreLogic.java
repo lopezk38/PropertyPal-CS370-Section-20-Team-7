@@ -1,8 +1,8 @@
-package com.propertypal;
+package com.propertypal.server;
 
-import com.propertypal.LogicBlocks.*;
+import com.propertypal.server.LogicBlocks.*;
 
-import javax.print.Doc;
+//import javax.print.Doc;
 
 public class CoreLogic
 {
@@ -41,7 +41,7 @@ public class CoreLogic
 
     //AuthLogic
     public void handleLogin(ClientRequest req) { authLogic.handleLogin(req); }
-    public void handleLogout(ClientRequest req) { ; } //TODO: Create and connect to submodule
+    public void handleLogout(ClientRequest req) { authLogic.handleLogout(req); }
 
     //AccountLogic
     public void handleCreateTenantAcct(ClientRequest req) { acctLogic.handleCreateTenantAccount(req); }
@@ -50,6 +50,7 @@ public class CoreLogic
     public void handleAcceptInvite(ClientRequest req) { acctLogic.handleAcceptInvite(req); }
     public void handleGetInviteList(ClientRequest req) { acctLogic.handleGetInviteList(req); }
     public void handleGetAcctLeasePacket(ClientRequest req) { acctLogic.handleGetAcctLeasePacket(req); }
+    public void handleGetAcctPropertyPacket(ClientRequest req) { acctLogic.handleGetAcctPropertyPacket(req); }
 
     //DocLogic
     public void handleViewDoc(ClientRequest req) { docLogic.handleViewDoc(req); }
@@ -75,8 +76,6 @@ public class CoreLogic
     //NavigationLogic
     public void handleGetRolePacket(ClientRequest req) { navLogic.handleGetRolePacket(req); }
     public void handleGetLeaseContactsPacket(ClientRequest req) { navLogic.handleGetLeaseContactsPacket(req); }
-    public void handleTenantLandingPgInfo(ClientRequest req) { ; } //TODO: Create and connect to submodule
-    public void handleLandlordLandingPgInfo(ClientRequest req) { ; } //TODO: Create and connect to submodule
     public void handleNotifications(ClientRequest req) { ; } //TODO: Create and connect to submodule
 
 

@@ -633,7 +633,7 @@ public class AccountLogic extends BaseLogic
             FROM Invites
             WHERE inviteID = ?
             """);
-            invQ.setLong(1, propertyID);
+            invQ.setLong(1, inviteID);
 
             ResultSet invR = invQ.executeQuery();
 

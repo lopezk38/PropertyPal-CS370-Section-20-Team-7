@@ -3,6 +3,7 @@ package main.java.com.propertypal.client;
 import com.propertypal.client.SceneManager;
 import com.propertypal.client.SessionManager;
 import com.propertypal.client.SendInviteDialog;
+import com.propertypal.shared.network.responses.AcceptInviteResponse;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -138,8 +139,24 @@ public class LoginController
                     }
 
                     //We have invites
+                    boolean accept = false;
                     //TODO SHOW INVITE ACCEPT SCREEN
-                    errorLabel.setText("TODO accept invite prompt");
+
+                    AcceptInviteResponse resp = manager.acceptInvite(invites.get(0), accept);
+                    System.out.println("DEBUG" + resp.toJson());
+
+                    if (resp.STATUS == 0)
+                    {
+                        if (accept)
+                        {
+                            manager.updateAcctStates(); //Needed to load info for landing page
+                            SceneManager.switchTo("/fxml/main.fxml");
+                        }
+                    }
+                    else
+                    {
+                        errorLabel.setText("Failed to accept, error: " + Integer.toString(resp.STATUS));
+                    }
 
                     return;
                 }

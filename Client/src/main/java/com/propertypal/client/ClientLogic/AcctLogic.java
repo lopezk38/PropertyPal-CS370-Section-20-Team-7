@@ -220,6 +220,24 @@ public class AcctLogic
         return resp;
     }
 
+    public AcceptInviteResponse acceptInvite(Long invID, boolean accept) throws IOException, IllegalArgumentException
+    {
+        if (invID == null || invID < 1)
+        {
+            throw new IllegalArgumentException("Invalid invite ID");
+        }
+
+        AcceptInvitePacket packet = new AcceptInvitePacket();
+        packet.inviteID = invID;
+        packet.accept = accept;
+
+        AcceptInviteResponse resp = handler.sendRequest("/lease/acceptInvite", packet, AcceptInviteResponse.class);
+
+        if (resp == null) { throw new IOException("Server provided empty response"); }
+
+        return resp;
+    }
+
     public ArrayList<Long> getInvites() throws IOException
     {
         GetInviteListPacket packet = new GetInviteListPacket();

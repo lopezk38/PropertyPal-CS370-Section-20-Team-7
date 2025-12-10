@@ -150,6 +150,12 @@ public class SessionManager
         return role;
     }
 
+    public void updateAcctStates()
+    {
+        this.leaseID = acctLogic.getLeaseID();
+        getContacts();
+    }
+
     public boolean isLeaseReady()
     {
         return acctLogic.isLeaseReady();
@@ -220,6 +226,11 @@ public class SessionManager
     public ArrayList<Long> getInvites() throws IOException
     {
         return acctLogic.getInvites();
+    }
+
+    public AcceptInviteResponse acceptInvite(Long invID, boolean accept) throws IOException, IllegalArgumentException
+    {
+        return acctLogic.acceptInvite(invID, accept);
     }
 
     //Documents

@@ -18,9 +18,6 @@ public class MainController
     private Label errorLabel;
 
     @FXML
-    private Button linkButton;
-
-    @FXML
     private Label helloXLabel;
 
     @FXML
@@ -117,8 +114,6 @@ public class MainController
 
     private void landlordUI()
     {
-        linkButton.setVisible(true);
-
         helloXLabel.setText(String.format("Hello, %s!", manager.getLLFname()));
 
         snapshotLabel.setText("Your Tenant's Snapshot");
@@ -132,8 +127,6 @@ public class MainController
 
     private void tenantUI()
     {
-        linkButton.setVisible(false);
-
         helloXLabel.setText(String.format("Hello, %s!", manager.getTTFname()));
 
         snapshotLabel.setText("Your Landlord's Snapshot");

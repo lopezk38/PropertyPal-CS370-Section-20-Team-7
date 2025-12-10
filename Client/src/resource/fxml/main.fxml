@@ -15,7 +15,6 @@
     </padding>
     <HBox alignment="TOP_RIGHT" prefHeight="25.0" prefWidth="1240.0">
         <children>
-            <Button fx:id="linkButton" alignment="CENTER" minWidth="-Infinity" onAction="#onLinkButtonClick" prefHeight="25.0" prefWidth="100.0" text="Link Tenant" />
             <HBox alignment="CENTER" prefHeight="25.0" prefWidth="2000.0">
                 <children>
 
